@@ -16,7 +16,15 @@ export default defineConfig({
   },
   plugins: [
     mdx({
-      remarkPlugins: [remarkFrontmatter, remarkToc],
+      remarkPlugins: [
+        remarkFrontmatter,
+        [
+          remarkToc,
+          {
+            filename: (file: any) => file.history[0].replace(process.cwd(), ""),
+          },
+        ],
+      ],
       rehypePlugins: [rehypeSlug],
     }),
     reactRouter(),

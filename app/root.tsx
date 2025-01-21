@@ -1,14 +1,18 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import { WikiHeader } from "./components/WikiHeader";
+import { REPO_URL } from "./data";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -47,30 +51,53 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
+  let title = "Error";
+  let message = "An unexpected error occurred.";
+  let createFilename: string | undefined = undefined;
+
+  const location = useLocation();
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
+    if (error.status === 404) {
+      title = "Page Not Found";
+      message =
+        "The requested wiki page could not be found. You can help by creating it!";
+      createFilename = location.pathname.slice(1);
+    } else {
+      title = `${error.status} Error`;
+      message = error.statusText || message;
+    }
+  } else if (error instanceof Error) {
+    message = error.message;
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+      <WikiHeader filename={undefined} />
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-8 max-w-2xl mx-auto text-center">
+          <h1 className="text-3xl font-bold mb-4">{title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">{message}</p>
+          <div className="flex justify-center gap-4">
+            <Link
+              to="/"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            >
+              Return to Main Page
+            </Link>
+            {createFilename && (
+              <a
+                href={`${REPO_URL}/new/main/app/routes/_wiki%2B?filename=${createFilename}.mdx`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700"
+              >
+                Create This Page
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

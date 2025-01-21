@@ -26,8 +26,6 @@ export const getPages = async (): Promise<PageMeta[]> => {
 
     if (build.routes[id] === undefined) throw new Error(`No route for ${id}`);
 
-    console.log(build.routes[id]);
-
     return {
       slug: "/" + (build.routes[id].path ?? ""),
       frontmatter: page.frontmatter,

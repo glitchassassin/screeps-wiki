@@ -75,7 +75,7 @@ const createMdxjsEsmNode = (exports: Record<string, any>) => {
 };
 
 export default function remarkToc() {
-  return (tree: any) => {
+  return (tree: any, file: any) => {
     // Extract frontmatter
     let frontmatter: Record<string, any> = {};
     visit(tree, ["yaml", "toml"], (node: any) => {
@@ -103,13 +103,32 @@ export default function remarkToc() {
 
     const toc = buildTocTree(headings);
 
+    const filename = file.history[0].replace(file.cwd, "");
+
     // Create export nodes
     const handleNode = createMdxjsEsmNode({
       handle: {
         frontmatter,
         toc,
+        filename,
       },
       frontmatter,
+      meta: [
+        { title: frontmatter.title ?? "Screeps Wiki" },
+        {
+          name: "description",
+          content:
+            frontmatter.description ??
+            "A community-run wiki for Screeps, the MMO strategy sandbox game for programmers.",
+        },
+        { property: "og:title", content: frontmatter.title ?? "Screeps Wiki" },
+        {
+          property: "og:description",
+          content:
+            frontmatter.description ??
+            "A community-run wiki for Screeps, the MMO strategy sandbox game for programmers.",
+        },
+      ],
     });
 
     // Add exports to the beginning of the tree

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, Outlet, useMatches } from "react-router";
+import { Link, Outlet } from "react-router";
+import { WikiHeader } from "~/components/WikiHeader";
 import { getPages } from "~/lib/pages.server";
 import type { TocEntry } from "../../lib/remark/toc";
 import type { Route } from "./+types/_layout";
@@ -32,41 +33,20 @@ function TableOfContents({ entries }: { entries: TocEntry[] }) {
 
 export default function WikiLayout({
   loaderData: { quicklinks },
+  matches,
 }: Route.ComponentProps) {
-  const matches = useMatches();
   const [isContentsOpen, setIsContentsOpen] = useState(true);
-  const handle = matches[matches.length - 1].handle as
+  const handle = matches[matches.length - 1]?.handle as
     | {
         frontmatter: Record<string, any>;
         toc: TocEntry[];
+        filename?: string;
       }
     | undefined;
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-gray-800 shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link
-            to="/"
-            className="text-xl font-semibold text-gray-800 dark:text-gray-100 pt-2"
-          >
-            <img
-              src="https://screeps.com/a/logotype.svg"
-              alt="Screeps Wiki"
-              className="h-8"
-            />
-          </Link>
-          <div className="relative">
-            <input
-              type="search"
-              placeholder="Search wiki..."
-              className="w-64 px-4 py-1 border focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </header>
-
+      <WikiHeader filename={handle?.filename} />
       <div className="container mx-auto px-4 flex gap-6 py-6">
         {/* Left Sidebar */}
         <nav className="w-64 flex-shrink-0">
@@ -81,6 +61,14 @@ export default function WikiLayout({
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
                   Main Page
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/categories"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Categories
                 </Link>
               </li>
               {quicklinks.map((page) => (
