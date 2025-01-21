@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Link, Outlet, useMatches } from "react-router";
+import { getPages } from "~/lib/pages.server";
 import type { TocEntry } from "../../lib/remark/toc";
+import type { Route } from "./+types/_layout";
+
+export async function loader() {
+  const pages = await getPages();
+  const quicklinks = pages.filter((page) => page.frontmatter.quicklink);
+  return { quicklinks };
+}
 
 function TableOfContents({ entries }: { entries: TocEntry[] }) {
   return (
@@ -22,7 +30,9 @@ function TableOfContents({ entries }: { entries: TocEntry[] }) {
   );
 }
 
-export default function WikiLayout() {
+export default function WikiLayout({
+  loaderData: { quicklinks },
+}: Route.ComponentProps) {
   const matches = useMatches();
   const [isContentsOpen, setIsContentsOpen] = useState(true);
   const handle = matches[matches.length - 1].handle as
@@ -73,52 +83,16 @@ export default function WikiLayout() {
                   Main Page
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/getting-started"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Getting Started
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/api"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  API Reference
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tutorials"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Tutorials
-                </Link>
-              </li>
-            </ul>
-
-            <h3 className="font-semibold text-gray-700 dark:text-gray-300 mt-6 mb-3">
-              Tools
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/recent-changes"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Recent Changes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/special-pages"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Special Pages
-                </Link>
-              </li>
+              {quicklinks.map((page) => (
+                <li key={page.slug}>
+                  <Link
+                    to={page.slug}
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    {page.frontmatter.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </nav>
