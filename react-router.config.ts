@@ -4,12 +4,10 @@ import path from "node:path";
 import { parse as parseYaml } from "yaml";
 
 export default {
-  // Config options...
-  // Server-side render by default, to enable SPA mode set this to `false`
   ssr: true,
   prerender: async ({ getStaticPaths }) => {
     const paths = getStaticPaths();
-    const wikiDir = path.join(process.cwd(), "app/routes/_wiki+");
+    const wikiDir = path.join(process.cwd(), "app/routes/_base+/_wiki+");
     const files = await fs.readdir(wikiDir);
     const mdFiles = files.filter(
       (file) => file.endsWith(".md") || file.endsWith(".mdx")

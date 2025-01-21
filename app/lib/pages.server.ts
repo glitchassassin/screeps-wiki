@@ -14,7 +14,7 @@ export type PageMeta = {
 
 export const getPages = async (): Promise<PageMeta[]> => {
   const modules = import.meta.glob<{ frontmatter: Frontmatter }>(
-    "../routes/_wiki+/*.(mdx|md)",
+    "../routes/_base+/_wiki+/*.(mdx|md)",
     { eager: true }
   );
   const build = (await import(

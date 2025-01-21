@@ -3,7 +3,7 @@ import { REPO_URL } from "~/data";
 export function GitHubEditLink({ filename }: { filename?: string }) {
   if (!filename) return null;
 
-  const editUrl = `${REPO_URL}/blob/main${filename}`;
+  const editUrl = `${REPO_URL}/edit/main${filename}`;
 
   return (
     <a
