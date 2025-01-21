@@ -1,0 +1,25 @@
+# Screeps Wiki
+
+This is a community-hosted and run wiki for [Screeps](https://screeps.com/), the world's first MMO strategy sandbox game for programmers.
+
+## Getting Started
+
+These pages will guide you through setting up your Screeps empire.
+
+## Online Resources
+
+Other online resources to help you get started
+
+## Private Servers
+
+How to install and use private servers
+
+## [Patch Notes](https://support.screeps.com/hc/en-us/sections/201094082-Changelogs)
+
+The latest updates to the game can be found in the [changelogs](https://support.screeps.com/hc/en-us/sections/201094082-Changelogs). Note that not all changes may yet be reflected in the Wiki!
+
+[Public Test Realm Changelogs](https://support.screeps.com/hc/en-us/community/topics/200416541-Public-Test-Realm). A place for discussion of upcoming changes.
+
+## Contribute
+
+The wiki could always use a hand! Check out our contribution page to see where you can help.
