@@ -1,0 +1,66 @@
+---
+title: Basic Debugging
+description: Between Javascript and the Screeps, you have several options to determine where errors are in your code. While some can be returned in the game's console, others you can do visually with various visual elements Screeps provides.
+categories:
+  - Development
+---
+
+import { Image } from "../../../components/Image";
+
+## Console.log()
+
+`console.log()` will print to the game's console, you can add various variables, strings and the like to the printout. If you want to see plain-text versions of objects (as they would print as `[Object object]` in most cases) you can use `JSON.stringify()` to convert the object to plain text which makes it much easier to determine many things. You can see some examples of this in [Screeps' official docs page on debugging](https://docs.screeps.com/debugging.html), along with helpful tips about how returns from methods work and can be displayed.
+
+### Console & Client-Abuse
+
+While a User should not modify the console.log itself, (the developers have warned against this) it is quite possible to use the console in many ways beyond simple text-output. This is due to console being mainly able to accept HTML, which allows for a whole host of things ranging from playing audio, creating links and buttons, to actually adding onto the UI itself. This can be very helpful to add extra information into console, or make it more dynamic / easier to access rooms and much more.
+
+You can take a look at some examples in the [Screepers' Snippets](https://github.com/screepers/screeps-snippets/tree/master/src) on Github, or check out the `#client-abuse` channel on Slack.
+
+## Try-Catch & Stack
+
+`try{ someCode }catch(error){ some backup code }` Try-Catch allows you to error handle without having to fully break your script. For example, if you are trying out a new spawning method for your creeps, but are unaware if it will fully cover all cases, you can wrap it in a try catch with your old code or older version you know to be stable as a backup, that way your script will keep running in the event of an unforeseen error as elsewise unhandled errors can easily kill colonies of creeps.
+
+To get the lineNumber/stack you can call `.stack` on the error and print it to the console. For example, `try{ someCode }catch(error){ console.log('Error stack: '+error.stack);}` should print you the stack with the line number to better help determine the source of the error.
+
+## Unhandled Errors
+
+Errors that cause your script to stop executing, these should provide a stack/line number you can trace down into your code to determine where the error is being caused. The returned error should be formatted as `File With the Error : The Line it is occurring at : The Character that is the problem`
+
+## Visual Debugging
+
+Screeps provides some powerful visual feedback tools for debugging your creep's actions or actions of your script. These tools allow the user to see in 'real time' the actions or states of their creeps to determine flaws in logic, code errors or the like.
+
+### Creep.say()
+
+<Image src="/images/Creepsayexp.png" caption="An example of several creeps using Creep.say()" float="right" />
+
+[Creep.say()](https://docs.screeps.com/api/#Creep.say) will display a speech bubble above the creep for the tick it is called, this allows for short-strings of text to be printed or even emoji as it accepts any valid unicode characters. This is very useful when trying to determine the 'state' or action a creep is taking, as a user can assign different emoji or text to different actions to determine where the creep is in its logic. It is also useful for marking different creeps, as you can use different strings or emoji to 'mark' different creep roles or types to easily tell which creep is which. These are just a few examples of course, there are many other uses for `creep.say()`.
+
+### RoomVisuals
+
+RoomVisuals are a powerful tool that allow you to display various graphics and visual elements onto a room for the tick that they are called. These can vary from making visual lines for pathfinding, displaying CPU useage, status of buildings or even your own dashboards rendered in a room. How you use them in your colony is up to you, however when you are looking for something very flexible with lots of visual feedback its hard to beat roomVisuals.
+
+<Image src="/images/Roomvs.png" caption="An example of a generated roomVisual stats display for a room." float="right" />
+
+### MapVisuals
+
+Like roomVisuals, mapVisuals allow you to display various graphic and visual elements but this time on the map overview itself. This can help with a variety of scouting and observer debugging, or longform pathing as you can see an overview of multiple rooms at a time.
+
+## Memory Viewer
+
+<Image src="/images/Memviewexp.png" caption="The memory viewer." float="right" />
+
+Along with your script/console, you also have a Memory tab which is the Memory Viewer. This allows you to check into or even create various memory objects without having to add checks into code, or print it out to the console. Once a path is being viewed, you need to close it and reopen to have it update (they update every tick unless actively viewed), and modifications are submitted next tick. Be careful adding or editing large-chunks such as from the root or room/all creeps level, as the data was retrieved the tick you opened it and may have since changed, submitting the change will revert the memory to whatever the data you had open was, not what it may be now.
+
+## Monitoring & Long-Term Statistics
+
+While at-a-glance or active monitoring can solve many issues, there can be longer-term trends that you can only notice when looking at larger set / longer-time set of data, such as inefficiencies in energy usage during RCL transitions, higher-than-thought usage of CPU or Bucket due to a bug or unaccounted for error, and much, much more. While the `Memory` & `RawMemory` objects are limited in-game for storage and do cost in-game CPU to use, it is quite possible to use the [web API & Authentication Tokens](https://docs.screeps.com/auth-tokens.html) to access these objects from outside Screeps to store data, and use outside tools to display the data in different ways making it easier to find problems or areas for improvement.
+
+Some Important thins to note however:
+
+- There are rate-limits in-place for accessing this way, please see the [Rate Limiting table](https://docs.screeps.com/auth-tokens.html#Rate-Limiting) for more details, ALWAYS refer to and follow the official doc's requirements.
+
+## Grafana
+
+[Grafana](https://grafana.com/) is a popular tool used by many players, you can either set up your own with this guide: [https://github.com/screepers/screeps-grafana](https://github.com/screepers/screeps-grafana) or use a hosted service provided by Screeps Plus [https://screepspl.us/services/grafana/](https://screepspl.us/services/grafana/). This tool is a wonderful dashboard to display various graphs and a good way to access and display your stored data.
