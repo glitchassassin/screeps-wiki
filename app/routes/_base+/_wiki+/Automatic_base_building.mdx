@@ -1,0 +1,80 @@
+---
+title: Automatic Base Building
+description: Automatic base building is the process of finding, claiming and, building up a claimed room without using the UI and direct user input. For many, a fully automatic bot is the end-goal, and automatic base building is a large step towards it.
+categories:
+  - Strategy
+---
+
+import { Gallery } from "../../../components/Gallery";
+import { SpoilerBlock } from "../../../components/SpoilerBlock";
+
+## Types
+
+There's a few types of automatic bases, depending on method used.
+
+### Bunker
+
+The easiest by far is to have a pre-defined 'bunker' object containing all structures and their locations that you intend to place. An anchor, or the center of the bunker's intended location, can give an offset from where you can place your bunker. So long as an area has enough space, bunkers are a great start with automated basing.
+
+![BunkerExample.png](/images/BunkerExample.png)
+
+### Stamp/Tile-sets
+
+Normally using a core tile/stamp, you can then determine locations for other pre-defined tile-sets/stamps to be placed around your anchor dependent on the terrain in the room. This allows for more flexibility in rooms that do not have large-open spaces that bunkers can not fit in, while still allowing for already designed and known-to-work types of tiles insuring for example, that labs are in-range of other labs for reactions, extensions are in reachable and manageable locations, spawns have open area for creeps to exit, and so on.
+
+Stamps, while more difficult to place and manage, can be an optimal improvement to bunkers, as they can better exploit terrain to reduce the need for barricades. Moreover they can allow for more optimal filling, as well as tower placement based around common attack locations or high-damage positions.
+
+![Stamp Example.png](/images/Stamp_Example.png)
+
+<SpoilerBlock title="Expand for examples of Extension tile sets, or don't, If you want to make your own.">
+
+Extension 'field' or groups come in many different shapes and sizes, and can be one-set, or many smaller tiles. Roads often surround or weave to allow for haulers with a 2:1 carry to move ratio.
+
+<Gallery images={[{ url: "/images/Plus.png", caption: "A plus, tileable extension field." }, { url: "/images/LargePlus.png", caption: "A large plus." }, { url: "/images/Hallway.png", caption: "A hallway tile type." }, { url: "/images/DissiFlower.png", caption: "A Dissi Flower extension field." }, { url: "/images/RapidFillCluster.png", caption: "A rapid-fill cluster." }, { url: "/images/EyeofEzic.png", caption: "An extension field some-what resembling the Ezic's symbol from 'Papers Please'." }]} />
+</SpoilerBlock>
+
+<SpoilerBlock title="Expand for example of lab tile sets.">
+Labs are often placed so every lab is in range of 2 to 2 'source labs' to allow for optimal compound production. When placing labs you should also consider their ability to engage in lab rotation with boost production, alongside ease of boosting and unboosting. Containers are often placed adjacent to labs to allow for unboosting resources to drop into them.
+
+<Gallery images={[{ url: "/images/Infinilabs.png", caption: "Labs in a figure 8 or 'infinity' symbol shape, hallway allows pass-though and 2 position filling of all labs" }, { url: "/images/LabStack.png", caption: "A stack of labs, where all 8 production labs can reach 2 source labs."}]} />
+</SpoilerBlock>
+
+<SpoilerBlock title="Expand for examples of Tower tile sets.">
+Towers can be clustered in a single area to allow for ease of refilling, though consequently they will likely have reduced damage.
+
+<Gallery images={[{ url: "/images/TowerA.png", caption: "A single-tile-to-fill cluster of towers" }, { url: "/images/TowerB.png", caption: "A Hallway style tile single-fill tower cluster." }]} />
+</SpoilerBlock>
+
+<SpoilerBlock title="Expand for examples of Anchor tile sets.">
+A 'hub', 'anchor' or 'center' fill location can often take 1~ creeps to manage and can be relatively small. They will likely include the terminal and storage, alongside the factory, power spawn and possibly nuker and spawns, and may have the rest of the base planned around it.
+
+<Gallery images={[{ url: "/images/AnchorExample.png", caption: "An example of a single-fill-creep position for multiple structures." }]} />
+</SpoilerBlock>
+
+### Dynamic/Pattern Generation
+Using a given open area, you can generate a structure or set of structures grouped together based on some basic rules. Some examples would include generating extension fields for one or more fillers to fill, calculating the best position for towers to sit for maximum damage on walls (instead of in a tight fill-group pattern), and so on.
+
+![Dynamic Base.png](/images/Dynamic_Base.png)
+
+## Useful Algorithms
+
+There are several useful algorithms to take into consideration when automatically building your base.
+
+### Distance-Transform
+
+Distance Transformation can be paired with room terrain data, such walls and non-walls, to score each room position (in something like a CostMatrix) based on their distance from the closest wall. This is great for finding large open locations to place things like bunkers.
+
+![Distance Transform Example.png](/images/Distance_Transform_Example.png)
+
+### Flood Fill
+
+Flood Fill is useful for defining or testing areas to make sure they are secure (like if there are barricades all around a base) or sectioning areas into groups. Filling an area and gathering room positions allows you to use these positions later, for whatever purpose you see fit.
+
+![PrototypeFloodFill.png](/images/PrototypeFloodFill.png)
+
+### Minimum Cut
+
+Minimum Cut is useful for rampart and wall placement based around weighted graphs, meaning barricades can be placed at terrain chokepoints, for example.
+
+![MincutResult.png](/images/MincutResult.png)
+![Mincutbase.png](/images/Mincutbase.png)

@@ -1,0 +1,63 @@
+---
+title: "A brief guide to reading the Screeps:World API Documentation"
+description: 'The <a href="https://docs.screeps.com/api/" target="_blank" rel="noopener noreferrer">Screeps:World API</a> is a very necessary component to playing and understanding the game. It contains information about the various game world objects, how they can be accessed and what actions can be taken with them / on them along with code-snippets providing practical examples. The API is broken up into two main categories: GLOBAL OBJECTS and PROTOTYPES.'
+quicklink: true
+---
+
+## Legend
+
+### Properties
+
+<img src="/images/PropertyPip.png" alt="PropertyPip" style={{display: "inline-block", margin: "0"}} /> - denotes a property of an object. Its page will be 🟢NameOfProperty typeOfValue followed by a description of the property. Some properties will be objects, and thus have sub-properties/functions associated with them. When not a breif description, these will occasionally have their own entry (like Game.cpu's functions) however, most of the time they will be in a table with parameter (name of 'sub' property) type (the type of value) and a description of it. Some of these under the parameter section may have *optional* or value | undefined meaning they are not guaranteed to appear on the object or appear on the object if a condition if fulfilled.
+
+<img src="/images/InherPropPip.png" alt="InherPropPip" style={{display: "inline-block", margin: "0"}} /> - denotes a property of an object that is inherited, for example most in-game objects are RoomObjects, meaning they inherit a pos & room object. Instead of having to chase properties back to its parent, you can see xyz object has the property, but that it gets it from inheritance.
+
+### Functions
+
+<img src="/images/FunctionPip.png" alt="FunctionPip" style={{display: "inline-block", margin: "0"}} /> - denotes a function on an object. Its page will be 🟦NameOfFunction (ParameterAccepted, ParameterTwoAccepted) followed by a description of the function, then a table with a description of the parameters which contains an example name of the parameter to pass, the type of value it accepts (if another game object, it is linked/underlined to go to that part of the API) and a description of the parameter. A function can also have no parameters (meaning it does not require them) or parameters marked in the table as optional meaning the function does not require them to run, or that they may be required for certain functionality. This is followed by a 'return value' which gives a brief description of the value(s) that can be/can possibly be returned, occasionally in table-format with constant values to match against, or even code-snippets showing the resulting object in-plain text. If you are not getting back what you expect from a function, it is important to read what the return 'could be', as its possible the function is working fine, or is returning an error to let you know what is wrong.
+
+<img src="/images/FuncInherPip.png" alt="FuncInherPip" style={{display: "inline-block", margin: "0"}} /> - denotes a function of an object that is inherited, for example, just about all structures like towers, labs and the like can call destroy() which is inherited from it being a structure object. Like properties, instead of having to reference the parent object constantly to find out what properties an object your working with has, they are listed as such to let you know they can be called.
+
+<img src="/images/InsigCPU.png" alt="InsigCPU" style={{display: "inline-block", margin: "0"}} /> - (At the top-right of most if not all functions) denotes the estimated CPU usage of the given function. These range from:
+
+- <img src="/images/InsigCPU.png" alt="InsigCPU" style={{display: "inline-block", margin: "0"}} /> Blank which is a low-to-insignificant cost
+- <img src="/images/IntentCPU.png" alt="IntentCPU" style={{display: "inline-block", margin: "0"}} /> 'A' aka an [intent](./Intent) meaning that you will be charged a flat-tax of 0.2 CPU if an OK is returned from the function (along with whatever other checks in the engine) if not OK then whatever checks were made to get to the error code are still charged.
+- <img src="/images/LowCPU.png" alt="LowCPU" style={{display: "inline-block", margin: "0"}} /> One green bar which denotes a low-CPU cost.
+- <img src="/images/MedCPU.png" alt="MedCPU" style={{display: "inline-block", margin: "0"}} /> Two orange bars which denotes a medium-CPU cost.
+- <img src="/images/HighCPU.png" alt="HighCPU" style={{display: "inline-block", margin: "0"}} /> Three red bars which denotes a high CPU cost. It is important to note, that these are 'estimates' as a variety of factors could make them more or less expensive, you can benchmark with your own code to determine a good level average for you.
+
+## Global Objects
+
+Global objects are objects that can be accessed from anywhere in your script without the need to fetching or calling them off of other in-game objects. They are further broken up into smaller groups depending on how much information is needed to describe them / their own use in the game world.
+
+### Game
+Game is the main global object containing much of the information about the game. It contains data such as your scripts visible rooms, creeps, structures, time (tick) and much more. Game is also sub-divided as-needed for more details about its parts, which are:
+
+- Map -> For various map-related functions
+- Map.visual -> for map visual information
+- Market -> for information about the game's market system and its various properties & functions.
+
+
+### InterShardMemory
+
+As described, this object is for storing/accessing a Memory object between shards
+
+### Memory
+
+The main way data is carried between tick-to-tick and for long term storage, this API article links to a larger article giving more detail.
+
+### PathFinder
+
+Screeps:World's pathfinder module which is the basis for all path-related things (unless you write your own)
+
+### RawMemory
+
+Details information on how to access / implement your own serializer for Memory in game, as well as RawMemory segments for further data storage, or sharing of data between other players though public segments.
+
+### Constants
+
+Looking to tell your code what value something is without hardcoding it? Generally the constants will have it, using the constants also is important incase something was to be changed in the future, your script can react to it as the constant will point to the value as-changed game side without your involvement. Generally if you have a question ranging from how many buildings you can have in a given RCL, what type of objects block creep movement, or various other values can be found here.
+
+## Prototypes
+
+Prototypes' list is various game objects that have a brief (or more detailed in the case of things like creeps) description along with the properties and functions associated with those objects and normally a picture of the associated in-game object where applicable. An given objects properties/function can only be called off the object their associated with (with some overlap in naming like tower.attack() vs creep.attack()) though various can have 'the same' as other ones though inheritance (a just about any in-game 'RoomObject' will have a position, room and effects, it inherits from being a RoomObject) They will not be all listed here, as the docs themselves cover each one in detail and it would be redundant to list them all.

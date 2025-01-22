@@ -1,0 +1,26 @@
+---
+title: Alliances
+description: Some Screeps players have chosen to form alliances, or teams to benefit each other. Alliances have been based on proximity, in-game or real life friendships, similar viewpoints, mutual defense, and even for joint code development. Tenets of alliances typically include Mutual Defense Pacts, trading agreements, and possibly sharing pieces of code.
+categories:
+  - Community
+---
+
+## History
+
+Until September 2016, there was no centralized way of associating a player with an alliance. The only way to find who was allied with whom was if they told you. At that point, members of the player community gathered in #loan to develop a website to make alliances publicly known and available.
+
+## League of Automated Nations website and other tools
+
+The [League of Automated Nations site](http://www.leagueofautomatednations.com/map) was the initial result of the #loan collaboration. Features include a map of the world highlighting rooms owned by each alliance as an overview, Alliance registration, member addition, self-removal from an alliance, maps of each player in an alliance, and logo and charter hosting for each alliance.
+
+The initial development of a [LeagueBot] was completed in mid-October, allowing the posting of battles to the [#thewarpath] slack channel and the [@ScreepsObserver] twitter account.
+
+One of the less known results of the site, was the publishing of [alliances.js](http://www.leagueofautomatednations.com/alliances.js) and [rooms.js](http://www.leagueofautomatednations.com/map/rooms.js). This was used in the development of a tampermonkey script for the browser called [loan-browser-ext](https://github.com/LeagueOfAutomatedNations/loan-browser-ext).
+
+In January of 2017 [Rankings](http://www.leagueofautomatednations.com/alliances/rankings) were added to the League website. Like the rest of the site this is updated every six hours.
+
+## Resources
+- [LeagueOfAutomatedNations github](https://github.com/LeagueOfAutomatedNations)
+- [League of Automated Nations website](http://www.leagueofautomatednations.com/map)
+- [alliances.js](http://www.leagueofautomatednations.com/alliances.js) (keyed by abrreviation, each alliance is an object in the form of `{color<String>, abbreviation<String>, logo<String>, members<String>[], slack_channel<String>, name<String>}` in JSON format)
+- [roomsjs](http://www.leagueofautomatednations.com/map/rooms.js)
