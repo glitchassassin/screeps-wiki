@@ -31,7 +31,7 @@ export const getPages = async (): Promise<PageMeta[]> => {
       frontmatter: page.frontmatter,
     };
   });
-  return sortBy(pages, (page) => page.frontmatter.title, "desc");
+  return sortBy(pages, (page) => page.frontmatter.title, "asc");
 };
 
 function sortBy<T>(
