@@ -1,0 +1,95 @@
+---
+title: Community Communication
+categories:
+  - Community
+---
+
+## In-Game
+
+Screeps itself has a few methods for communicating with another player within the game. Some are more effective than others, depending on the kind of message your intent on sending.
+
+### Messages
+
+Screep's ingame message system allows users to send and receive messages to each other. To message another user, go to their profile page and click 'message'. To view current conversations or history, you can go to your messages from the top left menu or by going to [https://screeps.com/a/#!/messages](https://screeps.com/a/#!/messages).
+
+### Public Memory
+
+By using [RawMemory](https://docs.screeps.com/api/#RawMemory), a user can display a public memory segment other user's can retrieve. While each segment is limited to 100 kb, you can have 10 segments at a time active (out of 100 total segments) and can choose which segments are public.
+
+### Creep.say()
+
+A creep can use `creep.say()` to display a message, the second argument accepts a Boolean (which by default is false) to display these messages as public. Meaning that other users can see the messages creeps display. Code wise, a user can get what a creep said the previous tick by reading the creep's `saying` property.
+
+### Signing Controllers
+
+Any creep adjacent to a controller, can use the `creep.signController()` to inscribe a message on the controller. The message has to be 100 characters or less, it is displayed on the UI when looking at the room from the map overview or clicking on the controller for its details. A user's code can see the message as well by accessing the controller's `sign` property, which returns an object containing the text, username of the user who made the message, the time in game ticks it was left and, the datetime which is the real time date the message was left.
+
+## Outside of Game
+
+Screeps does have out-side of game communication for users to communicate with a wider Screep's world.
+
+### Discord
+
+Screep's discord server has been launched which covers both Screeps:World & Screeps:Arena it is considered the main official platform of choice and was set up/is managed mainly by the Screep's development team.
+
+Permeant invite: [https://discord.gg/RjSS5fQuFx](https://discord.gg/RjSS5fQuFx) or see the official migration post on the screeps forums here: [https://screeps.com/forum/topic/3187/migration-from-slack-to-discord](https://screeps.com/forum/topic/3187/migration-from-slack-to-discord)
+
+### Lingo
+
+As with any community, short-hand messages or inside jokes happen.
+
+#### NCP (Non-Coding Player(s))
+
+Non-Coding Player, NCP is mainly stated to reference a player who uses an open-source bot and does not modify its code. While it is not disallowed in the Terms of Service for Screeps, due to some community related events 'most' players have a hostile attitude towards players they perceive to be NCPs and will attack them on sight. The general concusses being, that the game is a coding game, and if you are not coding you are not playing. However, as it is not disallowed by the ToS of the game, it is a valid way to play should one choose to do so, just be prepared for the community response.
+
+#### You can't say Murder
+
+If you say the word 'murder' in Screep's Slack, you will likely be responded to with several gopher emoji. Tradition states that this word be reserved for advertising in-game conflicts and as such, many users have it set as a ping word for Slack. Now-a-days, there is #theWarpath channel that displays conflicts.
+
+#### RTFM
+
+Read the ^%&!ing Manual, normally in reference for another user to look at the API & documentation when asking a question where a quick glance or search would reveal the answer.
+
+#### OM (Overmind)
+
+OM or, Overmind is normally in reference to the open source bot [Overmind](https://github.com/bencbartlett/Overmind) written by Ben Bartlett. Themed after the Zerg from StarCraft, it is at time of writing the most popular open-source bot. While not currently implemented, [assimilation](https://bencbartlett.wordpress.com/2019/01/02/screeps-6-verifiably-refreshed/) was slated to be one of its biggest features allowing for many independent Overmind bots to work as one unit. When announced, there was some pushback from non OM users at the time.
+
+#### Airport
+
+An airport, is commonly used to refer to a user's room when they build overly sized road networks in their rooms which end up looking like airports/runways. The logic is mainly that 'more roads, less creep parts' without considering the cost/time in repairing the road network.
+
+#### Doritos
+
+Dorito(s) are normally stated as being the [Invaders](/Invader) of Screeps, due to their angular red-bodies being reminiscent of the snack food.
+
+#### Blinky-bois
+
+A references to a type of attack build creep, that mainly uses Ranged_Attack parts and 'blinks' constantly by ranged-mass attacking.
+
+#### Tigga & TiggaBot
+
+[Tigga](https://screeps.com/a/#!/profile/Tigga) is a well-known player in the community who has a very aggressive bot. Residing mainly on [Shard](/Shard) 2, the bot is configured to automatically attack and destroy anyone who settles nearby. Some players take this, less well, than others but it is normally understood that spawning in-range of TiggaBot is asking for a fight.
+
+#### Duck Emoji & Rubber Ducking
+
+Not exclusive to Screep's Slack, [Rubber Duck Debugging](/Rubber_duck_debugging) happens occasionally when some one starts explaining a problem or asking for help in Slack but ultimately solves their own issue as their reasoning it out.
+
+#### The Cult of TypeScript
+
+A group of players who are dedicated to using and spreading the use of [TypeScript](https://en.wikipedia.org/wiki/TypeScript) for Screeps. They are very helpful with helping people learn and use the language.
+
+#### YP & The Shard 1 Ocean
+
+YP is short for [Ypsilon Pact](https://www.leagueofautomatednations.com/a/YP) which is a large alliance of players, their color-scheme for their badges is mainly blue and they have a very large claim on Shard 1 resulting in the shard being kind of an 'ocean'.
+
+### Slack
+
+Was previously the main communication method for Screeps:World, however with Screeps:Arena on the horizon the developers have migrated the official community platform to Discord instead which will host both Screeps:World & Arena content. While it may still be joinable for a time, expect most users to be active on Discord.
+
+### Reddit
+
+[https://www.reddit.com/r/screeps/](https://www.reddit.com/r/screeps/) is Screep's official reddit page.
+
+### Twitter
+
+[https://twitter.com/screepsgame?lang=en](https://twitter.com/screepsgame?lang=en) is Screep's official twitter.

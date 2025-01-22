@@ -1,0 +1,69 @@
+---
+title: CPU
+description: In Screeps, every operation requires a certain amount of processing power to be completed. Every player has a limit of how much CPU they can be use in a single tick.
+categories:
+  - Stubs
+  - Game Knowledge
+  - Resources
+---
+
+## Meaning
+
+The official docs explain CPU here [https://docs.screeps.com/cpu-limit.html](https://docs.screeps.com/cpu-limit.html)
+
+1 CPU is 1 ms of processor time on the server. What this means is that something taking 1 CPU on one server does not necessarily mean it will also take 1 CPU on another server. This is due to the amount of possible calculations in 1 ms of processor time wildly varying and depending on the processor used.
+
+Generally this means you cannot compare the absolute numbers for example when you are benchmarking on your own private server vs MMO. However you can still estimate how much better code will run by the relative numbers. A 10 % improvement on CPU usage on one server will usually also roughly translate to a 10 % improvement on other servers. The exception to this rule is the simulator, since it is basically an "approximation" of the screeps server running in your browser, the environment is just too different to reliably compare CPU usage or benchmark solutions.
+
+## Limits
+
+The limit of CPU time depends on multiple factors. A player with a [subscription](/Subscription) starts with 30 CPU. This is then increased by 10 for every [Global Controller Level](/Global_Controller_Level) that the player has. Players who have purchased the Steam version, but who do not pay for a subscription, have 20 CPU regardless of their GCL. On [private servers](/Private_Server) the limit is fixed to 100 by default. There are server modifications that change this (for example [screepsmod-admin-utils](https://github.com/ScreepsMods/screepsmod-admin-utils) which allows to mimic the official server's behavior).
+
+## Bucket
+
+For every tick that the limit of CPU is not consumed, the remainder is stored into your bucket. The bucket has a total capacity of 10,000 CPU. Every tick that usage exceeds the CPU limit, it is removed from the bucket. If the bucket reaches 0, and CPU usage is above limits, script execution halts. You may never use more than 500 CPU from your CPU limit and bucket combined in a single tick, it will result in the server stopping execution of your code at any point.
+
+Buckets are commonly used to combine multiple, heavier calculations to run intermittently over one or several ticks. This allows for a low average of CPU usage, with spikes to perform calculations that are then stored.
+
+## API CPU Usage
+
+Each API method on the [API Reference](http://support.screeps.com/hc/en-us/articles/203084991-API-Reference) page lists CPU usage of the method ranging from low to High. Methods marked with an A always require .2 CPU because they directly modify the game world. These methods are usually called "intents", since you call them to set an intent to do something that changes the game state and all the intents are later resolved by the server. It is generally suggested to avoid making repeated calls to methods with High CPU usage. Many employ [caching](/Caching) as a mechanism to avoid this.
+
+## Managing CPU
+
+There are several easy-to-do CPU optimizations in screeps that may not be easy to catch when you first start playing.
+
+### reusePath opt & moveTo
+
+moveTo is the go-to method for getting your creep to any given position and is what most users use when starting out. However, by default this method has an option called 'reusePath' which is set to 5. This means, that moveTo will store a path it creates for five in-game ticks before recalculating the path. Calculating the path to a given object can be quite expensive, depending on the distance and complexity. As the user grows in GCL and rooms, more creeps, means more pathing calculations per tick resulting in more CPU useage.
+
+You can change this option by passing moveTo an object containing reusePath as a property in the object and the value being how often you want it to recalculate the path. Example: `creep.moveTo(someRoomPosition,{reusePath:15})` Would cause the path not to be recalculated for fifteen ticks instead of the default five. It is important to note, however, that if a creep encounters an obstruction on its stored path (such as another creep) it will attempt to keep moving on its stored path until the path recalculates. This can result in stuck creeps or blockades, the user needs to account for these situations by resolving the block in the path, moving the other creep, deleting the stored path, or many other ways.
+
+### Redundant checks
+
+Each method you use for a creep has a variety of checks it must complete before the action can move forward and can return an error code if the action encounters a problem. If a user is constantly calling a method that will never work, depending on when the action returns the user is paying CPU for these checks, when the action will never be preformed. As such, setting up your own checks to stop this, can save CPU, while this may not be noticeable with one room of creeps, many, many creeps it all adds up.
+
+### OK Intents that do nothing
+
+If a user gets an OK returned from an action, that schedules an intent to preform that action which costs the user 0.2 CPU. However, even after the intent is scheduled it is still possible for the action preformed to not happen, thus costing an unnecessary amount of CPU that could have been used elsewhere.
+
+Examples of OK intents that will not cause action:
+
+- A creep .move()ing into a wall. The move may be valid, and you will get an OK, but the wall will prevent the creep from executing the move when preforming the action.
+- A tower 'over-repairing' a structure. If multiple towers are attempting to repair a road, for example, but the first tower would have sufficed, when the rest of the towers go to preform the action, nothing will be done, however as the OK was given and intent scheduled, it still costs 0.2 CPU + any checks preformed to get the OK.
+
+### Path pre-caching
+
+If a user's creeps need to travel the same path repeatedly over and over, recalculating the path with moveTo or other methods every time is unnecessarily costly and only balloons in cost as you get more creeps. By using pathFinder or other methods, you can save paths to memory or global and use them over and over. There are several challenges that come with this, however it can be a very large CPU saver.
+
+### Memory & Global
+
+Memory is very useful for carrying information across ticks, however, the cost of JSON.stringifiying() and JSON.parsing() the Memory at the end/start of the tick respectively is charged to the user. Meaning, as you use more memory, the cost for this process increases. Leveraging caching, global and, rawMemory, it is possible to store things without using memory albeit temporarily in the case of global/caching.
+
+### External Resources
+
+This article is a stub. You can help Screeps Wiki by editing to add more information.
+
+- [https://github.com/bonzaiferroni/screepswiki/wiki/%23cpu-clinic-faq](https://github.com/bonzaiferroni/screepswiki/wiki/%23cpu-clinic-faq)
+- [https://screeps.slack.com/messages/cpu-clinic](https://screeps.slack.com/messages/cpu-clinic)
+- [https://screeps.slack.com/messages/10-cpu-club](https://screeps.slack.com/messages/10-cpu-club)

@@ -1,0 +1,140 @@
+---
+title: Common development problems
+description: This is a list of some of the most common problems people come across while playing the game.
+categories:
+  - Stubs
+  - Development
+---
+
+import { Image } from '../../../components/Image'
+
+## Why are all my creeps one role?
+
+If you have made some new changes to you code and you suddenly find that all your creeps are the same role, likely when assigning, searching or checking the new role somewhere a `=` is suppose to be a `==` for example if your running logic for a creep `if(creep.memory.role = 'roleName')` Will set every creep run, to the role name, instead of comparing.
+
+## How can I tell what my creep/tombstone/container is storing?
+
+You can use `Object.keys()` on the object's `store` property to retrieve the keys that are active, then check the amounts by looping though the keys and its store.
+
+## Why is store.getXXX() returning Null?
+
+If you do not provide a `RESOURCE_*` (Where * is a resource) constant to the method, and it is a non-generalized store it will return null. A generalized store (Terminal, storage) will return the 'total' regardless, but most other objects will not.
+
+## What is using all my CPU!?
+
+You can use [Game.cpu.getUsed](https://docs.screeps.com/api/#Game.cpu.getUsed) before and after various parts of your code to determine how much CPU a certain snippet uses.
+
+## Why is pathfinder pathing though my spawn/extension/tower?
+
+By default, pathfinder only uses terrain. You need to provide a `roomCallback` with a `costMatrix` with the buildings/objects you wish to avoid set.
+
+## Why is my pathfinder path not working with moveByPath and/or not what I want?
+
+There are a few common issues that can happen when using pathfinder if not set correctly.
+
+- If your object is on a terrain wall (Source/Controller/ect) or otherwise 'not possible' for a creep to stand on, you need to provide a range for the goal object. Elsewise, it will not be able to find the object as an 'end goal' as walls are not path able by default. (see API doc)
+- If you are passing the whole return from to moveByPath, then it will not recognize it as a path. You need to use the `path` property of the returned object, which is the 'path'
+- If the path is not what you thought it 'should' be, check the `incompelete` property of the returned object, if true, then the path could not be found. It is possible for some reasons mentioned here for that to occur, or it simply ran out of `ops` before it could find the path. the `maxOps` by default is 2000, however you can set this higher if need be. It is important to note, EVEN with an `incomplete` of true, you will still get a `path` of whatever was last 'found/tried' which will likely not be correct.
+- If you are storing the path in `Memory` to use later on, you will probably find that moveByPath will return an error. This is because when an object is stored to memory, it is `JSON.stringified()` into a string, saved, then next tick on first memory call `JSON.parsed()` into an object again. However, this object is now 'new' and is not a `roomPosition` even though it still contains, x,y, and roomName. `moveByPath()` accepts an array of `roomPositions` not of this new object, as such you need to reconstrue each obj in the array back to a roomPosition, or use another method to encode it.
+
+## Why can't I dismantle this InvaderCore!?
+
+Invader cores are alien, [Invader](/Invader) technology, as such careful and effective dismantling by a creep is ineffectual as they do not know how it is put together. However, it is still quite possible to bluntly attack and destroy it.
+
+(code reason: It doesn't have an entry in the `CONSTRUCTION_COST` constant, as such calling `dismantle()` will return before any damage is done)
+
+## Why is getObjectByID() not returning an Object?
+
+If your object is in a room you do not have vision on, then you will not be able to fetch the object.
+
+## Why is my game object in memory not working/updating?
+
+Storing a live-game object in memory makes it 'stale', and not reference the original. This is because when an object is stored to `Memory` it is `JSON.stringified()` for storage, and next tick on first `Memory` call, `JSON.parsed()` into a new object, losing all reference to its live counterpart. It is recommended you instead store its `ID` so you can retrive it when necessary using `Game.getObjectByID()`
+
+## Why is my creep not using exclusively roads with moveTo?
+
+While roads are 'preferred' when set with the cost-matrix for the default moveTo, they are not 'only' considered. It is quite possible for steps off the road to be taken, you may want to consider using path-caching or other methods such as a custom costMatrix to make them take the path you desire.
+
+## Why is creep.transfer() returning an error when targeting my controller?
+
+Likely, your creep does not have any `WORK` parts, the proper method in upgrading a controller is `upgradeController` which is called by default when using `transfer()` and the target is a controller. See the: [Creep.upgradeController](https://docs.screeps.com/api/#Creep.upgradeController) API doc.
+
+## Why is my spawn not generating any more energy, shouldn't it generate to 300?
+
+A spawn will only generate energy when the total room energy is &lt;300, check extensions (even if not owned by you) to see if there is energy there.
+
+## Why does findClosestByRange & Path not working?
+
+If your object is outside the room, is a common issue. findClosest only works for in-room objects, you have to code your own solution for out-of-room objects. findClosestByPath can also fail to 'find' or detect an object if a path can not be found/fails to be found.
+
+## Why is console.log() returning [Object, object]?
+
+When printing `Objects` to console such as creeps, rooms, memory, ect, console will output `[Object,object]` if you wish to view it as a simplified string you can use `JSON.stringify()` on the object to print it out as a plain string.
+
+## Why can't I remove/delete ruins?
+
+Ruins are remains of old buildings from other users. They can not be removed or deleted except by a nuke (which deletes all creeps/constructionSites and ruins from a room on-landing). They do not block creep movement however and resources contained within them can be withdrawn by creeps.
+
+## Why isn't RESOURCES_ALL working to withdraw/transfer from this container/tombstone/creep?
+
+The methods `withdraw()` and `transfer()` ONLY accept 1 `RESOURCE_*` (where * is a resource) constant at a time, you can not pass it an array of them, or more than one. You can retrieve active resources in an object by looping over `RESOURCES_ALL` and checking for amounts contained within, or simply by getting the keys from the object's `store` with `Object.keys()` and then selecting one to use.
+
+## Why is spawnCreep() giving me ERR_INVALID_ARGS as a return?
+
+This is commonly because the body of the creep is not configured properly. It needs to be only array containing only body part constants and/or their respective strings. If you pass it an array, containing arrays of parts, it will not work. For example: If you have a 'set' of parts you want to use such as `[MOVE,WORK]` and push them to a final 'array' `finalBody.push([MOVE,WORK])` then the result is an array, containing arrays, which can not be used by spawnCreep `[[WORK,MOVE],[WORK,MOVE]]` . When configuring your body, it is best to push every part into one array, concat these various arrays, flatten the array, or whatever method you wish to have only one array at the end.
+
+## Why won't my controller upgrade when its over its required progress total?
+
+This normally happens when there is an active downgrade timer, your downgrade timer count 'increases' as a controller is upgraded with energy similar to the controller's progress. Each level has a different downgrade timer, and the timer must be 'full' in-order for a controller to upgrade. see the `CONTROLLER_DOWNGRADE` constant on the API for details per RCL.
+
+## Why wont my moveTo() / other creep methods work on the result of room.find()?
+
+`room.find()` returns an `array` of objects, while most methods (with a few exceptions) accept only one target. You need to choose one target from the array.
+
+## Why won't RangeMassAttack() work on this Road/Wall/Container?
+
+`rangedMassAttack()` does not damage any structure that does not have an owner. This includes roads, walls & containers as they do not have direct ownership, while things such as ramparts, towers and spawns do.
+
+## Why do I get an error when trying to access a reserved room and/or objects in a reserved room?
+
+Reservation of a room does not mean ownership of its controller, as such, the controller itself does not grant [vision](/Vision) in the room, meaning attempts to access the room object or objects in the room will fail if there are no creeps, owned objects, observer or tombstones to provide vision in the room.
+
+## How can I stop my creep from blinking between rooms when attempting to move to a room?
+
+An [exit-tile](/Exit_tiles) will cause a creep that is on it at-ticks-end to be instant transported to the adjoining exit tile in the next room at the start of next tick. If the creep remains on this exit tile during the next tick, it will be transported back again. This is commonly caused when using logic that moves to a room by 'roomName'. On entering the room, the creep beings logic for the room (finding sources, controller, locking target, ect.) however, if a move action is not called that tick, the creep will blink back to the previous room, and if there is no [vision](/Vision) in the room, any found objects, targets, ect will not be valid. Similarly, if the logic is set up in a way to 'only' run when in room, the creep will 'always' bounce back and forth as if it doesn't exit the exit tile, it will be 'trapped'.
+
+Some different ways to counter-act this:
+
+- Call on your logic to move as-soon-as your detected in room (EX: Your in room, you lock your target/find your target, move to it asap in code not next tick).
+- Use a [roomPosition](/RoomPosition) as a target, and only begin your in-room logic once you have moved 'in range' (away from exit tiles) of the desired position
+- Use roomPositions as a target, in context of your goal for the room. (EX: You want to harvest a source, use a roomPosition that is adj to the source as a target for the move)
+- Step off the exit tile into the room as soon as you enter (not guaranteed 'best position' but do-able)
+
+These are by no means the 'only' solutions, as always, find what works best for you and your bot.
+
+## Why are my structures blinking red?
+
+Structures blink red when damaged, or a room's control level (RCL) is too low to operate (use) the structures. In the case of damage, repairing the structure with a creep or tower will work. In the case of lower RCL then allowed, you need to upgrade the controller back to the appropriate level to have full use of the structure. Such as, you can't transfer into a storage that is inactive, but you can withdraw from it. A deactivated tower, will not take commands. If it is multiple structures like extensions, which you get an amount per level, the game's code sets the 'active' structures based on distance to controller (in the case of same distance, indexed first). You'll often see this in [Temple Rooms](/GCL_temple) where users will often un-claim and re-upgrade, where inactive structures remain as they will become useful again once the RCL has been reached.
+
+## Why is checking the result of a .find() search against undefined not equivalent when nothing was found?
+
+`.find()` calls do not return undefined/null if nothing was found, they will always return an array of objects and in the case of no objects of the specifications provided being found an empty array will be returned. Instead of checking against undefined, check the length of the array. If the length is one or greater, then something was found, elsewise nothing was located.
+
+## Why can't I see my all my logs in the console? What's the limit?
+
+The Client can only display 100 messages / 1MB worth of messages a tick, its also possible that the logic calling your console.log is not running. If you need more verbose logs, try a buffer, or some method of compacting your output.
+
+## I purchased item(s) from Steam's Marketplace / Store (CPU Unlock, Access Key, Pixel,Decoration...) but can't find it in Screeps, where is it?
+
+<Image src="/images/Steaminvscreepsexmp.png" caption="Highlighted red, the steam inventory shown expanded. If you don't see it expanded, click on the steam icon/ arrow to expand the menu." float="right" />
+
+When purchasing something from Steam, it will go into your Steam inventory. To get it in Screeps, you need to go to your Screep's inventory page and access the Steam inventory interface on the right-hand side of the inventory screen. This interface is normally collapsed, so you have to expand it, once expanded, you should see all your Steam inventory items in a list. From here, you can select which ones and how many you wish to transfer to your Screeps inventory and once in Screep's inventory you should be-able to use in-game as you see fit. Conversely, you can also move things to Steam to store in that inventory as well.
+
+## Why is room.energyAvailable returning an incorrect number / why is my spawn not spawning a creep even though there's enough active extensions with energy for it?
+
+When a room decays in RCL (Room Control Level) there is a bug that can occur where inactive extensions are counted as 'active' when tallying the energyAvailable for the room property / spawning of creeps, which can result in an incorrect tally for energy. This can cause code to think at the RCL level it is at, that it should be-able to spawn a creep for the RCL level it is at, when the avail energy count is returning differently. This does not effect energyCapacityAvailable however, which leads to an issue of your script believing it can spawn a larger creep if it 'waits' for energy to be filled, when that can not happen as all available/active structures are filled.
+
+Workarounds:
+
+- Dynamic spawn & only use energyAvailable when spawning creeps. The count of course, is still incorrect, but as the game is checking that count for spawning, only spawning with the energy avail should not return errors. energyCapacity however, will still return as its suppose to, meaning checking against the 'maximum' spawnable creep will be an issue.
+- Pass an energyStructures option when spawning creeps with the active structures, this will mean instead of the strait energyAvailable count being checked against, energyStructures will be passed to a function to check it against roomObjects & if those objects are 'off' (inactive). not including the inactive structures when passing the energyStructures means they are never checked/counted against

@@ -1,0 +1,13 @@
+---
+title: Client Abuse
+description: Client Abuse is taking advantage of <code>console.log()</code> accepting HTML, especially <code>&lt;script&gt;</code> and <code>&lt;style&gt;</code> tags, to inject code into the client. This is done for the purpose of adding/editing client functionality, modifying how the client displays the game data, or performing tasks that interact with the game and external sites. The code will only function while a client is open.
+categories:
+  - Stubs
+  - Development
+---
+
+## History
+
+Since the beginning of the project the admins have allowed `console.log()` to accept HTML code. This has been used by multiple projects, such as the screeps-console project's example logger, but mostly focused on prettier console output. In late 2016 a larger Client Abuse community has grown in size, with the goal of expanding the Steam Client functionality by injecting scripts using the console. One of the first instances of purely Client Abuse code was posted around late November or early December, which provided a global function that output the text to the console and read it aloud, using an API provided by [ResponsiveVoice](https://responsivevoice.org/). Since then, Client Abuse snippets have been released providing an in-client grafana agent for screepspl.us, saving files to your computer via the client, injecting the [League of Automated Nations](/Alliances) tampermonkey script into the client, saving the [alliances.js](http://www.leagueofautomatednations.com/alliances.js) to a location in Memory, and more.
+
+*This article is a stub. You can help Screeps Wiki by editing to add more information.*

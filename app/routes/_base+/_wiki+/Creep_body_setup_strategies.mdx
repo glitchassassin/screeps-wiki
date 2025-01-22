@@ -1,0 +1,69 @@
+---
+title: Creep Body Setup Strategies
+categories:
+  - Strategy
+  - Game_Knowledge
+---
+
+## Creep Design Strategies
+There are multiple ways how to create Your desired creep with desired bodyparts, 2 most common would be:
+
+- predefined
+- template repetition
+
+### Predefined Body
+
+It can be implemented in multiple ways, though it boils down to always return earlier-designed array of bodyparts.
+
+To avoid blocking Spawn with creep that has body with too high energy cost it's worth to explore creating several predefined sets of body arrays depending on room.energyCapacity or room.energyCapacityAvailable.
+
+### Template Repetition Body
+
+Template body design bases on a predefined subset of bodyparts, that have calculated energy cost, and repeating them either body matches required bodypart count, or energy limit.
+
+i.e we want a mineral worker creep that has as many WORK parts as possible and half of WORK parts amount of MOVE
+
+thus we arrive at [WORK,WORK,MOVE] template.
+
+Next calculate the energy cost of this template.
+
+With this two information we can create an array, into which, inside a while/for loop, we will push above template IF cost of all added bodyparts is below or equal room.energyCapacity or room.energyCapacityAvailable..
+
+One needs to be careful not to exceed the `MAX_CREEP_SIZE` limit.
+
+Both methods can be combined, with predefined starting template and additional bodyparts added from another template.
+
+TOUGH part only applies damage reduction to itself __(and if boosted)__ - so it's worth to put it always in front.
+
+### Things to give a though or two about
+
+#### MOVE parts can be positioned strategically:
+
+- at the front to serve as damage sponges (creep will be getting fatigue when moving but his offensive capabilities will be less impacted)
+- at the front to cut on intent-check cost if creep can move : [https://github.com/screeps/engine/blob/master/src/game/creeps.js#L20](https://github.com/screeps/engine/blob/master/src/game/creeps.js#L20)
+- at the back to ensure creep mobility when in combat/attacked (creep might still run away while not having any other bodyparts)
+
+#### In general, order of bodyparts can impact how creep can perform in longer combat/skirmishes
+
+Two creeps with same bodyparts but different bodyparts order can perform better (or worse) in certain combat situations.
+
+You can:
+
+- sacrifice MOVE parts by putting them in front to ensure that damage from RangedAttack/RangedMassAttack is maximal for longest time
+- sacrifice offensive parts by putting them in front to ensure that in case of loosing skirmish, creep can still retreat at full speed with remaining MOVE parts
+- putting HEAL parts at the back to ensure it can 'survive longer' just to stall or reheal after combat
+- doing kind-of mosaic, resulting in creep progressively getting weaker across all BodyPowers (HEAL/ATTACK/RANGED_ATTACK/MOVE) without getting big penalty to just one action.
+
+## MOVE parts
+
+Using the right number of MOVE parts is important. If you use too many, your creep will be more expensive than necessary. If you use too few, the creep will move very slowly.
+
+If you have roads, you don't need as many MOVE parts. Roads speed creep movement by a factor of 2, meaning only half as many MOVE parts are required. Roads are especially important in swamps, which are 5 times slower than plain land and 10 times slower than roads. However, the roads must be maintained, so a few players decide not to keep up roads.
+
+## CARRY parts
+
+CARRY parts do not generate fatigue if they are empty. Boosted CARRY parts do not generate extra fatigue, so boosted transport creeps require much fewer MOVE parts for the amount they can carry.
+
+## Attackers
+
+The order of the creep's body parts makes a difference: The ones listed first take damage first. For this reason, TOUGH parts should almost always appear at the beginning of the creep's parts list. HEAL parts should usually be near the end, so that if the creep is nearly destroyed, it may have a chance to heal itself.

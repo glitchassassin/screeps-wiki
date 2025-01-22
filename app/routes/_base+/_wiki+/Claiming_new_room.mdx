@@ -1,0 +1,88 @@
+---
+title: Claiming new room
+categories: []
+---
+
+## Requirements
+
+If you have claimed fewer rooms than your [Global Control Level](https://docs.screeps.com/control.html#Global-Control-Level) (GCL) allows, you can claim another one.
+
+### Simple overview of how to claim a new room
+
+To claim a new room, you need to do 6(7) things:
+
+- send a creep with at least one CLAIM body part to an unowned room
+- have this creep successfully perform the [.claimController()](https://docs.screeps.com/api/#Creep.claimController) action
+- place a spawn construction site
+- bring builders from at least one of the rooms you already own
+- build the spawn
+- keep the controller from downgrading and losing a [Room Control Level](https://docs.screeps.com/control.html#Room-Controller-Level) (RCL)
+
+Optional (quite often required)
+
+- Defend the new room from invaders / other Players
+
+### Things to think about
+
+#### Before considering claiming a new room:
+
+Claiming a new room comes with some cost:
+
+- spawn time required to spawn builders
+- energy cost of builders
+- possible initial energy load of builder (if you're not sending them empty)
+- possible need of sending combat creeps to defend new room
+- CPU cost of multiple creeps going on multi-room voyage
+- CPU cost of some extra creeps building new room
+- fully developed rooms require more CPU
+
+**Which can be summed up as:**
+
+- Do you have enough CPU?
+- Do you have a room that can support setting up a new room?
+- If you're short on CPU (i.e. on shard3) or would need to disable some parts of your code to claim a new room it should be well thought before.
+
+The same applies to the situation when your rooms are attacked or energy-starved.
+
+#### Things to consider when picking new Room
+
+If your empire is healthy, then you need to find a suitable room to claim. These are some things to consider while picking:
+
+- How close/far should the new room be from my base?
+- Does the new room have 2 sources? (1 source rooms usually develop more slowly)
+- How many potential [remotes](/Remote_Harvesting) are available? How many sources do they have (the more the better)?
+- Which mineral should the new room have (In general it's best to pick a room with a mineral you don't have yet. In the beginning it's good to have O or H for basic boosts, focusing on X early on is not always the best choice.)
+- Does the new room have other players around?
+  - Are they aggressive?
+  - Do they have Remote Mining Rooms close to / overlapping with your room?
+  - Will they want to expand towards you / your new room?
+- What's the purpose of the room?
+  - access to [PowerBanks](https://docs.screeps.com/power.html) or [Deposits](https://docs.screeps.com/resources.html#Commodities)
+  - access to highway in general
+  - control of area
+
+#### First-time expansion
+
+If you have just started the game (or did not expand yet), this is a special situation that adds another 3 questions:
+
+- Do you have code organized in a way that can run multiple rooms?
+- In case of a bug or an error in one room, can you still run your other rooms without crashing your code?
+- Is your code ready for edge cases that might come with the new room?
+
+#### Strategies of claiming a new room
+
+- Refilling spawn builders by harvesting sources in the new room
+- Spawning big spawn builders that carry a lot of energy to the new room
+- Spawning small spawn builders that swarm neighbouring rooms' sources for energy
+- Sending big hauler creeps to provide energy to build the spawn
+- Protecting the spawn construction site with rampart(s) or walls
+- Protecting the controller from [.attackController()](https://docs.screeps.com/api/#Creep.attackController) actions of other players using rampart(s)/wall(s)
+- Creating a path with [PathFinder.search()](https://docs.screeps.com/api/#PathFinder.search) between your owned Room and the new room and storing it for later use by creeps to save CPU
+
+#### After claiming the new room
+
+In theory, you should already have code that can support this room on its own, but you can still help it develop by
+
+- sending big hauler creeps with energy (and recycling them for more energy)
+- sending big upgrading / mining / building creeps and renewing them, to provide the room with creeps that would not be available to it because of its lack of extensions
+- ensuring its protection with combat creeps sent from more developed rooms

@@ -1,0 +1,28 @@
+---
+title: Caching
+categories:
+  - Development
+---
+
+## Global Cache
+
+The Loop Architecture of the server creates a new instance of the "loop" function each tick, but it does not reset items in the global scope. This means that any data can be stored in the global space for future ticks to use.
+
+However, due to the [server architecture](https://support.screeps.com/hc/en-us/articles/205960931-Server-side-architecture-overview), each worker process has it's own global scope. Items entered into or removed in one run will not have their state changed on other workers, which adds considerable constraints on being used to cache volatile data. It does work great for memoization (saving the results of expensive functions where the results are not expected to change).
+
+## Require Cache
+
+The first time a require statement is run it loads the module and caches the result. Future calls return the cached module.
+
+If the module had code that ran, rather than just class and function definitions, that code will only be run when resetting the cache.
+
+Since this depends on the global cache all of this cache is cleared when it is reset.
+
+## Memory Cache
+
+It is possible to cache things in memory- this is the only way to persist a cache between [global resets](/Global_reset).
+
+- Don't forget that anything stored in memory is going to cost CPU due to json parsing.
+- Cost matrixes take up an obscene amount of space but there are numerous ways to reduce that.
+- One large object (such as a string) is significantly cheaper to parse than lots of small ones, even if they take up the same space.
+- Room positions in particular should not be cached as is, but should be serialized/deserialized with a custom method.

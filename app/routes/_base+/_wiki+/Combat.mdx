@@ -1,0 +1,96 @@
+---
+title: Combat
+description: The world of screeps while a wonderful sandbox, is not always a peaceful place. Between NPC invaders, Strongholds, Caravans and, other users, a user must always be ready to defend what they have claimed or attack when necessary (or for some, sport). How you want to approach other users is up to you, however some do not give you that choice.
+categories:
+  - Strategy
+---
+
+## Creep Combat
+
+The most common type of combat, creeps with attack, ranged_attack, tough and, heal parts are your front-line combatants. As the body arrangement of a creep can take on many forms, it is up to the user to define their creep's unit-type and makeup as in relation to their 'role' in combat and interaction with enemies, allies and their own creeps. While one creep may act well as a defense from an NPC invader, groups of creeps working together can accomplish more and generally faster then one creep could alone.
+
+Creeps receive damage in order of their body, starting at the beginning of the array (or top-left in the UI) and ending at the end (bottom-right of the UI).
+
+### Creep Parts
+
+Each of the combat-type body parts has its role to play. Each body part will only contribute its effect to its creep's actions if its individual HP is above zero. Else wise, it will not contribute but still add weight to the creep (unless it is a move or carry part).
+
+#### ATTACK
+
+The melee body part with a effective range of one position, each part adds 30 damage to the creep when preforming the `.attack()` creep action. Attack parts also add to the creeps 'counter attack' power, when being attacked by another creep using `.attack()`. (See: [https://github.com/screeps/engine/blob/master/src/processor/intents/_damage.js#L14](https://github.com/screeps/engine/blob/master/src/processor/intents/_damage.js#L14)). As they have a short range and high damage, their very useful as stationary defenders or dealing damage in large chunks. However, when faced with more agile creeps or creeps at a greater range they can come up short.
+
+**Counter-Attack**: Also known as 'attack back power' when a creep with attack parts are attacked by a creep with attack parts, they will deal damage automatically back to their attacker.
+
+#### RANGED_ATTACK
+
+The ranged version of attack, this body part allows for a creep to deal damage to other creeps and structures within a range of three positions by either `.rangedAttack()` to attack one target for 10 hits per ranged_attack part, or `.rangedMassAttack()` which deals damage in a radius of three from the creep, with a fall-off of ten HP at a range of one, four HP at a range of two and, one HP at a range of three. Its important to note that rangedMassAttack will not damage the user's own creeps and, will not damaged un-owned structures. Specifically this means structures that do not have a defined `.user` aka `.owner` are unaffected by rangedMassAttack, this includes things like containers and roads. (see: [https://github.com/screeps/engine/blob/master/src/processor/intents/creeps/rangedMassAttack.js#L26](https://github.com/screeps/engine/blob/master/src/processor/intents/creeps/rangedMassAttack.js#L26)).
+
+Ranged_attack parts are useful as they allow creeps to either stay safely out of combat range of melee creeps and grant the ability to deal damage at range while chasing an enemy creep. RangedMassAttack is useful to deal damage to multiple creeps/structures at the same time, spreading out the damage and making healing more complex for the defender.
+
+#### HEAL
+
+Heal allows the creep to heal itself or others using `.heal()` for 12 points per part with a range of one or, `.rangedHeal()` for 4 points per part with a range of 3. Either by healing itself, or being a dedicated healer, creeps with this part can help creeps survive for longer, or out heal damage entirely.
+
+#### TOUGH
+
+Tough on its own is a inexpensive body part only costing 10 energy, that can act as a buffer as it also (as other parts do) adds 100 HP to the creep. The main use for tough parts comes into play when they are boosted, as depending on the tier of boost applied to the creep, it is able to reduce the amount of damage that it takes. This allows for a creep to take less damage from their attackers, while still healing at the same rate applied to them. Boosting this body part as with every other body part, does not change its overall HP only the damage to it. Any damage that overcomes the tough part, if not another though part after, is applied as normal as the damage reduction only applies to boosted tough parts.
+
+#### WORK
+
+While WORK may seem like it is only an economy part, creeps with WORK parts have access to `.dismantle()` which attacks a structure's HP for 50. This makes the WORK part useful to attack walls, ramparts and, structures in general as you can deal more damage with less parts. However, WORK can not damage other creeps while ATTACK can. So you have to trade off doing more structure damage with doing no creep damage.
+
+#### MOVE
+
+While MOVE parts may only be seen as necessary to move your creep around it is important for your creep to be able to reach targets, catch creeps, or run away when necessary. MOVE parts also have HP as every part does, making it useful as a barrier or increasing HP when taking damage. Boosting move allows for less move parts to be required, as it increases how much fatigue each part reduces allowing for more combat or heal parts to be used.
+
+### Boosts
+
+Boosts are very common in mid-to-high level combat, they are very useful for improving the survival of individual creeps and improving creep's contributing to groups.
+
+### Duos
+
+A duo is when two creeps work in tandem for attack/defense, generally only being one space apart. Their configurations vary, but a common tactic to have one be the attacker and the other the healer. This allows the creeps to specialize further as they can rely on the other creep for support. Important to note is, however, that you still need MOVE parts to keep them moving, but the increase in effectiveness is still great.
+
+### Squads (Aka, Quads)
+
+A Squad (or quad) is a group of four creeps working in tandem, normally in a group of four where all creeps are within one position of each other. This allows for even greater results than a duo and, with proper logic, you can spread out tasks, focus fire or do much more than any single creep or duo could do. Pathing, however, becomes a challenge as several conditions have to be taken into account when traveling in this formation.
+
+### Platoons
+
+Large groups of creeps bigger than quads working together have been seen before, such as a group of six. While not every creep can touch each creep within a space of one in this configuration, with proper logic they are still able to cover other creeps.
+
+
+
+## Tower combat & Tactics
+
+Tower's are very powerful stationary structures that deal damage/heal/repair creeps and structures dependent on range at the cost of 10 energy per action. The tower's range is the entire room it is in, however if the object is less than or equal to five positions from the tower, its maximum effect will be applied, anything on or after six positions will fall-off in power until a range of twenty, anything twenty and greater will be the minimum.
+
+The location of towers in your base can be very important to its defense, as if the walls/ramparts are too far the tower's damage will be lowered but if they are too far from a source of energy to supply them, they will be harder to refill quickly.
+
+### Offense
+
+As defending towers have a fall-off range and energy requirement, it is possible to tank though their damage from a far and 'drain' the tower of energy. Depending on how well/robust the defending player's refilling of their towers is, this can open up windows to attack walls or rush the towers to destroy them before they can refill them. With boosts and coordination, it is easy enough to tank though towers while getting though walls if no creeps are involved, just remember to take them into account when calculating damage.
+
+### Defense
+
+Generally you only want to shoot enemy creeps with towers, if they will damage them. Creeps with high heal, damage resistance or support healers, may be able to out-heal your towers depending on range. As such, its important to have logic in place to account for the damage you can do, vs the healing the enemy creep will do in a given tick. You can also use towers to heal creeps, which can be useful in overcoming attackers. You can also use them to repair structures, however this is less efficient then doing so with a creep, but still valid.
+
+## Nukers & nukes
+
+A powerful structure unlocked a RCL 8, a nuker allows nukes to be fired at rooms within a 10 room range. They deal an impressive 10 million HP at the position they are targeted, with an additional 5 million HP to everything else in a five by five area around the target. In other words, if an object is within two positions of the targeted position they are dealt 5 million damage. On landing (triggering) all creeps, dropped resources, construction sites, ruins and, tombstones are vaporized (deleted) instantly even if they are under a rampart. Ruins and tombstones are not created as they would normally be when structures and creeps die from this effect. If a room is in safe mode it is ended instantly, however the cooldown is not placed so it may be put into safe mode again instantly if there are still safemodes available.
+
+### Offense
+
+Nukes do not require pathfinding to a target position as they effectively 'fly' though the air to their target, as such, they can be used to strike at the heart of a base without having to breach its walls to destroy vital structures. They can also be used against walls and ramparts to weaken or destroy them giving your creeps an easier time attacking. As they also remove all creeps from the room, they can be useful to destroy a built up defense, or delay a response in defense as a room will have to recover creeps if not accounting for the nuke.
+
+### Defense
+
+Nukes take 50,000 ticks to land, as such a user on defense has plenty of time to prepare. Inner structures can either be moved, or protected by ramparts. Creeps can repair/build up walls or ramparts being attacked, and if possible, you can move creeps to another room until the nuke lands to save them from being deleted.
+
+## Defensive & Delay tactics
+
+Walls and ramparts can be used to enclose your base to keep invaders and other user's out, however while this may deter most invaders and newer users, determined users can easily overcome walls with boosts or time. Often its best to think of walls and ramparts as a delay to allow you to create a defensive force of creeps, than as impenetrable defenses.
+
+Safemodes also allow for the delay of any hostilities in your room as activating one lasts for 20,000 ticks and makes all enemy creeps unable to attack you and your structures as well as making them walkable, so they can not block access to parts of your base, or the exit.
+
+## Offense & attack tactics
