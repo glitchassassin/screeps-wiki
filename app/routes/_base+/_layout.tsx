@@ -1,3 +1,4 @@
+import { clsx } from "clsx";
 import { useState } from "react";
 import { Link, Outlet } from "react-router";
 import { WikiHeader } from "~/components/WikiHeader";
@@ -36,6 +37,7 @@ export default function WikiLayout({
   matches,
 }: Route.ComponentProps) {
   const [isContentsOpen, setIsContentsOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const handle = matches[matches.length - 1]?.handle as
     | {
         frontmatter: Record<string, any>;
@@ -47,14 +49,29 @@ export default function WikiLayout({
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <WikiHeader filename={handle?.filename} />
-      <div className="container mx-auto px-4 flex gap-6 py-6">
+      <div className="container mx-auto px-4 flex flex-col md:flex-row gap-6 py-6">
         {/* Left Sidebar */}
-        <nav className="w-64 flex-shrink-0">
+        <nav className="md:w-64 flex-shrink-0">
           <div className="bg-white dark:bg-gray-800 shadow-sm p-4">
-            <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">
-              Navigation
-            </h3>
-            <ul className="space-y-2">
+            <div className="flex items-center justify-between gap-8">
+              <h3 className="font-semibold text-gray-700 dark:text-gray-300">
+                Navigation
+              </h3>
+              <button
+                onClick={() => setIsSidebarOpen((prev) => !prev)}
+                className="block md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                {isSidebarOpen ? "[ − ]" : "[ + ]"}
+              </button>
+            </div>
+            <ul
+              className={clsx(
+                "space-y-2",
+                isSidebarOpen ? "block" : "hidden",
+                "md:block",
+                "mt-4"
+              )}
+            >
               <li>
                 <Link
                   to="/"
