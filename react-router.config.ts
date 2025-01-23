@@ -34,7 +34,7 @@ export default {
     }
 
     for (const category of categories) {
-      paths.push(`/categories/${category}`);
+      paths.push(`/Categories/${category}`);
     }
 
     return paths;

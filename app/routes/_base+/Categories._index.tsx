@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { getPages } from "~/lib/pages.server";
-import type { Route } from "./+types/categories._index";
+import type { Route } from "./+types/Categories._index";
 
 export const meta = [
   {
@@ -49,7 +49,7 @@ export default function Categories({
         {categories.map((category) => (
           <li key={category.name} className="my-0">
             <Link
-              to={`/categories/${category.name}`}
+              to={`/Categories/${category.name}`}
               className="text-blue-600 dark:text-blue-400 hover:underline"
             >
               {category.name}

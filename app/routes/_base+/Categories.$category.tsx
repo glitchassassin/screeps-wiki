@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { getPages } from "~/lib/pages.server";
-import type { Route } from "./+types/categories.$category";
+import type { Route } from "./+types/Categories.$category";
 
 export const meta = ({ params }: Route.MetaArgs) => [
   {

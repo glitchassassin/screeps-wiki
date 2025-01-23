@@ -102,7 +102,7 @@ export default function WikiLayout({
               </li>
               <li>
                 <Link
-                  to="/categories"
+                  to="/Categories"
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
                   Categories
