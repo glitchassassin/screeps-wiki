@@ -1,0 +1,102 @@
+---
+title: Invader
+description: The hostile Non-Player Characters (NPCs) of Screeps.
+categories:
+  - Game_Knowledge
+---
+
+import { Image } from '../../../components/Image'
+
+<Image src="/images/InvaderIcon.png" alt="Invader" float="right" />
+
+Their forces are built up primarily of creeps, however instead of a user's round shape they take on a more angular one colored red with a darker red outline. They have a body the same as a normal creep made up of the same parts. They are immediately hostile to any user's creeps but will only attack/peruse in the room they were created, they can not use exit-tiles and walk over them as normal tiles without being transported. What do they want? Why are they here? Little is known about Invaders beyond their aggressive nature, they seem to take exception with user's creeps harvesting energy and will attack on a semi-regular basis when they can reach the room safely. Recently, they have begun to set up strongholds in every sector which they use to launch invaderCores into nearby unowned controller rooms, strange alien structures that are able to reserve rooms keeping user's creeps from harvesting the energy within the room.
+
+## Room Invasions
+
+<Image src="/images/Invader_creep.png" caption="An invader creep. Depending on your snack-food preference occasionally they are referred to as 'doritos' or 'pizza slices' by players. They have more angular bodies and are always red with a darker red outline." float="right" />
+
+The most common Invader based attack a user will encounter is a room invasion. When any player creep harvests energy in a room, it is added to a background counter for that room known as `invaderGoal`. Once the counter reaches ~100,000 energy plus/minus a random off-set (See: [Engine Code](https://github.com/screeps/backend-local/blob/master/lib/cronjobs.js#L433)) and a stronghold is present in in the sector (as-of stronghold update, See: [Engine code](https://github.com/screeps/backend-local/blob/7520c8c7e6a443ad955d25e064dbd151a909d8cb/lib/cronjobs.js#L393)) the Invaders will attempt to spawn on an [exit tile](/Exit_tiles) in the room. Invaders may only spawn on exit tiles from adjoining neutral rooms which are connected by exit-tiles, such as a [Highway room](/Map), [Source-Keeper room](/Map), or a [Controller room](/Map) that does not have an active user Claim/Reservation. If there is no viable exit tile for them to use or stronghold in the sector, they will not spawn. Invasions can happen in any room that energy harvesting is happening, even in Source-Keeper & Center Sector rooms where they will normally attack in greater strength.
+
+Once spawned, the Invader(s) will seek out and attack user creeps it can path to. It will avoid attacking structures unless it is blocking its access to the user's spawn (Such as built walls & ramparts). In non-claimed rooms where there is no spawn, as long as one Invader remains with attack parts they will wait in-room till they die naturally or are killed.
+
+The invader(s) will not stop attacking until:
+
+- They die of natural causes (their `TicksToLive` by default 1500, reaches 0).
+- All Attack-based Invaders die (Healer invaders will `suicide()` if no attack-based body type invaders remain)
+- They succeed in killing all the user's creeps in a room and can reach the spawn. (If they can reach (path) to the spawn & there are no active room creeps, they `suicide()`, only applies to rooms with a controller & level (owned room))
+- Their HP (`hits`) are brought to 0 by the user's creeps or towers.
+
+Their body makeup and number of Invaders spawned during an invasion varies first by the presence/absence of a controller (See: [Screep's Docs on Invaders](https://docs.screeps.com/invaders.html)). Rooms with a controller will scale based on its `level` while rooms without a controller (SourceKeeper/Center Sectors) will always spawn a 'raid' or larger group of invaders (See: [Engine Code](https://github.com/screeps/backend-local/blob/7520c8c7e6a443ad955d25e064dbd151a909d8cb/lib/cronjobs.js#L322)), controllers with a level greater or equal to four also have a chance to spawn raids. They will occasionally be boosted, and on-death will drop energy & boosts according to their body makeup in a tombstone which a user can withdraw from, and when the tombstone decays will drop to the ground and begin to decay as well.
+
+### Dealing with Room Invasions
+
+Room invasions are one of the first tower-to-creep & creep-to-creep combat a user partakes in. In an owned room RCL 3 or greater, a tower can be use to attack and destroy the Invaders providing that they do not out-match the towers damage (rare, but can happen with boosts & raids at later RCLs depending on their positioning). In [remote harvesting](/Remote_Harvesting) rooms, where a user does not have owned objects like towers creeps are normally employed. They can be 'retained' by renewing and renewed at a spawn until they are needed & deployed to a room (sometimes energy expensive) or spawned on-demand by the user's spawn system to deal with the attack (takes time to spawn). Generally, you will need:
+
+- A System or Systems to detect an invader has spawned in the room
+- A System or Systems to deploy your countermeasure creep (either spawned deploying mission, or call spawning for it)
+- Logic to out-match the size of the invader (greater attack & healing or just attack)
+- Logic to guide the combat creep to the target & to destroy the target.
+
+Once mission complete, if reusing the creep I needs to be healed up and renewed, if not, it can be repurposed for other attack missions, or recycled for a return of its energy, or what-ever other task the user desires.
+
+### Spawning Invaders
+
+Though use of the Screep's GUI it is possible to spawn invaders of approx. desired size and with or without boosts by using the menu, then clicking on an exit tile. These Invaders will behave exactly like their normally spawned counterparts, but should have no effect on the background counter and do not drop energy/boosts when killed. The damage they can do to creeps however, is still very real. This is mainly mean to test defenses, and can not be done when hostile user creeps are in the room (creeps different from other user's creeps).
+
+See: [Screep's Docs](https://docs.screeps.com/invaders.html#Testing) for more details.
+
+## Source-Keepers
+
+<Image src="/images/Source_Keeper_and_lair.png" caption="A keeper, its lair & resource its defending." float="left" />
+
+Source-Keepers are special Invaders found in Source-Keeper rooms that border the center room of a sector. They spawn from eternally from Keeper-Lairs, which are indestructible hostile structures (the lairs can not be attacked, destroyed or modified by a user). A new Source-Keeper will be start spawning with a spawn-time of 300 ticks when the current Source-Keeper dies of old age (its `ticksToLive` are reduced to zero) or its HP (`hits`) is reduced under its maximum amount (Basically, when damage is dealt to it) (See: [Engine Code](https://github.com/screeps/engine/blob/master/src/processor/intents/keeper-lairs/tick.js#L12)).
+
+Each Source-Keeper seeks out and defends the nearest source or mineral from its Lair and defends it. Unlike regular room Invaders, they will not chase a user's creeps but instead will attack anything in range and stay to guard their assigned resource. Should a creep path within three roomPositions/tiles of the Keeper, it will range-attack should it have parts to do so. Within one space, and it will both attack and range attack, should it have parts left to do so. When first spawned, they will emerge on-top of their Lair inside a natural wall and normally will only move off the wall towards their assigned resource when a user creep enters the room.
+
+### Source-Keeper Harvesting
+
+Why harvest somewhere you have to deal with Invaders constantly? Mainly its because a Source-Keeper's Source will have an automatic 4000/4000 energy (You may note, older MMO rooms contain 4500/4000 energy, this is due to them being higher previously) without any reserving or claiming required, and the mineral resource in the room comes with a neutral extractor, which allows any creeps to harvest from it without claiming the room. Effective Source-Keeper harvesting allows for higher energy input and access to minerals a user's GCL or claims may elsewise not allow for.
+
+To harvest a Source-Keeper room you generally need:
+
+- A type of creep or creeps that can effectively kill Source-Keepers in an effective and timely matter (The faster they die, the longer you have to harvest as the timer starts as soon as it takes damage)
+- A type of creep or creeps that can harvest the energy/resource, and stay 'safe' in-between spawns (Stay too long, the next Keeper will likely destroy the harvester before the kill-creep returns)
+- A type of creep or creeps that can haul/transport the energy/resource back to the main room/colony. (Similarly, you ideally want to avoid damage from Keepers in the process)
+- A Plan for dealing with / avoiding Room Invasions (always 'raids')
+
+If a user has an effective [remote harvesting](/Remote_Harvesting)/[mineral mining](/Mineral_Mining) setup, with a few tweaks it can be applied to a Source-Keeper room, though you may want to consider upsizing the creeps are more energy is available. As the invasions here are always raids, they can be a bit more difficult to deal with, but not impossible. It is up to the user to define a setup for this, ranging generally from using the kill-creep to manage the invaders, spawning anti-invasion creeps, or abandoning the room and waiting the invaders out.
+
+### Traversing Source-Keeper Rooms
+
+A user will likely find out at some point when sending creeps to distant rooms that when crossing a Source-Keeper room towards the center of a sector will likely cause their creep damage or even get them killed. Default moveTo and most pathing implementations will not account for the presence of hostile-creeps or structures unless specified to do so. It is up to the user to come up with methods in which to do this, some examples are:
+
+- Making a custom CostMatrix for PathFinder which flags/excludes spaces in which a creep would 'likely' take damage moving though (a roomPosition in range of a keeper, or its assigned resource/lair for example)
+- Avoiding pathing into Source-Keeper rooms at all (Various ways, to either Regex the roomName and avoid with your pathing method or flag the room as 'avoid')
+
+Of course, these are not all the ways, and its up to the user to decide how they want to deal with it.
+
+## Strongholds & Stronghold Invaders
+
+<Image src="/images/L5_Stronghold.png" caption="A Level Five stronghold is well-defended and well stocked. Can also see they can occasionally spawn near source-keepers for extra defense or close to the edge of rooms, limiting mobility." float="right" />
+
+Strongholds are Invader bases that periodically spawn in a Source-keeper room in a sector. Only one can be spawned in a sector at a time, and they vary in level 1 - 5. While they are quite a challenge to take down, they contain many valuable resources. (See: [Screeps Docs](https://docs.screeps.com/invaders.html#Strongholds) for more details)
+
+### InvaderCore
+
+The primary core of an invader base, it acts as a spawn & brain for invaders stationed at the base. If the core dies, any invaders created by the base stop functioning and no invasions can happen in the sector until a new invaderCore stronghold is spawned (Generally, whatever time is left on the 'despawn' time of the destroyed base)
+
+The stronghold will also spawn proxy/remote invader cores which will attempt to reserved the controller of the room they are spawned in, causing problems for harvesting in that room. They can not be dismantled as they are alien Invader technology (code reason: They do not have a `CONSTRUCTION_COST` entry in that constant, it is checked during dismantles' `intent` and as such, will fail to execute), but can still be attacked or ranged_attacked.
+
+They do tend to spawn semi-frequently, but their rate is normally dependent on the stronghold's level in the sector. The only way to keep them from spawning entirely is to destroy the stronghold spawning them. An important note is that they get 'priority' when reserving the controller, so it can be difficult to combat them purely be attempting to 'out reserve' them.
+
+### Stronghold Invaders
+
+Stronghold invaders are spawned with & by a stronghold and generally live to defend its core. They will not chase user-creeps around the room they are spawned and will generally stay by the core that spawned them. The amount and makeup is determined by the InvaderCore that spawned them, and even the same level stronghold can spawn with a different 'deck' of creeps it uses. If killed, an InvaderCore will respawn them with a timer based on the level of the core/stronghold. If the main InvaderCore of a stronghold is destroyed, any living stronghold Invaders will stop functioning.
+
+### Attacking a Stronghold
+
+Tactics range to attack a stronghold, smaller lower level strongholds can be dealt with by one to a few creeps normally boosted to tank/soak the tower damage. Tower logic depends on the level of the stronghold (lower levels, less advanced, higher levels, more advanced). Some common tactics include:
+
+- 'Core sniping' - In which one or more ranged-attack creeps equiped to out-heal the damage of the tower/creeps of the stronghold find a position that is best to do so, then simply attack the rampart/InvaderCore until it is dead (note: Does not work with larger strongholds)
+- Nuking - In which one or more nukes from RCL8 rooms are employed to weaken the strongholds defenses or destroy it outright. (Note: Can easily destroy some of the 'loot', and higher-level cores do attempt to combat this tactic, logic can always be updated to fight it better)
+- Traditional warfare - As you'd normally with an enemy user's base, you can attack it with boosted creeps and fight, fight, fight.
