@@ -1,0 +1,89 @@
+---
+title: Energy
+description: Energy is the most basic resource in Screeps. It is used to spawn creeps, build structures, fill towers, and upgrade controllers. It can be harvested from Sources and transported using creeps with CARRY parts. Then, it can be used by worker creeps to perform tasks in your rooms.
+categories:
+  - Stubs
+  - In-Game_Objects
+  - Game_Knowledge
+  - Resources
+---
+
+Energy is overwhelmingly gathered through the mining of [Sources](/Source), but can also be gathered through [Market](/Market) transactions. In some cases, Energy is used by players as a form of currency, and can be used to indirectly transfer credits to other players, as energy prices are (relatively) stable and can be easily sold.
+
+Energy management is key to success in Screeps. [Storages](/StructureStorage), [Links](/StructureLink), Containers, all help provide ways to manage and store energy.
+
+## Getting Energy
+
+There are a few different ways to acquire energy.
+
+### Harvesting
+
+The most basic and first way to acquire energy is to harvest it. This simply requires a creep with one or more WORK parts adjacent to a source execute a harvest action on the source. If the creep has CARRY parts and available room within those parts, the energy harvested will be stored automatically there. Any energy that is harvested that will not fit within a creep's CARRY parts will be 'dropped' to the ground, if there is a container underneath the creep w/ available room in its store when this happens, the energy will be transferred into the container's store. Like with the creep, if there is no room in the container, or there is no container, the energy will be deposited to the ground as a 'dropped' resource. It will start to decay (evaporate/sublimate) at a rate dependent on how much energy is in the pool/pile ( Code wise: `ceil(amount/1000)` ) per tick.
+
+Harvesting generally starts out at low-to-start RCL with generic workers or harvester roles gathering energy to start building up the room, however [static mining](/Static_Harvesting) / harvesting is normally swapped to in short order as a specialized or specific creep can more easily strip a source of its energy before regeneration. It is important to mine out the energy before the regeneration as a source will only regenerate to its 'maximum' (3000 normally in an owned/claimed room) and no higher. So if a source is not harvested fully in the time before its regeneration, generally this means that energy that could be used for the colony is 'lost', or a different way of thinking is that the energy that 'could' have been generated from an empty source, was not as there was still some energy, thus reducing the 'maximum' amount of energy you can harness. Example: A source starts with 3000 energy, creeps harvest it to 1200 energy, when the regeneration timer triggers, the source is now 3000 energy again but only 'generated' 1800 energy to get back to its maximum instead of the fully 3000 it 'could' have.
+
+Effective energy harvesting allows for more work a room/colony can do. It is up to the user to determine/implement the best strategy they can.
+
+### Purchasing from the market
+
+Another common way on RCL 6 and after to get energy is from the [market](/Market). Some users do not use all the energy they have, and as such sell it. While other users for various reasons need more energy to do more than they could harvest in their area. Normally the 'best' way to purchase energy is from creating a buy order. This is because when any terminal transaction is done, the dealer of the transaction must pay energy to complete it. If you purchase energy from a sell order, energy must be spent 'acquiring' the energy, and less overall energy is gained. That's not to say its not done, or impossible to profit from doing it different, it just requires careful calculation of how it will benefit your script.
+
+### Recycling & Dead creeps
+
+A creep that has 'fulfilled its purpose' can be recycled by a spawn calling [recycle creep](https://docs.screeps.com/api/#StructureSpawn.recycleCreep) on it. While the energy is limited to 125 per part, and is adjusted for its remaining/how much ticks-to-live it has, if the creep you were using has a specific mission it has completed and it is no longer needed, it is possible to recoup some of the energy spent on it. The energy will be 'stored' in the creeps tombstone for the ticks it exists, then dropped to the floor.
+
+Similarly, a creep or [invader](/Invader) that dies (as long as the invader was not spawned by the user) will drop some energy on-death. While not a ton, opportune harvesting of this resource allows for more input with little effort spent/energy spent.
+
+## Transporting Energy
+
+There are a few different ways to transport energy around a room/colony.
+
+### Using Creeps
+
+Creeps could be considered the 'main' way to transport energy around a room, but their by no means the only way.
+
+#### Bucket Chain
+
+A 'Bucket Chain' is when two or more creeps use [transfer](https://docs.screeps.com/api/#Creep.transfer) to send energy along multiple adjacent creeps from one destination to another (like people handing buckets of water along a chain of people to combat a fire), normally from a source of energy to a desired use (like upgrading) or storage (like a container/storage). Energy held/transported in this matter keeps it from 'decaying' on the ground, insures rapid transit along the chain, and requires little-to-no movement from the creeps in the chain. However, due to [intents](/Intent) each transfer call does cost the flat 0.2 tax as such it can get CPU expensive quickly. It is up to the user how to balance their CPU vs energy maintained and how to best implement their desired method.
+
+#### Haulers & Transports
+
+Likely the most common form of energy transportation, creeps with primarily CARRY & MOVE parts withdraw/pickup energy from a source and bring it to a place of storage or use. How these creeps are structured and utilized quite varies from bot-to-bot. Some common implementations include:
+
+- Using specific-sized 'haulers' to go one route between a source & storage, never changing and hauling the same route
+- Using generic/large sized 'haulers' to acquire energy on a mission or task based system, where depending on need they are assigned to pickup/withdraw energy from one source, and transport it where needed.
+
+When creating hauler(s) generally keep in mind:
+
+- how big does one or more haulers have to be? Too large, and its wasted energy/time spawning, too small and it won't bring in enough to be worth the cost.
+- How many haulers do I need? Too few, or too many again, wastes energy.
+- How are they going to determine where/when they need to fetch energy/return it?
+- How do I want to budget CPU for their trips/searching?
+
+### Using Links
+
+[Links](/StructureLink) are commonly used mid-to-late RCL methods of transporting energy, that cost 3% of energy being transmitted via link along with a short cool-down before they can fire again, dependent on range. They have multiple uses within a colony, check out the [links](/StructureLink) page to see some implementations.
+
+### Using Extensions, Spawning & Recycling
+
+Another way of transporting energy is to use [extensions](https://docs.screeps.com/api/#StructureExtension). Primarily this method involves a creep transferring energy into extensions (normally by a source, or other 'source' of energy), then using a spawn spawnCreep's `energyStructures` opt to specify what extensions are going to be used in the spawning process. The spawn will then use these in order of the array provided to spawn the specified creep. Once spawned, the creep can be immediately recycled, which results in the energy spent being deposited (up to 125 per part/dependent on TTL) into a tombstone. That energy can then be withdrawn/picked up by creeps and transferred to other extensions, spawns, containers or storages. This makes it a very fast way to transfer sums of energy around a room without too much loss. There are some limitations to this method, as previously mentioned only 125 energy per-part is available as such larger/more costly parts such as CLAIM, RANGED_ATTACK and HEAL, will always 'lose' energy (as their cost is higher than 125). This also requires the spawn to be spawning a creep (at 3 ticks per body part), which does use up time it could be spawning other creeps.
+
+## Storing Energy
+
+Keeping energy for later use, or for high-demand times such as defense or repair is key.
+
+### Storage
+
+At RCL 4 and beyond, a [storage](https://docs.screeps.com/api/#StructureStorage) is a very useful and high capacity energy storage option. With 1,000,000 capacity for resources, and the ability to expand it even further for periods of time using [powerCreeps](/Power) it is hard to beat. Storages are often used as the 'center' storage location that most creeps deposit to, and then energy is withdrawn from it for various tasks within the room.
+
+### Containers
+
+Available at RCL 0 (meaning you can build them even in unclaimed rooms), you can have up to five containers in a room. Containers offer a modest 2000 resource storage capacity and decay at a rate dependent on ownership of the room, but are very flexible as they are pathable (walkable) by creeps, can take energy 'dropped' onto them into their storage without calling transfer and make for good buffer or short-term storages. Containers have all sorts of use-cases, from [drop mining](/Static_Harvesting), mineral mining, capacitors for spawning, holding energy for upgraders/spawners, storing the result of unboosting creeps and so on. It is up to the user how best to spend their five containers a room, if they even wish to use all five.
+
+### Terminals
+
+Terminals are available at RCL 6 and onward in a room, they can store up to 300,000 resources and send resources to other rooms/make market details at the cost of energy and a short cooldown (which can be reduced with a powerCreep's power). They are very useful in sending energy from a high-gaining room to a lower one, to be used more effectively or in reinforcing/restocking a room that is under siege (though power creeps in power enabled rooms can reduce their effectiveness)
+
+### Factory & Batteries
+
+A factory available at RCL 7, does have a medium 50,000 storage capacity for resource on its own, however it does shine in helping store energy via the 'compression' or conversion of energy into batteries. Batteries cost 600 energy to produce a quantity of 50, meaning a 'cost' of 100 energy to store 500 energy in a smaller form and can be 'decompressed' or converted back into energy at the cost of 50 batteries into 500 energy. While some energy is lost in the conversion, this allows more energy to be stored in a 'smaller' space, or more energy to be sent via terminal with less cost (as terminals cost energy to send resources, the 'more' of a resource you send, the higher the cost.)

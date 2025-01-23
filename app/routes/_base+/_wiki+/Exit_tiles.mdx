@@ -1,0 +1,28 @@
+---
+title: Exit Tiles
+description: An Exit Tile refers to a tile/space/roomPosition that is designated to transport a creep from one room to another. They normally appear on the 'exits' or edges of rooms (Where X or Y is either 0 or 49 in value), as a plain terrain tile with a white tringle pointed in the direction of the way it transports the creep. They will always have a corresponding tile in the next room linked to it and they can not be created, destroyed or directly blocked unless by server-side action (such as a respawn wall, or the deactivation of the adjacent room). When a creep is moved onto or is on an exit tile by ticks 'end' it will be transported at the start of next tick to the corresponding exit tile.
+categories:
+  - Stubs
+  - In-Game_Objects
+  - Game_Knowledge
+---
+
+import { Image } from '../../../components/Image'
+
+## Common challenges
+
+<Image src="/images/ExitTiles.png" caption="Four exit tiles that move a creep to the RIGHT room or a creep emerges into the room from the left, always plains & not in natural walls." float="right" />
+
+A common challenge with exit tiles is when a creep 'blinks' back and forth between two rooms seemingly endlessly. This is mainly due to the logic of the creep not moving it off the tile during the tick it is 'transported' from the previous room, and since it ended the tick on an exit tile, it is transported to the room prior. If a user's logic depends on `roomName` alone, and does not execute a move/moveTo action as soon as it steps into the new room then its transported back, no longer in the room where the logic was triggered and attempts to move to the room again. This can be solved in a few ways, mainly by using a different non-vision dependent target in the room (such as a [roomPosition](/RoomPosition)), moving into the room further on-entry, or making sure whatever logic is run executes a move towards its assigned goal/target when found.
+
+Another challenge can happen if there are alot of swamps adjacent to the exit tile, with default moveTo settings a situation can happen where the creep fails to find a path. There are a few ways to combat this one, such as storing paths ahead of time, or modifying the cost of swamps.
+
+<Image src="/images/Portal.png" float="left" />
+
+## Portals
+
+Portals are a special type of tile. They appear randomly in the center rooms of [sectors](/Map), and they transport creeps that enter them to a matching portal in another sector. The portal connections change once in a while.
+
+### Inter-Shard Portals
+
+Inter-shard portals are a type of portal but instead of transporting to another sector, they transport the creep to a different [shard](/Shard). Unlike normal exit tile/portals, the creep will be deposited in a random position in an area around the connected portal and will keep its name and TicksToLive, but gain a new ID and lose all of its stored Memory.
