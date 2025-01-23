@@ -1,0 +1,35 @@
+---
+title: Find Methods
+description: Find methods, along with look methods are the primary way to get in-game objects. They are split up into two types. One type is using the find methods available in the Room object, and the other type is by using RoomPosition methods.
+categories:
+  - Stubs
+  - Game_Knowledge
+---
+
+## Find methods in the Room object
+
+Find methods of the Room object will return an array of values or an integer error value, depending on the specific method. It is recommended to check the API prior to using them. Links to the method in the API are provided by clicking on the appropriate method below.
+
+### [Room.find()](https://support.screeps.com/hc/en-us/articles/203079011-Room#find)
+
+Returns an array of objects that meet the specifications passed in the arguments. It can be passed a FIND_* constant, and has and optional filter argument.
+
+### [Room.findExitTo()](http://support.screeps.com/hc/en-us/articles/203079011-Room#findExitTo)
+
+Returns an array of directional exit constants (e.g. FIND_EXIT_TOP) or an integer error value if there is no path or you pass an invalid argument. This is typically used in conjunction with another find method to get specific [RoomPositions](/RoomPosition) matching the returned exit constants.
+
+### Room.findPathTo()
+
+## Find methods in the RoomPosition object
+
+### RoomPosition.findClosestByRange()
+
+Finds the single closest object to the room position that meets the specifications and returns it. If there is no such object in the room, returns null.
+
+### RoomPosition.findClosestByPath()
+
+Works like `findClosestByRange()`, but measures distance by pathfinding, taking obstacles into account. This is better for finding, for example, the creep that can get to a certain position fastest, but it is more expensive [CPU](/CPU)-wise.
+
+### RoomPosition.findInRange()
+
+Finds all objects matching the specifications that are in a given range of the room position, returning them in an array.
