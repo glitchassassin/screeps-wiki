@@ -23,10 +23,11 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function Categories({
   loaderData: { pages },
+  params,
 }: Route.ComponentProps) {
   return (
     <div>
-      <h1>Categories</h1>
+      <h1>{params.category}</h1>
       <ul className="list-disc pl-6">
         {pages.map((page) => (
           <li key={page.slug} className="my-0">

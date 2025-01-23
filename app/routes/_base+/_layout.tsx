@@ -118,7 +118,20 @@ export default function WikiLayout({
             {handle && (
               <>
                 {handle.frontmatter.title && (
-                  <h1>{handle.frontmatter.title}</h1>
+                  <h1 className="mb-2">{handle.frontmatter.title}</h1>
+                )}
+                {handle.frontmatter.categories && (
+                  <div className="not-prose flex gap-2 flex-wrap mb-4">
+                    {handle.frontmatter.categories.map((category: string) => (
+                      <a
+                        key={category}
+                        href={`/Categories/${category}`}
+                        className="px-2 py-1 rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-sm hover:bg-blue-200 dark:hover:bg-blue-800"
+                      >
+                        {category}
+                      </a>
+                    ))}
+                  </div>
                 )}
                 {handle.frontmatter.description && (
                   <div
