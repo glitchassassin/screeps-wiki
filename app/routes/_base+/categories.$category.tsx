@@ -2,6 +2,12 @@ import { Link } from "react-router";
 import { getPages } from "~/lib/pages.server";
 import type { Route } from "./+types/categories.$category";
 
+export const meta = ({ params }: Route.MetaArgs) => [
+  {
+    title: `${params.category} | Screeps Wiki`,
+  },
+];
+
 export async function loader({ params }: Route.LoaderArgs) {
   const pages = (await getPages()).filter((p) =>
     p.frontmatter.categories?.includes(params.category)

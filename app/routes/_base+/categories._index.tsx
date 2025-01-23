@@ -2,6 +2,16 @@ import { Link } from "react-router";
 import { getPages } from "~/lib/pages.server";
 import type { Route } from "./+types/categories._index";
 
+export const meta = [
+  {
+    title: "Categories | Screeps Wiki",
+  },
+  {
+    name: "description",
+    content: "Index of all categories on the Screeps Wiki",
+  },
+];
+
 export async function loader() {
   const pages = await getPages();
   const categoriesMap = new Map<string, { title: string; slug: string }[]>();

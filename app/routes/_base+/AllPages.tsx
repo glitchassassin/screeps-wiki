@@ -2,6 +2,16 @@ import { Link } from "react-router";
 import { getPages } from "~/lib/pages.server";
 import type { Route } from "./+types/AllPages";
 
+export const meta = [
+  {
+    title: "All Pages | Screeps Wiki",
+  },
+  {
+    name: "description",
+    content: "Index of all pages on the Screeps Wiki",
+  },
+];
+
 export async function loader() {
   const pages = await getPages();
   return { pages };
