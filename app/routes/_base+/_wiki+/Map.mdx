@@ -1,0 +1,48 @@
+---
+title: Map
+description: A map is the total group of Region(s), Sector(s), Room(s) and, RoomPosition(s) that a server has. A server generally has one or more regions (normally four total on the MMO/Seasonal), made up of sector(s), made up of room(s) which are made up of 2500 roomPositions (by default). Private servers have a main map that is default consisting of one sector with 72 rooms bordered by highways, and requires a mod to make new maps.
+categories:
+  - Game_Knowledge
+---
+
+import { Image } from "../../../components/Image";
+
+## Region
+
+A region is a group of sectors and highway rooms, normally divided into four areas by ordinal directions, North-West, North-East, South-East and, South-West. Room's names reflect their location in their string, W5N5 for example would be In the west-north region, 6 rooms both north and west of center (first room starts at W0N0).
+
+## Sector
+
+<Image src="/images/SectorFull.png" caption="An example of a sector, bordered by shared highway rooms to other sectors. Inside blue are the 'claimable' rooms, inside red are the unclaimable source-keeper rooms, inside the gold at-center is the center room." float="right" />
+
+A sector is a block of rooms nine by nine (by default) bordered by highway rooms. They contain 72 controller rooms that can be claimed/reserved by users, eight Source-Keeper rooms and, one center room.
+
+## Room
+
+A room, is the main play field of Screeps and is a 2 dimensional plane measuring from x:0 y:0 at top left to x:49 y:49 at bottom right containing 2500 roomPositions/tiles, each tile is given a type of terrain either plain, swamp or wall. Rooms are inter-connected by [exit tiles](/Exit_tiles) on their outside edges, but an exit to every adjacent room does not always exist. Creeps can move around the room at a pace of one tile or roomPosition as long as their fatigue and movement parts allow. A room's name is determined by its location on the map, specifically by where it falls into a region. The first character of the string is either W for west, or E for east, followed by 1-3 numbers depending on distance from the 'center' (Note: Could be more with a larger map, but MMO only goes to 3), then another character either N for North or S for south followed by another 1-3 numbers. W0N0 Would be closest to the center, 1 room west and 1 room north, W62N38 would be 63 rooms West of center and 39 rooms north of center. sectors and rooms follow repeating patterns out from the center, it is possible to regex or process the string to determine the type of room it will be, which is useful for avoiding/finding types of rooms when pathfinding or other tasks. There are a few different types of rooms, depending on their features.
+
+### Controller Room
+
+<Image src="/images/CtrlRoom.png" caption="A Controller room, exit tiles shown left, spawn 'walls' shown right. These happen over exit tiles, when the room borders a respawn/novice zone." float="right" />
+
+The main type of room in Screeps, these rooms have a controller that can be claimed by a user with enough spare GCL and allow for the building of owned structures. They can also be reserved by a user using a creep with claim parts. These rooms come with between one to two sources, which if unclaimed start at 1500 energy and claimed/reserved boost to 3000. Each room will also have one type of mineral. These rooms' controller can be upgraded in level from zero (unclaimed/reserved) to eight by having a creep pump energy into the controller using upgradeController and allow for more owned structures and better defenses to be built. A player must start in one of these rooms by placing a spawn, if a player has no rooms of this type left they are 'dead' but can respawn elsewhere.
+
+### Highway Room
+
+These rooms do not have controllers and border each sector dividing it from the next sector. They can not be claimed or reserved however, they do hold high-level harvestable items such as PowerBanks for power and deposits for factory production. Crossroad sections of these rooms (the corners where 4 sectors meet) also have interShard portals to travel to other shards on the main server. Unless modified on a private server or seasonal, highway rooms should always have at least one 0 at the end of one of their directions and crossroads have two. (EX: E50N20 is a crossroads, E87S0 is a highway room.)
+
+### Source-Keeper Room
+
+These rooms do not have a controller and surround the center room in a sector. They have three higher yield sources at 4000 energy each and one mineral with an extractor already built. However, each resource node in this room has a corresponding Source Keeper Lair which spawns a special type of Invader to guard the resource from user's creeps. These Keepers will not chase a creep around the room, but will attack anything that comes within a range of three positions with ranged attacks, or melee if closer. These rooms also host Strongholds, which are powerful Invader bases that spawn in occasionally each sector. Defeating a Stronghold disables invader invasions for a short time.
+
+### Center-Sector Room
+
+These rooms do not have a controller and are generated at the center of a sector. They have four sources with 4000 energy each. Occasionally these rooms will also general portals which creeps can travel though to reach other sectors on the same Shard.
+
+## RoomPosition
+
+A roomPosition is an object that contains an X, Y, and, RoomName `{x:0, y:0, roomName:'W0N0'}`. Every object in the world has a roomPosition (normally under a property `.pos`) which determines where it is in a room and subsequently in the game world and can be used to determine where it is in relation to other objects in the world. You can create a roomPosition object by calling its [constructor](https://docs.screeps.com/api/#RoomPosition.constructor).
+
+roomPositions also have a hidden property known as '_packedPos' this one value can be used to determine an object's location without the need for looking at room-level. For details, see here in the [engine code](https://github.com/screeps/engine/blob/master/src/game/rooms.js#L1252)
+
+In relation to a room, a roomPosition is one 'tile' of a room, totally 2500 in one room (by default). They will be either a Plain, Swamp, or Wall terrain which determines if a creep can move onto the tile and if it can, how much fatigue it takes doing so.

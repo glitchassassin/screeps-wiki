@@ -1,0 +1,32 @@
+---
+title: Memory
+description: Memory is one of the game's places to keep data. Unlike the heap, memory persists through global resets. As such it is good for storing data that is not easily recoverable or critical enough to want to quickly recover it.
+categories:
+  - Stubs
+  - Game_Knowledge
+---
+
+## [Memory](https://docs.screeps.com/api/#Memory)
+
+When players talk about "Memory", they usually refer to the main memory, which is an object that can be accessed with the `Memory` keyword. It can have up to 2048KB (2MB) worth of data and gets serialized and deserialized between ticks, due to which game objects will become "stale" if kept in memory. If the size is exceeded it will cause an error at the end of the tick.
+
+## [RawMemory](https://docs.screeps.com/api/#RawMemory)
+
+RawMemory is a way to access memory directly in its string form, instead of getting it automatically parsed by the game. This can be especially useful when using custom serialization or alternative memory formats.
+
+### RawMemory Segments
+
+There are 100 segments with 100KB per (10MB total) worth of space available. Up to 10 segments can be used per tick. To use segments they need to be [set active](https://docs.screeps.com/api/#RawMemory.setActiveSegments), and can be accessed starting the next tick until other segments are set active. Data stored in segments needs to be passed as a string.
+
+#### Public Segments
+
+Segments can be set public so that other players can access the data inside them. This can be useful for communicating with other players, e.g. when in an alliance.
+
+## [Intershard Memory](https://docs.screeps.com/api/#InterShardMemory)
+
+Intershard memory can be used to make data accessible across [shards](/Shard). It can keep up to 100KB worth of data in the form of a string and can be accessed anytime.
+
+## Notes
+
+- While the docs describe the size limits in KB, the backend does not actually check for size, but character count. Some players use this to increase their effective memory size by using a different character base.
+- Segments dont need to be active to be written to, but written to segments still count towards the tick limit even if they're inactive. Keep in mind that this is undocumented and most likely unintended behaviour and may change at any point.

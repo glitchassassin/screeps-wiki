@@ -1,0 +1,185 @@
+---
+title: Market
+description: The Screep's market is a server run system to allow for trading/auto trading between users.
+categories:
+  - Game_Knowledge
+---
+
+import { Image } from "../../../components/Image";
+
+Users can create orders that other users and their code can see, either buy or sell. Users then fulfill these orders using `Game.market.deal()`, either sending or receiving the resources via their terminal and specified room (see: [https://docs.screeps.com/api/#Game.market.deal](https://docs.screeps.com/api/#Game.market.deal)). Credits, Screep's in-game currency is used to transact these deals, as such, a user starting out will normally first need to deal buy orders to acquire credits before they can start creating deals of their own. Each shard has its own market, separate from other shards except for account-level resources that are available/the same for all shards.
+
+## Orders
+
+A user creates an order using `Game.market.createOrder()` and passing it an object containing: `{type: ORDER_*,resourceType: RESOURCE_*, price: 0, totalAmount: 0, roomName: 'W0N0'}` if the user is creating a order containing an [Account-level Resource](/Account-level_Resource) then the roomName is not required. Creating an order costs 5% of its price in credits, a user can create up to 300 orders per-[Shard](/Shard) and each order lasts 30 days unless canceled by the user before hand. If an order expires that went unfulfilled, then the user is refunded their 5% tax however canceling an order does not refund this tax and extending an order does not update its expiration time.
+
+<Image src="/images/Buysell_example.png" caption="An example of a buy/sell order" />
+
+### Buy Orders
+
+If not involving an account-level resource, a user will create buy-orders in order to purchase resources from other users. A room must have an active and built terminal in order to receive the resources, once created, user's or their code can then find the order and deal it. The order will only show up on the market visibly if:
+
+- There is room in the terminal to receive the order (known as 'available amount' or just amount)
+- The user who created the order has enough credits on their account to supply the order.
+- There is still a 'remaining amount' of the total amount of the order. (if no amount is remaining, this means likely the order was fulfilled)
+- The room and terminal of the user who created the order is still active and claimed.
+
+If these conditions are not met, an order will display as 'inactive' when a user tries to see their own orders using: [https://docs.screeps.com/api/#Game.market.orders](https://docs.screeps.com/api/#Game.market.orders) Even if there is still resources to be fulfilled. As such, you need to make sure when garbage collecting your orders that you only remove orders that are fulfilled, unless otherwise desired.
+
+As other users deal your order, the specified resource will show up in the room's terminal specified by the order. In amounts dependent on what the other user deal'd or room available in your terminal.
+
+### Sell Orders
+
+If not involving an account-level resource, a user will create sell-orders in order to sell resources from their terminal to other users. A room must have an active and built terminal in order to send the resources, once created, the user's or their code can find the order and deal with it.
+
+The order will only show up on the market visibly if:
+
+- There is any of the resource specified by the sell order in the terminal. (known as 'available amount' or just amount)
+- There is still a 'remaining amount' of the total amount of the order. (if no amount is remaining, this means likely the order was fulfilled)
+- The room and terminal of the user who created the order is still active and claimed.
+
+If these conditions are not met, an order will display as 'inactive' when a user tries to see their own orders using: [https://docs.screeps.com/api/#Game.market.orders](https://docs.screeps.com/api/#Game.market.orders) Even if there is still resources to be fulfilled. As such, you need to make sure when garbage collecting your orders that you only remove orders that are fulfilled, unless otherwise desired.
+
+As other users deal your order, the specified resource will be removed from the specified room's terminal and sent to the dealing user, in amounts dependent on what the other user deal'd or amount available from your terminal.
+
+### Modifying Existing Orders
+
+A user can modify their existing orders on the market in order to respond to market trends, price changes or other factors.
+
+#### changeOrderPrice
+
+[https://docs.screeps.com/api/#Game.market.changeOrderPrice](https://docs.screeps.com/api/#Game.market.changeOrderPrice) will allow the user to edit the current price of one of their existing orders. If the price the user is changing to is higher than the price that was originally on the order they will be taxed 5% on the difference between the prices.
+
+#### extendOrder
+
+[https://docs.screeps.com/api/#Game.market.extendOrder](https://docs.screeps.com/api/#Game.market.extendOrder) Will allow the user to increase the total amount of their order, they will be charged at a tax of 5% on the added amount. It is important to note, that extending the order does not change the order's expiration time in any way, just the maximum amount the order is requesting.
+
+#### cancelOrder
+
+[https://docs.screeps.com/api/#Game.market.cancelOrder](https://docs.screeps.com/api/#Game.market.cancelOrder) Will allow the user to cancel an order, the user does not receive the 5% tax taken at order creation. The only way to get the 5% tax back, is to let the order expire on its own. Reasons a user may want to cancel an order range from remaining credits, to overflow of their terminal or storage.
+
+#### Manual Orders
+
+You can using the game's console and [https://docs.screeps.com/api/#Game.market.createOrder](https://docs.screeps.com/api/#Game.market.createOrder), create an order. You can check the game's market page to see pricing and such to determine what you should set the price at.
+
+#### Automatic Orders
+
+Using the same, [https://docs.screeps.com/api/#Game.market.createOrder](https://docs.screeps.com/api/#Game.market.createOrder), you can automatically create orders using your code and whatever conditions you specify. As you create them, the next tick your orders will show up in [https://docs.screeps.com/api/#Game.market.orders](https://docs.screeps.com/api/#Game.market.orders) which you can use to check and compare orders you have existing vs what you need. This lists both active and inactive orders and as stated, if inactive does not mean 'no remaining amount' as there are a variety of conditions that can make an order inactive. Keeping that in mind, you can also use this for garbage collection by canceling completed orders, to free up space from your order capacity. To get pricing, you can use [https://docs.screeps.com/api/#Game.market.getAllOrders](https://docs.screeps.com/api/#Game.market.getAllOrders) to get orders and compare what pricing you will need to set.
+
+Things to watch out for:
+
+- Make sure to check your existing orders and prices, as you do not want to get into a bidding war with yourself, or far, far over order.
+- If you have enough space in your room for the resource you are buying so you do not flood your terminal or subsequently, your storage.
+- Pricing, even if not the highest or lowest can still be dealt, if other users are considering distance to save energy.
+
+#### NPC Orders
+
+The game (or NPCs) will create orders for users to deal. These can be buy or sell orders, but are most commonly buy orders. At the time of writing, most orders are commodities. These orders will originate from Highway rooms' terminals.
+
+## Dealing
+
+Dealing is the process of using `Game.market.deal()` on an existing order in the market, using the order's orderID. If not dealing with an account-level resource, then when you deal, your specified room's terminal will retrieve/send the resource specified from the deal as long as it is able to do so. This costs [energy](/Energy) each time you deal dependent on the distance and amount your are sending/receiving, see: [https://docs.screeps.com/api/#Game.market.calcTransactionCost](https://docs.screeps.com/api/#Game.market.calcTransactionCost) for formula / method for calculating how much energy is required. The energy must be in the terminal to be spent on the deal. Your terminal will also go into a cooldown of 10 ticks unless it has the effect power_terminal on it granted by a powerCreep, the terminal will not beable to do another deal till this cooldown is over. Per shard, you can not execute more then 10 deals in a single game tick. Also, if multiple users are dealing the same order, whatever user is the shortest distance to the room that created the order will take precedence.
+
+If you are dealing in an account-level resource as they are tied to an account, no room needs to be specified and no energy is required for the transaction.
+
+Doing deals will often fail if:
+
+- Your terminal is still on cooldown.
+- You've done 10 deals already across the shard this game tick.
+- You do not have enough credits to fulfill the deal (Ex: You try to buy X resources, but you do not have enough credits)
+- You do not have enough energy in your terminal for the amount of resource you specified.
+- You do not have enough room in your terminal (buying) or you don't have enough of the resource specified in your terminal (selling)
+- The room your trying to use does not have a terminal.
+- You are passing incorrect arguments for your resource type (Ex, providing a room for an account level res, or missing one for a resource)
+
+### Manual Dealing
+
+Using the game's console, you can simply go to the market page for Screeps, find an order copy its ID then execute the deal using [https://docs.screeps.com/api/#Game.market.deal](https://docs.screeps.com/api/#Game.market.deal).
+
+### Automatic Dealing
+
+Using your code, you can retrieve all market orders using [https://docs.screeps.com/api/#Game.market.getAllOrders](https://docs.screeps.com/api/#Game.market.getAllOrders) and if only searching for a specific type, pass this a filter and get back only orders meeting the filter's criteria. Once you have the orders, you then need to have a system to sort and/or search for the order you want to deal.
+
+Good sorting/searching terms are:
+
+- Orders that are highest/lowest credit prices (for selling/buying)
+- Orders that are closer to you than other orders (The closer the room, the less energy cost for the deal, as energy costs credits or time to harvest, can factor this in to your calculations)
+- The order's amount. (If you need X of a resource, better some times to get more of it from another order, then a small amount remaining on a existing order)
+
+You can of course check the price history as well using [https://docs.screeps.com/api/#Game.market.getHistory](https://docs.screeps.com/api/#Game.market.getHistory), and see how the price of a given order compares to recent history, or set your own limits.
+
+## Arbitrage
+
+Buy low, sell high, the old adage goes. By playing the market and other user's orders, it is quite possible to buy resources at a lower price, and sell them to other users at a higher price, thus making credits. Keep in mind, if dealing while doing this you are spending energy which is a resource that costs credits.
+
+### Inter-Shard Arbitrage
+
+By leveraging [Inter-Sharding](/Shard) and having multiple bases per shard, you can using inter-shard memory to check prices of various resources on separate shards. Often, as not all players Inter-shard, there will be differences on each shard due to demand. As such, you can purchase and then move resources from a low-price shard to a high price shard using creeps to haul them. Not everything will be worth the cost of transport, however there are plenty of opportunities to make credits this way as the difference between prices can be vast. Account-level resources however, as they are tied to an account are available on all shards simultaneously.
+
+## Steam & Account-Level resources
+
+As you can transfer account-level resources between your account and steam. It is possible to purchase & sell account level items on steam and in the in-game market. Meaning, you can purchase an account-level resource on steam from another user directly, then transfer to your account and sell them in-game for credits, or vice versa.
+
+## Getting your first credits
+
+With the advent of pixels and the ability to generate them by paying with your bucket and, that they are an account level resource, this is a very easy way to get some starting credits. Since they do not require a room or terminal to trade, one can simply deal with existing orders to get credits from another user.
+
+Beyond pixels, most users will start with energy trading as it is used in almost all aspects of Screeps many users purchase and sell this resource daily. Thus completing deals on buy orders for this resource is relatively quick and easy to do. 'most' but not all users will create buy-orders for energy because as it costs energy to deal, purchasing energy, with credits and energy, often is more of a loss, than having others deal their extra energy to their buy order.
+
+If desired, it is of course possible to purchase account-level resources from the Screep's store or Steam and then sell them in-game for credits.
+
+## F.A.Q.
+What is the difference between 'amount' and 'remainingAmount'?
+
+```
+Amount, is the amount of the specified resource that is available to be dealt that tick while remainingAmount is the remaining amount of the total that has yet to be fulfilled.  For example, if some one creates a                   buy-order for more resource then they available space have in their terminal,  whatever space they have in their terminal will be the 'amount' and whatever has been dealt so far will be the remainingAmount of the total.
+```
+
+I garbage collect my inactive orders, but why is it removing my not completed orders?
+
+```
+An order can be inactive while still not being fulfilled, if there is no room in the terminal to receive or no resource in the terminal to send, then the order is 'inactive'. You need to check the remainingAmount of your order.
+```
+
+I am trying to deal an account-level resource, why is it not going though?
+
+```
+Check that you did not specify a room.  As they are account-level, they do not require a room or energy to transact.  They do still require credits, if buying, of course.
+```
+
+I keep getting -6 on a return from deal but I have plenty of credits and/or room in my terminal! What gives.
+
+```
+Deal transactions require energy as well as credits / room.  Check that you have enough energy to complete the transaction for the amount you are looking for, you can use 
+https://docs.screeps.com/api/#Game.market.calcTransactionCost to check the amount you should have.
+```
+
+I created an order by mistake, if I cancel the order, will I get my credits back?
+
+```
+No, only when the order expires in 30 days, if not completely refilled will you be refunded your credits.
+```
+
+If I extend my order, does that extend the expiration time?
+
+```
+No, the time will not change from when it was created.
+```
+
+Its so expensive to getAllOrders!
+
+```
+I would suggest not looking at the market every tick, and once you have the orders, only filter/use what you need.
+```
+
+How do I calculate the energy cost of sending X of a resource?
+
+```
+https://docs.screeps.com/api/#Game.market.calcTransactionCost contains the formula for how cost is calculated.  By doing some math, you can use this to determine what the maximum resource you can send in a tick is, given available energy and resources.
+```
+
+Will I lose my credits if I have to respawn?
+
+```
+No, as an Account-Level Resource, you keep your credits when respawning.  You still have to clean up any outstanding inactive orders however.
+```

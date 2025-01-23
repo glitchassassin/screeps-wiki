@@ -1,0 +1,655 @@
+---
+title: Maturity Matrix
+description: While developing your bot, there many, many different implementations that different systems can use. Some are more efficient than others, comparing your progress to other such implementations can be useful to gauge where you are and how far you have to go. It is important to remember, that Screeps is a sandbox however, if something works for you and your happy with it, use it. However, if you are looking to improve a system, or just wondering how your implementation can compare then you may find this useful. This article is structured roughly after a Maturity Matrix.
+---
+
+## Forward
+
+### Structure
+
+This article will be broken up into various game 'systems' that a bot normally has at levels that they are normally used (Ex: Room Level, Colony Level, Creep Level). Each system will then list different implementations generally from 'least efficient' or 'easiest to code' to 'most efficient' or 'hardest to code'. This will vary by user, of course, some things may be on-par or similar to other implementations efficiency wise, or be a small part to add on not necessarily a full rework. This is not to say that implementations listed are the 'only' ways or the 'be all end all'
+
+**!! - ~ FINAL WARNING ~ - !!**
+
+If you wish to view Screeps as a puzzle based game where your progression is working out your own solutions to the challenges the game presents, then perhaps do not read further. While the following has been attempted to be curated in a way that does not give code examples or strict explanations (when possible) you could be 'spoiled' on various implementations you could have figured out on your own. The fun of Screeps often comes from setting your own goals and building your own solutions although if you feel stuck, this may help give you ideas or see things a different way.
+
+### Important concepts
+
+The are several concepts in this article that are repeated, instead of explaining each time, this section will attempt a brief explanation with supporting links when possible.
+
+#### Hard-Coding
+
+Hard-Coding a concept where a user sets data for their bot right into the main or other modules instead of dynamically retrieving information though code (such as a find call for Screeps). For example setting a variable 'tower' to be an object from a getObjectById call `var tower = Game.getObjectById('12345');` in this case, instead of retrieving the ID though a find or other means, the user sets the ID into the code itself. This is a fast and easy method for fetching an object, but does have several drawbacks. Such as, should access to the specified object, say the tower in the previous example, were to be cut off (such as the tower being destroyed) then the code would return an error (unless accounted for). For Screeps such manual hardcoding also could be slightly considered when a user edits data using the GUI such as flag names/data and/or the Memory Manager tab. While this data is not as 'set in stone' as it does not require a code push to implement, without a system(s) fetching data it is completely manual and requires the user's attention to manipulate.
+
+#### Looping
+
+Using different kinds of loops to iterate (loop) though set(s) of data when preforming the same or similar checks on that data. For example, instead of an if/else if chain, a user can implement a loop to go though each element. This can simplify readability as well as improve CPU usage by exiting checks early, or not having to preform unnecessary checks. The game's tutorial provides a good example of this in the method of garbage collecting dead creep's memories.
+
+#### Queue System
+
+A queue system is normally a system where items (objects, elements, ect) are 'pushed' into a list (such as an array) then another system executes on the queue without having to preform the checks itself. Mainly this means each item in the queue has the data the systems needs to execute the action in needs to do. For example, in using a terminal queue for Screeps, a market system and/or a room resource balancing system can push request objects into an array, then the terminal if it does not have a cooldown and/or is not on a user specified cooldown can check the queue's length, then if it has elements, proceed though each object making a deal/send request dependent on the data in each object without having to consider or reconsider the other system's considerations done when creating the element. If completed or dependent on error, the item can then be removed from the queue, the creating system can also use the queue to look for similar or the same already created items so it does not do redundant checks and/or send requests while requests are waiting to be processed.
+
+## Room Specific Systems
+
+These systems are generally considered only for an individual room or room(s) in a colony. They can be hard coded, or iterated over multiple rooms, but generally they are considered as operations a room or system managing rooms would execute.
+
+### Spawning Creeps
+
+This system is responsible for creating creeps and maintaining a balance of creep type/roles across a given room/colony.
+
+#### Hard-Coded & Console Generated
+
+The first stage for spawning creeps introduced in Screep's tutorial. Creeps can be generated by a user typing the information out into the console, and subsequently spawning the creep, or hard-coding it into the main or other modules. This is very easy, as it is mostly user controlled but not very robust. If data changes in-game (say, a spawn in destroyed) the hard-coded item will cease to function, and a user can only spend so much time without having to fulfil other requirements than spawning creeps, like eating, or sleeping.
+
+#### If & Else-If Chain & Filter Head-count
+
+Introduced in Screep's Tutorial, this implementation centers around getting a head-count for currently living creeps then going though either a set of IF statements or a chain of IF ELSE IF statements looking for a (normally) hardcoded value. When a discrepancy is found, a spawning call is put out and a creep is spawned. This system can be further improved by optimizing how and when the headcount is done, vs how long / how many statements are checked. This implementation does tend to run into challenges when the number of roles/type of creeps a user is spawning gets past a certain point.
+
+#### Library Object & Looping
+
+A further evolution of the spawning system, by keeping an 'object' of paired role/type names along with quantities or other data a user can thereby implement a looping architecture to iterate though the object, using the contained data to fetch counts, and compare needs. This can then be further evolved by a management system adjusting counts as needed by pressures of the environment on the colony so that a balance of creeps of many times is maintained when they are needed, or counts reduced when they are not. By executing on a looping structure as well, a user can exit the loop when a legitimate need (spawning creep) is found, meaning that further checks are skipped as they would be redundant / unnecessary to preform since the spawn has found something to act on.
+
+#### Queue System
+
+Instead of looking down a list of 'highest priority' strictly on an object, a management system can go though its own processes to determine what 'needs to be' spawned next, then simply push it to a queue that the 'spawning system' can execute on when it can, or adjust as needed.
+
+#### Dynamic Energy Considerations
+
+Another part though not normally a major overhaul, depending on colony/room need some times it is imperative that certain creeps are replenished but not necessarily always at the maximum size. Having a user's spawn system know this, and take into account when it needs to 'make do' with what energy is at hand is useful to maintain a constant operation.
+
+Examples Include:
+
+- Catch-up - If a user's spawn/extension filler(s) have perished and no creep is going to take over, a creep needs to be spawned to do so, even if the 'normal size' is not available due to energy.
+- Cold boot / Recovery - If something catastrophic has happened, and a user is not getting any more energy, the spawn system can take this into account (either by measuring income or by measuring reserves) and spawn with what it has to recover accordingly.
+
+#### Dynamic Part Generation
+Normally implemented along-side systems that keep track of things such as Hauling Logistics, Defense/Combat creeps, or other such systems. Dynamic Part Generation takes into account not only that a creep needs to be spawned, but what size and composition it needs to be. Examples include:
+
+- Hauling Logistics - How many 'total carry parts' required to haul energy for a room (or chain of rooms), by how many creeps required/exist (as dependent on RCL creeps can only be so large due to energy requirements) and what energy is available now.
+- Combat Logistics - How many 'total combat parts' are required to defeat the enemy defenses / enemy creeps? What configuration/order? Spread out over how many creeps?
+
+
+### Building Structures (Placing Construction Sites)
+
+This system generally means placing construction sites as per a pre-made plan, or on the fly as needed by other systems and managing the amount/order they are done in.
+
+#### User Placed Structures
+
+By far the most dynamic, a user can use the GUI or command via console/hardcoding to place structures at will up to the limit allowed by the game for their shard (as-of-writing, 100). This allows for alot of control, but again, if a user is not present / otherwise engaged with doing other things then time can be lost in placing/constructing vital infrastructure.
+
+#### Queue Placed Structures
+
+Either from a pre-made base plan, or from a dynamic one, a system can proceed though a queue to place construction sites as limits allow / as needed.
+
+#### Fully Automatic / Automated Plan Structures
+
+Fully automatic means no user input is required and construction sites are placed as demanded by various different systems / managed depending on need (ex, a container is built instead of a road, roads are pushed back when an RCL upgrade is progressed and replaced when they are done)
+
+### Hauling Logistics
+
+This system generally refers to the movement of resources throughout a room or multiple rooms. Most commonly, energy from a source where it is generated, to storage or use in other systems.
+
+#### Opportunity Gathering
+
+Generally when first starting on hauling energy around to either store or use, the first implementation tends to be having creeps seek out sources (such as piles of energy, containers with energy or storages) and then transporting to some centralized location dependent on the creep's function (container/drop -> storage or storage -> controller to use for upgrading, ect). without consideration of other creep(s) actions.
+
+#### Mining / Hauler Pairs
+
+Another implementation is to have every container/drop miner have its own 'twin' hauler, this way there is not a conflict in different haulers going for similar tasks, but depending on how they are managed does mean the creep may have downtime or be waiting for a miner to spawn, or other situations in where it could do something else while 'waiting'
+
+#### Task execution
+
+When using a Top-Down or Management based approach haulers generally execute on tasks that they are assigned by their manager. The manager takes care to not have conflicts and assign tasks as-needed.
+
+### Tower Defense
+
+This system is normally intended to manage the actions of tower structures in regards to the defense of a room from hostile creeps.
+
+#### User Targeting
+
+By far the most manual but using the most 'capably advanced' targeting system known to humans, the human mind. It requires a user to not only pick targets while being attacked, but fire as well. This works, well enough but is hardly sustainable as the human mind requires time away from the system and can not always be there to help.
+
+#### First-Found/Indexed Targeting
+
+Introduced in Screep's tutorial, first found/ first index mainly looks for hostile creeps in a room, then selects the 'first element' of the provided array or closest by range. This works well to target threats that are closest / as they come, but does not consider a vareity of factors such as if the opposing creep can actually do harm, or if shooting it will result in no damage due to healing.
+
+#### Highest Priority / Threat filtering
+
+By examining the return of the hostile creeps located in a room, a user's system can determine what creeps have what parts, where they are in relation to the base/other creeps and a variety of other factors before shooting.
+
+#### 'Damageable' Filtering
+
+Further, by considering enemy creeps relation to each other, it is possible to detect the amount of heal parts, their boosts, associated tough parts if boosted and then calculate due to the range falloff / distance from the tower how much damage if any will be done to a particular target. Sometimes, it is better to not fire, or a different target will take more damage.
+
+#### Shotgun / Flak / Spread firing
+
+When combating Quad or other groups of creeps, if damaged is focused on a single unit, the rest of the oponent's creeps can then focus on out-healing the incoming damage. By spreading out damage amongst several creeps, it is possible to have the opponent pick which unit is most vital, allow for subsequent shots/damage to penetrate deeper into the hits (health) and parts of the other creeps, reducing their capabilities and making it easier to deal more damage subsequently.
+
+#### Not firing & Support firing
+
+Instead of a system for specific tower targeting, it is instead possible to think of a tower as an 'extra damage or healing' source, and only call on the objects when a targeting/combat manager needs them to take action. In this way, the system of combat creeps and towers work best together to deal damage or heal creeps.
+
+### Boosting Creeps
+This system or systems is intended for the assigning of labs for boosting creeps as well as the actual boosting.
+
+#### User Generated Boosting
+
+A user manually changing / requesting a filling of a lab to facilitate a creep boosting. While precise it is hardly very automatic.
+
+#### Dedicated labs
+
+Having a dedicated lab, or set of labs made only to do boosting means that a creep only has to consider filling it, and using it to boost as needed, this does however tie up the lab 'forever' and does mean as well it reduces the boost production that a room can output.
+
+#### State set boosting
+
+Configuring a 'state' or toggle to change labs from a production mode, to boost mode means that a creep or creeps needs to beable to change out the currently filled minerals/product in labs, and subsequently fill the labs with the specified or a pre-set set of boosts. This allows for the boost production to be at full steam when not needed, but does require the full 'resetting' of both production vs boost mode to occur.
+
+#### On-demand / on the fly boosting
+
+When a boost is needed, a lab can effectively be 'taken offline' from production to be used for boosting and then filled with the boosts as-needed for whatever creep needs to be boosted. This allows for boost production in the online labs to continue, and not be fully interrupted.
+
+### Link Logistics
+
+This system (or systems) is intended to manage the distribution of energy over a set of or network of links in a room.
+
+#### Central Dumping
+
+Having a central 'dumping' link that all supply links simply send energy to, then a creep can fetch energy from this link to transfer to storage/use for tasks.
+
+#### Dynamic Distribution
+
+Having a set of links used for different things (upgrading, storage, capacity/utility) and having supply links transfer energy based on a hierarchy/need helps keep energy flowing around the room without the need for a creep pathfinding it there.
+
+### Factory Management
+
+A system or set of systems to manage the production and distribution of factory products (commodities)
+
+#### Minimum Filling & Manual orders
+
+The first and easiest methods, either by a user setting an order or hardcoding a task, like any structure it can be filled from a source (normally a storage or a terminal) and then filled to a pre-determined limit by creeps. Once the factory has the minimum amount within, again either by manual action or hard coding the factory can execute a production on the supplied resources.
+
+#### Balancing & Dynamic production
+
+Instead of manually or hard coding, by looking at either a room's levels of resources or a colonoy's (shard wide) a user can have any particular factory then determine what it needs to make to meet goals or further produce more expensive/advanced commodities.
+
+#### Chaining & Multiple Tier management
+
+Though the use of multi-level factories and several rooms, it is possible to distribute the production of one factory, onto the next, and so on to produce more and more.
+
+#### Full automatic production, balancing and T5 production
+
+Once all factory levels have been acquired, setting up a system to balance the production of required parts for T5 and send them to the T5 location for production is the final step.
+
+### Lab Logistics
+
+This system or systems pertains to the use of labs to produce various compounds and boosts to be used by creeps or sold on the market.
+
+#### User Generated demands
+
+By simply hard-coding or setting a set of source/provider labs, a user can then have the labs execute forever this same reaction, and can then manually change as needed.
+
+#### Recipe demand
+
+By setting a 'list' or desired amount of various compounds/boosts a user can then have a creep/creeps empty the labs as needed to then fill with the next recipe. One way this can be done is by having multiple states that you switch to, such as a 'empty and reset' and 'refill with selected recipe', thus the creep(s) will act according to the system's state to maintain the labs and the labs will execute based on state.
+
+#### Fully automatic Recipe switching & lab configuring
+
+By determining what boosts are possible to make with given resources in storage, an associated recipe(s) can be found, and then determined based on need of the colony what boost to produce without having to strictly have the user set these limits.
+
+### Terminal Logic
+
+A system or systems made to facilitate the sending / receiving of resources in terminals.
+
+#### Basic filling & hard coded / console transferring/dealing
+
+As with most structures, a creep can be tasked to fill terminals to a hard coded limit to insure some balance, and similarly take out resources when over a set amount. Beyond that, users can also use the console to put though deals or transfers.
+
+#### Task based / need based filling & transferring/dealing
+
+Instead of maintaining strict levels based on hard coding, instead when the demand or need is triggered a task can be assigned to fill the terminal with the required amount of resources that needs to be used. Similarly, for dealing the the market, a system that finds orders to fulfil can find an execute on them automatically and similarly rooms that have specific requests can be auto transferred to.
+
+#### Fully automatic task-based system / Queue execution
+
+Once the basic automation is out of the way, evolving to a task system that simply generates a queue for a terminal to proceed down to works well. As whatever system(s) need to 'order' the resources if market, or other user rooms can just put the task into the queue and the terminal only needs to check its queue and execute on the queued order.
+
+### Room Defense (Generalized)
+
+A system or systems dedicated to the defense of a room from hostile creeps.
+
+#### Spawning
+
+**User-Spawned Defenders**
+
+A user can determine by observing though the website/application what the attackers are, and then manually console spawn or hardcode responses to the attackers.
+
+**Automatic Spawning & Defending**
+
+A user can set a preset 'list' or library of defender types that can be automatically spawned when an attacker is spotted, and proceed to continue spawning until the attacker is no more, or the user runs out of energy.
+
+**Fully Automatic Dynamic Spawning**
+
+Instead of having a set-body and list of types, by examining the attackers a user can have their system automatically prepare a response that will out-do the attacking force (should their energy and boosts allow).
+
+**Time To Kill / Time to Die**
+
+TTK or 'time to kill' is a determined of how fast any given value can 'win' or kill the opposing creep. Simply by knowing the attack value of the creep(s) in question, vs the opponents healing and damage mitigation (if any from boosts) a user can determine the number of game ticks it will take to 'kill' or 'win' the fight. Similarly, by examining the enemy's attack strength and a users creep's healing power a TTD or Time To Die can be determined. If the TTK is less than the TTD, then the creep will likely win (barring reinforcements, or unaccounted for factors). If TTD is less than TTK then the creep will lose the fight.
+
+#### Positioning
+
+**User Positioning / target assignment**
+
+A user can choose positions/targets for creeps to use either by hardcoding or by assigning in memory/flag states. This is very precise but very manual and user attention dependent.
+
+**Automatic positioning**
+A user can use a variety of criteria t0 automatically position their defensive creeps. Normally this is done via rampart defense where a user will look for positions to assign a creep to defend based on the location's safety (ramparted/not ramparted) and the proximity to aggressors (enemy creeps). Then they can either score these positions as 'best to worse' and choose one, or simply assign a position as it is open, then redact it from further consideration for other defensive creeps as to not overlap.
+
+### Room Offense (Generalized)
+
+A system or systems designed for picking and attacking other user's rooms.
+
+#### User-Specified target(s)
+
+The easiest to tackle, a user can use hard-coding, setting memory values to set a attack point or points, then initiate different phases or set individual creep targets. This is of course allows for a high degree of control, but requires the user's attention and focus.
+
+#### Flag / RoomPosition / General targets
+
+Some what more automated system, instead of hard-coding values the user can have creep look for specific Flags, roompositions or other systems to use as a rally/state setter. A user can still modify/setup these points, to give a measure of control or automate them.
+
+#### Automatic Target scoring
+
+It is possible to fully automate attacking decisions in a variety of thresholds. Some use 'aggression' or 'diplomacy' balancing, where nearby rooms, active creep(s) in rooms, entering/attacking creeps and other factors that add to a count. Once a threashold is reached, then active counter-attacking begins. Its of course, also possible to just consider every enemy user as hostile and attack-on-sight. A user should still balance how/when they attack due to CPU and energy constraints,
+
+## Creep Specific Systems
+
+These systems are generally used at an agent based creep level or applied to creeps by top-down systems.
+
+### Harvesting Energy
+
+A system or systems in which creeps harvest energy, mainly the method(s) by which they do so regarding a source.
+
+#### Harvesters
+
+Harvesters and 'on demand' source mining roles as shown in Screep's tutorial are the first most common implementation of creeps acquiring energy. When a creep needs energy, it seeks out a source acquires the energy needed then moves on. While easy to implement, this often leave sources with energy left-over in them when their regeneration timer goes off, meaning that it is 'wasted' (not used).
+
+#### Drop-Mining & Static Harvesting
+
+Static harvesters are a big step when it comes to maximizing energy for a room, with a creep or creeps dedicated to harvesting a source, a user can normally drain it long before the regeneration timer lapses meaning the maximum amount of energy is pulled from the source to be used. The first step is normally drop mining where the energy is dropped to the floor, some energy may be lost in this implementation as energy evaporates/sublimates (decays) and is lost forever. However, creeps when needing energy can instead move to these piles to collect energy without having to mine it.
+
+#### Container Mining & Hauler Logistics
+
+Container mining is a big step in insuring that the decay of the drop mining/static harvesting method is lessened though some investment must be made into the container as its hits will decay and require repair at a rate dependent on the state of the room (Owned/Unowned). To drop mine into the container, a creep also has to specifically select a location to stand, and always stand on to insure the energy is property dropped into the container.
+
+#### Remote Mining
+
+Once a room's energy has been harnessed, energy from other rooms can be as well. This becomes more complex due to having to assign miners to multiple rooms, getting them to the rooms (pathing), building and maintaining containers, reserving the room to increase the energy, and various other tasks.
+
+#### Source Keeper Mining
+
+Currently the hardest challenge when it comes to gathering energy. While source keeper's (SK's) rooms are very energy rich, and even include a mineral with a public extractor to mine resources from they are always guarded by SKs generated from SK lairs paired with each source. As well invasions in these rooms still occur and with stronger invaders as well as Invader Strongholds which have a chance to spawn.
+
+To mine a SK room you generally need:
+
+- A way to kill the keepers consistently
+- Miners that know to avoid danger
+- Haulers that know to avoid danger
+- A way to deal with, or avoid invasions
+- A plan for how to deal with or avoid Strongholds
+
+
+### Extension & Spawn Filling
+
+This system mainly pertains to the act of refilling and maintaining energy levels in the Spawn and Extension structures so that it can be used for spawning & renewing.
+
+#### First Found Filling
+
+When first filling extensions, generally users have either harvesters or dedicated field fillers that look for energy then seek a target to fill. Generally the 'first empty' target is considered, which can be improved byPath or byRange considerations. Depending on implementation and extension field setup this can mean the creep either passes by, misses, or does not consider the most optimal route when filling.
+
+#### Sporadic and Opportunity filling
+
+It is quite possible, when haulers of energy are transporting energy to-and-fro that they will come across an extension or extension field in their route. If they are already hauling this energy to be used in the execution of filling and other tasks, why not fill on the fly? By searching their immediate area, if an empty spawn/extension is found a hauler can sporadically choose to execute a transfer operation even while moving as long as the transfer was valid when called. This cuts down on dedicated fillers having to execute on searching/pathing to an extension and speeds up fill time, but can cut down on the efficiency of some field filling routes.
+
+#### Field and Route Filling
+
+By having predictable extension fields or a dynamic path generator around given fields, when coupled with the spawn's ability to pull energy from a set order of spawns/extensions it is possible to fill extensions in a 'route' such as the creep starts at a designated point then proceeds along the route filling extensions/spawns as it goes cutting down on searching/pathing and speeding up the filling.
+
+#### Capacitor Filling
+
+A capacitor generally as an electronic component stores electrical energy then discharges it. In concept of extension filling, it is possible to have larger carry size creeps with few-to-no move parts that 'sit' in one space nearby a source of energy (container, storage, ect) then when extensions are used by the spawning process the capacitor creep then feeds on the source of energy and distributes it to the surrounding extensions/spawns without ever having to move. Haulers / other creeps can refill the reserves of the capacitor system, meaning the capacitors themselves only have to execute on withdraw and transfer intents, no pathfinding needed and generally very rapid without having to travel to find energy/a place to put it.
+
+### Upgrading a Controller
+
+The system where a creep or creeps upgrades a controller, while also generating global control points to contribute to a user's overall level.
+
+#### Harvester & Generic Creeps
+
+As presented in the form of a 'harvester' or 'upgrader' in Screep's Tutorial, mainly these are creeps that gather energy opportunity wise and pump it into the controller. This works well to start, however does mean that they have to mine and pathfind to the source of energy and back to the controller
+
+#### Static upgraders
+
+Static upgraders can pull from a source of energy (container,storage,terminal ect) and only focusing on upgrading. As Withdraw and UpgradeController are non-conflicting actions, it is possible to consistently pull from the source of energy (when upgrading would put the creep below the lowest amount) and upgrade the controller at the same time. This means the upgrader needs fewer move parts and really, only one carry part as even a 49 part work creep still needs a carry party to use energy from, and as they store 50 energy, can only ever use 49 energy a tick.
+
+#### Temple rooms, praising and boosts
+
+Though the use of boosts, it is possible to use the same amount of energy but get more 'points' into a controller. Combined with whats known as 'praising' at a temple room, a user can have creeps consistently pump energy into a controller to gain Global Control Level points and speed up progression.
+
+### Building Structures
+
+The system or systems around getting creeps to and building up construction sites into buildings.
+
+#### First found / first placed
+
+As shown in Screep's tutorial, simply finding construction sites then going after the first indexed (which is normally the 'first placed' in order of Game.time relevance) works well, but doesn't consider pathing, time, or order of whatever structures should be built at the time.
+
+#### Most built / most needed
+
+Though filtering, or other methods, a builder can determine what structure is best to do 'at the time' not necessarily 'what was placed first.
+
+#### Queue based
+
+A manager can implement a queue either in memory or other storage that builders can than take from.
+
+#### Task based (top-down)
+
+A Top-Down Manager can assign creeps tasks based on their energy, distance, need for the room, or ect so the creep does not have to worry about these considerations only acting on it. The top down manager can also consider as a whole for that room/colony what is most important to build.
+
+### Repairing Structures
+
+The system or systems around finding, and getting creeps to damaged structures in order to repair them.
+
+#### First Found / Any damaged
+
+Generally the first method introduced in Screep's Tutorial, repair creeps at an agent level look at all structures in their room, then find ones that are damaged (that their hits property value is not the same as their hitsMax property value) then seek energy (if needed) and repair.
+
+#### Cached Repairables
+
+Beyond always executing and looking for every structure, making a list or library object containing all damageable / frequently repaired structures (normally indexed/set by ID) then proceeding down the list until a damaged structure is found cuts down on time searching and CPU spent needlessly checking structures that would not be damaged elsewise.
+
+#### Tower based repairing
+
+Debatably tower repairing allows for a reduction in CPU usage due to their agility to repair anything in a given room however, this is at the cost of more energy. While an improvement for some, it can be considered a determent to others.
+
+#### Opportunity based repairs
+
+Again, debatable if it saves energy vs CPU, haulers and other general work creeps can in context of their area (repair range of 3 as-of-writing) while in transit to a task/location if they have energy repair on the fly. This again, cuts down on CPU used by repair creeps and energy based tower repairing but does mean the hauler/other creep is giving up energy that it could be spending on its assigned task, and generally, also costs CPU to look at the repairable area.
+
+#### Task-based assignment
+
+A manager or top-down system can take a look at all repairable structures (or if there are any) in a given tick, and assign tasks to either generic or flexible creeps as they are free or in context of being 'closest' or 'best' to do the task. In this way, tasks are done efficiently and only checked for once by the manager instead of multiple times by various different agents.
+
+### Scouting (with creeps)
+
+This system is generally meant to be how a scout creep navigates around to grant vision to rooms for scouting.
+
+#### Random Scout movement
+
+The by far easiest method for scouting, 'pick an exit / room from this list, and go there' doing it randomly will 'eventually' cover all areas but doesn't necessarily mean it is done in a timely or efficient manner.
+
+#### Progressive / Area / Timed Scout movement
+
+Instead of randomly moving, it is quite possible to define an 'area of influence' that creeps must maintain a watch/vision over occasinally. One way this can be done is by a floodfill of rooms from a core room, to determine how many interconnected rooms are 'in range' of the creeps abilities to get to. Then, maintaining this list / information to send creeps out to specific rooms on-order when vision has not been seen in a while, or on demand due to stresses or planners require.
+
+### Creep Movement (Pathfinding)
+
+The system managing getting a creep from point A to point B.
+
+#### moveTo
+
+moveTo is the main pre-packaged solution when it comes to pathfinding, a user mainly only has to set a target desired to 'move to' and the function takes care of the pathing, caching and executing of the movement all in one. This is a powerful function that will carry a user far, however possibly by design it is not 'perfect' allowing the user to get familiar with the movement system and evolve past it in the future.
+
+#### adding Options to moveTo
+
+moveTo allows for various opts or 'options' to be passed as an argument in the form of an object along with the target you are looking to move to. These options can have a huge impact on the way moveTo itself acts and behaves allowing for more complex/efficient movement.
+
+##### reusePath
+
+by default, moveTo will cache and use the results of 'new' moveTo request for 5 ticks, or when it crosses a exit tile (as paths are only cached an encoded string 'in room'). This behavior can be modified by passing an object with the property `reusePath` along with a numerical value of the amount of game ticks the user wishes the function to reuse the cached path. Depending on how far away the target is, or the complexity of the room(s) considered, repathing every 5 ticks can become costly when many creeps are considered. Increasing this, means that you have creeps that will reuse the path for longer but will react slower to pathing obstructions. This is up to the user to resolve normally in the form of collision management.
+
+##### ignoreCreeps & Collision management
+
+by default, moveTo will consider creep objects found when pathingfinding as 'impassable'. This means that it will attempt to pathfind around the creep found in the path, which can result in higher costs, even though the creep in the path is moveable, or may have moved by the time the creep arrives at that step in the path. The `ignoreCreeps` option allows for a user to as the name suggests, tell moveTo to ignore creeps when considering blockages/obstacles in the path. This generally allows for faster/shorter routes to be found as in a crowded base or a long busy areas of road creeps can often be found.
+
+However, if the creep in question blocking the path remains, that is where collision management comes in. moveTo will continue to attempt to execute the next step in the path, even though the path is obstructed meaning the creep does not move. Implementing a system that detects when a path obstruction/blockage/collision has occurred, and then resolving it helps fix this issue as insures that the creeps are taking the 'shortest route'
+
+##### range
+
+by default, the moveTo will attempt to path 'onto or near' the object it is targeting. However, there are times when moving between rooms or to certain areas that the user's creeps do not need to necessarily worry about being so precise. For example, a creep traveling to a distant room to scout without vision does not need to path to any particular tile to do so, just enter the room. This is where the `range` option comes in handy, the pathfinding of moveTo will attempt to find a pathable location 'in range' of the target provided meaning many operations of pathfinding can be saved thus saving CPU.
+
+##### maxRooms and maxOps
+
+While not necessary in most use-cases, these two operations are important in several specific functions. For example with maxRooms, you can tell the moveTo function to only consider X number of rooms when pathfinding. If you have a creep, for example, that you want to only ever stay within its home room for whatever reason, then you can pass a maxRooms opt of 1 and it will not attempt to path outside of the room to get to any given target (even if it is a shorter path). As well, maxOps allows the user to set the maximum number of operations while pathfinding, when going a far distance or a complex path, increasing the number of maxOps opt will allow it to run for longer hopefully finding a path. This does, however, use more CPU.
+
+##### costCallback and PathFinder.CostMatrix
+
+by default, the moveTo system will use the built in PathFinder in screeps to create and cache (when necessary) CostMatricies for a user's creeps to use when using moveTo. With the costCallback option however, a user can provide a customized cost matrix to be used instead of the default one that is generated/cached. This is probably the more complex of the options and likely the last step before moving on beyond the confines of moveTo. The user must make a costMatrix for a room considering (or not considering) all impathable objects, this can include custom values for whatever locations the user desires either to fully obstruct or allow passage though. An example, say the user has dedicated static mining creeps that should not move, or be moved. As such, even though the container they stand on is passable, or the creep passable if ignoreCreeps is on, the user can modify the costmatrix for the room to make this location impassable so the creeps do not consider it when trying to move, allowing the miner to continue without being obstructed, moved ect.
+
+#### PathFinder.search
+
+This is the base function that as-of-writing all other pathfinding functions in Screeps uses. It is by far the most powerful solution to pathfinding given by the API. It requires the user to be far more specific when passing options but allows for a wide flexibility of path generation options.
+
+#### Path Caching & moveByPath
+
+Generally once a user has become familiar with the pathfinder system, they can begin storing paths to be reused along common routes. An example would be a miner is always assigned to X source, and spawns from a spawn. The route is always the same, or becomes the same once they reach a certain point along the path. This path can be found, cached, and then reused by moveByPath or a user's custom implementation to execute move commands so that instead of pathfinding every time, the user only has to pathfind the once, or once in a while (incase new structures or obstructions have been added) dramatically reducing CPU costs.
+
+#### Node Networks & cached path assignment
+
+Once paths have been cached, a user can then evolve into caching common routes or destinations to areas that can be reused by various creeps dynamically instead of by specific need. Mainly, a user needs to create this pathing network with a 'start' node and 'end' node or any other amount of 'nodes' they desire. A creep (or its management system) can then consider its position as well as the position of its assigned task (goal position, lets say) when looking for a path. If the goal position is within X distance of a pathing end, start, or other node and the creep is within Y of the 'other end' of the cached path / node pair then the creep can be assigned the cached path to use for traversing to nearby its target. This may require a short moveTo/pathing operation to snap to / affix to the path, but once on the path movebypath or a user's system of executing moves by the stored path can be used. The creep thereby didn't need to do the complex pathing operations to its target, only short jumps, saving CPU.
+
+An Example:
+
+A hauler creep is assigned a container in a remote harvesting room 2 rooms away, it is currently idling by the storage from a previous drop off. The hauler creep first looks at node(s) in the same room as its target, searching for the closest one to its assigned container, the creep then looks for the node(s) that pair with the desired node(s) for ones it is standing on or near to. Once found, it then moves to the 'start' node and once there, proceeds along the path till it is nearby its target (or closer enough to leave the 'rail' path).
+
+### Highway Harvesting
+
+This system is generally meant to manage / execute on harvesting highway resources such as Deposits, Power, Score ect.
+
+#### User Generated Missions
+
+A user can hard-code or put into a memory/flag storage missions for creeps to embark on.
+
+#### Scout based / vision based (observer) missions
+
+From scouts generating vision, a creep team can be assigned the harvest.
+
+#### Scout reports / data based generation
+
+From scouting reports, where information is saved on targets, a system can then proceed though the list to find objects as needed to do missions on automatically without user input.
+
+### Creep Combat Actions
+
+A system or systems determining creep action(s) and combat styles.
+
+#### User Generated
+
+A user can use memory or flags to assign targets as they find them and control creep's actions to attack, very dynamic but requires user attention.
+
+#### Find Closest & Attack
+
+The simplest automation, find all hostiles, locate the closest, attack until it dies or the user's creep dies.
+
+#### Kiting & Ranged combat
+
+When using ranged-creeps against melee creeps it is possible to 'kite' or keep moving whilst firing to stay out of range. This has its own challenges as a user's creep needs to avoid being cornered, as well as staying in range should the enemy creep start retreating.
+
+#### Duo-combat
+
+One creep can only have 50 parts and can only take certain actions at a time as some actions conflict with each other (such as ATTACK and HEAL). Using multiple creeps to co-ordinate attacks such as Duos, helps expand the power of attack/defense with creeps. A duo as the name suggests consists of two creeps working in tandem, normally a healer and a fighter. The fighter will lead, while the healer follows to stay in range, and heals either itself or the fighter depending on need. This allows for bigger combat creeps paired with bigger heal creeps to be able to overcome many challenges.
+
+#### Quad-Combat
+
+A further evolution of cooperation from duos, 'quads' as they are known are groups of 4 creeps working in tandem, normally consisting of a combination of ranged/heal parts, two attackers and two healers, or other combinations, since in a 2 by 2 space the quad occupies means that each creep is adjacent or 'near to' other creeps means it can support creeps that take damage with the 'maximum' amount of healing possible from all units when necessary, and attack with a large group when not.
+
+#### Room Attacking
+
+##### Find any wall
+
+Most users tend to wall off their rooms with ramparts or walls, finding 'any' wall and destroying it 'could' allow access to the core.
+
+##### Find Weakest / easiest path to goal
+
+Using pathfinder and CostMatricies, a user can set enemy walls dependent on their Hits to different cost values for pathfinding, then find associated 'steps' in the path that have walls, and set those as targets.
+
+## Colony (global) Specific Systems
+
+These systems may not fall into any 'specific' category, or they may consider a colony (the entire set of rooms/entirety of the bot) instead of a type.
+
+### Creep Action Management
+
+This system or systems are generally designed to execute/manage the actions of individual or groups of creeps.
+
+#### Role Modules & Agent Based Approach
+
+An agent based approach known as 'roles' is what is presented in Screep's Tutorial. Primarily, each creep is assigned a role via memory (normally as a string) which is used to then determine what module (normally of the 'same' or similar name) to have the creep execute. The creep then works though the module's logic to determine what to do and how to act. This works well in keeping creeps consistent and focused with their logic, however it does mean that unless otherwise programmed to do so, they only consider their own situation and also normally run checks multiple times instead of just once.
+
+#### Top Down / Management based Approach
+
+A Top-Down or Management based approach primarily means that instead of each creep being responsible for finding its own goals, targets, information and the like, it is instead assigned these things by a manager considering the entire picture. This enables the system to fetch data as-needed, pass it / use it over the span of multiple creeps instead of multiple times over creeps and even change creeps as needed.
+
+An example:
+
+A management system for assigning tasks for haulers beings its tick. It looks first for available haulers that do not have a task assigned to them, if found, it then proceeds to look at all available containers assigned to its room, filtering out any containers that are already assigned to other creeps already or that energy will be not enough for the task to be worth assigning. If containers were found, it then progresses though the available creeps, assigning them to containers as they are available. The creeps (or their own different management systems) then only act on their assigned task.
+
+### Base Building
+
+This system (or systems) are responsible for creating a base layout or structure for a room to use.
+
+#### User Generated
+
+Most commonly a user places construction sites using the GUI on the Screeps website or application. These are then handled by building creeps. While very precise, without the user's availability time can be wasted on RCL transitions as buildings go unplaced.
+
+#### Bunker Placement
+
+The most common automated placement for an overall base is a bunker, in which one 'anchor location' for the bunker is chosen, and as long as the location has enough room around / in its area, then from a hard-coded object containing the information, structures can be placed as they become available to do so.
+
+#### Stamp/Tile dynamic placement
+
+Slightly more complicated, tile-sets or 'stamps' are normally user-generated configurations of various buildings that are then 'placed' dynamically nearby one another. Normally starting with one anchor stamp, then expanding out with vital or necessary stamps until a configuration that works for the given target room is found. This is by far, more flexible and allows for more types of rooms to be used other than ones that have large open areas.
+
+#### Dynamic pattern / rule generation
+
+Quite more complicated, Dynamic / rule generation relies on placing structures in an area based on a set of rules, for example, a storage ideally has multiple points of contact to interact with, while an extension only requires one, a spawn ideally has a point of contact that is open to any other area (so the creep is not trapped/blocked) while a terminal at least needs one route to and exit from. Starting from a base/anchor and then expanding out with structures to ensure no previous rule is violated a base can be 'grown'. That does not mean you have to treat every structure this way, an example of an implementation of this would be using a flood fill algorithm to fill out a field of extensions.
+
+### Base enclosing (Passive Defense)
+
+This system is meant for providing 'passive' defense in the form of walls or ramparts to enclose a base.
+
+#### User Generated
+
+Of course, a user placing walls/ramparts according to their design is very easy to do and can create complex structures, but the user will not always be present when walls are required to be built, repaired or replaced.
+
+#### 'Box cut' area
+
+By simply designating an area as 'should be walls around here. A user's code can cut a 'box' around an area of which they wish to be walls. Quick, but not always efficient or the best use of walls.
+
+#### Everything's a Rampart
+
+Cover everything in a rampart! Need to defend it? If its got a rampart, its defended. As ramparts decay however, this is not very energy efficient.
+
+#### Choke point / rule defined walls
+
+By determining 'choke points' in-between natural walls, or having a rule based system where if X roomPosition is not a natural wall, and in-range to a need-to-be-defended object, a user can define a more dynamic set of walls, then use something such as a floodfill or the pathfinder to determine if any given walls are redundant or unused in blocking access to the 'core' or base area.
+
+#### Minimum cut
+
+The Minimum cut algorithm allows a user to find the area they can 'cut' walls from so that the smallest area of walls is used. A user must define what is important to defend in this case, or what is not.
+
+### Road Placement & Networks
+
+This system generally refers to the where/when to place and connect roads between frequent creep destinations or for reduced fatigue cost in areas.
+
+#### User generated
+
+A user can use their advanced pathfinding abilities honed over millennia of organic evolution to determine the shortest / best distance between two points and place roads there. That does not mean, however, that their creep's pathfinding algorithms will always agree / use the roads, but that can further be refined in coding.
+
+#### Opportunity / frequency based placement
+
+A common / some-what-a-trap solution to placing roads that often leads to what users call 'airports', by virtue of any given creep is walking to a common destination point it is possible to place construction sites as they walk then have creeps build them. While this seems like awesome easy-to-implement idea (and it is to some degree), pathfinding in screeps (unless made by the user elsewise) is non deterministic, so it is quite possible to have multiple paths due to a variety of situations such as creep obstructions or other such issues, that end up with massive road networks that are never used, or as seen from a user's view that look like airport runways.
+
+#### Cached Path based / PathFinder based generation
+
+If a user is advanced enough to be storing common cached paths, then they can subsequently used these positions on the paths (steps) as locations for roads, forming road networks. Depending on the level of pathfinding at play, this can still have is inefficiencies.
+
+#### Multi-Path/goal based recursive generation
+
+If a user has determined a set of goals that their creeps need to achieve, it is quite possible to start with the 'closest' to the origin location, then use the subsequently generated path as a 'preferred' or lower score on a CostMatricies to use for subsequent generation. This allows for roads/path networks to be generated along common routes that are already 'in use' without having to create a new road from the origin. Though the new road, may be shorter, using existing roads may be just as 'fast' for it, and for subsequent goals to use. Saving overall on repair cost.
+
+#### Alternative / custom based algorithms
+
+##### minimum spanning tree
+
+### Memory Management
+
+This system or systems are generally spread out all over your bot, a general way you handle storing things to memory and using them.
+
+#### Storing Whatever
+
+Store whatever works to make your bot work, long and complex objects? Sure. Weird strings? Why not.
+
+#### Reducing Usage / Compression
+
+Reducing objects/information down to things such as IDs or goals/mission movement targets down to roomposition or room position data helps reduce useage. The smaller, less complex, the more CPU savings from having to stringify/parse the memory object.
+
+#### Further compression / Encoding
+
+Though compression like PackRat or your own scheme, you can further compression IDs, roompositions or other data down into simple characters or such strings that can then be 'unpacked' or interpreted as other data. Minimizing the memory usage and allowing for more storage / less CPU used.
+
+#### MemHack
+
+MemHack while at-time-of-writing still works, is a wonderful implementation that allows you to save CPU, and is hard to beat elsewise.
+
+### Multi-Room Management
+
+Multi-Room management refers to a system or systems that are responsible for taking actions on a room. When starting a user normally only has to worry about one room, however as soon as two come into play shifting the way you handle a room helps as more and more rooms are added.
+
+#### Hard coded
+
+Simply splitting off spawns / other calls into different rooms is generally most people's first step. Hard coding in general, however is not a great pratice.
+
+#### Looping Architecture
+
+Though Looping a set of rooms you've gathered you can preform actions as needed.
+
+#### Dynamic Looping
+
+Though fetching and sorting rooms in your Game.rooms object, you can then pass the rooms off to whatever manager needs to take action on them in context of if their owned, reserved, if they have a room that their associated with (proxy mining/defense wise) or if their visible due to scouting and intel gathering has not occurred in X ticks.
+
+### Observability (Logging & Statistics)
+
+This system or systems allow a user to view data/states of their bot and its performance as well as keeping a history to see performance over time.
+
+#### Console.log() and basic debugging
+
+Using console.log() can display a wide variety of information into the console, but only for as long as the console exists and by virtue only as complex as the console allows you to be. While you can get creative with this with HTML, it has its limits.
+
+#### Room Visuals & Map Visuals
+
+Using memory in conjunction with room / map visuals you can create your on UI / statistics tracking that renders right on a room/map, allowing for more 'at-a-glance' reviewing of information and tracking trends.
+
+#### Web API & External Tool logging / visualization
+
+By using the Web API (and keeping in mind the rate limits allowed) A user can fetch information stored in the memory, then store and use it in external tools such as Grafana. This allows for very robust and wide ranging tracking with all the fancy charts, graphs and the like you'd ever want.
+
+
+
+### Market Actions
+
+A system or systems dedicated to finding and acting on market data, normally to increase a user's credits.
+
+#### User Generated
+
+A user can use the GUI provided by screeps to view market buy/sell orders and using hard-coding or the console execute deals in their rooms. A high degree of control, but requires the user's attention.
+
+#### Automated Opportunity based Buying / Selling
+
+Instead of manually located and executing on deals when a user decides, they can have a system detect what resources are 'extra' or made to be sold and scan market data for desired buy/sell orders to execute on automatically.
+
+#### Arbitrage based Buying / Selling
+
+By checking market data over a long-span or short-span of time, a user can get a sense of what the value of any given item is, the game does provide history data up to two weeks to facilitate this, but keeping your own record or limits can help as well. As such, detecting 'low' prices for items or 'high' demand for others, allows a user to buy things cheap, sell them high to turn a profit in the market.
+
+#### Inter-Shard based buying / selling
+
+Once a user has rooms on multiple shards, it is quite possible to buy something one one shard, and transport it to another for re-sale, or vice versa. This requires normally using Inter-Shard Memory to pass information back and forth on the prices and a system to create hauling creeps to transport the resources as well as restore their memory / assign information to them as needed.
+
+#### Arbitrage Inter-Shard based Buying / Selling
+
+Once inter-shard hauling and market data is established a user can do the same 'buy low' on one shard 'sell high' on another, not every user has access to every shard, so the demand across varying shards can be different.

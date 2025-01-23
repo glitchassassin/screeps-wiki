@@ -1,0 +1,20 @@
+---
+title: Mineral Mining
+description: Mineral Mining is the process of harvesting the resource in your rooms instead of energy.
+categories:
+  - Stubs
+  - Game_Knowledge
+  - Strategy
+---
+
+## Common Implementations
+
+Some implementations will use a version of [container mining](/Static_Harvesting#container-mining). Different roles than the standard miners and carriers may be required, to account for a variety of resource types instead of only checking for energy.
+
+### Container style
+
+Generally container mining for minerals means spawning one or more large sized worker creeps with as many `WORK` parts as possible and a few MOVE parts, unless your planning on using `pull()`. The creep(s) then head to the container, and proceed to mine it in between cooldowns. The larger the worker creep, the faster a mineral can be depleted and the faster you get to the cooldown, meaning the more minerals you get in the long run. On a mining action, if the creep has no carry parts the minerals will drop, and if a container is present with free space, into the container. You then need to pick the up and move them with another creep, either to your storage, labs, terminal or however you wish to deal with the minerals.
+
+### Carry-style harvesters
+
+Another type of mineral mining is with one or more creeps that have a balance between `WORK`, `CARRY`, and `MOVE` parts. These creeps generally preform both the harvesting & hauling role, as they need carry parts, this does however limit the number of work parts you can have, slowing down harvesting a bit. These however, do not require (though you could still if you wanted to) a container as they can carry & transport the mineral back.

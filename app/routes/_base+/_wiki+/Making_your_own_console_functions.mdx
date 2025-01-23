@@ -1,0 +1,26 @@
+---
+title: Making your own console functions
+description: Being able to call functions/commands from the console can be useful. There are a few ways to go about it.
+categories:
+  - Development
+---
+
+## Global
+
+By assigning a function to global, it is possible to access the function from everywhere in your script including console. This does however, mean that the name you choose may cause conflicts down the line if you plan on trying to use it in another part of your script, so choose carefully.
+
+`global.someFunctionName(someVarName) = { someCode };` then simply call it in console with `someFunctionName(someVarName)`.
+
+Global will persist between [ticks](/Tick), however it will go away on a [global reset](/Global_reset), which normally happens when uploading new code or during server side resets / issues. It's up to you to keep it refreshed if you want it persistent.
+
+You can check out the global's [official docs](https://docs.screeps.com/contributed/caching-overview.html#Global) entry to learn more.
+
+## Prototype
+
+By setting a prototype of an existing object in game (that can take it) you can call the prototype from console off the object. This works because the game objects are global objects (`global.Creep === Creep`). Note that `Game` does not have a prototype, and is recreated each tick.
+
+`GameObject.prototype.functionName = function(someVarName){ someCode};` and then you can call it in the console like `GameObject.functionName(someVarName)`. For a more specific example you could prototype room, then call the method off any room object.
+
+`Room.prototype.functionName = function(varName){ someCode };` and in console `Game.rooms['roomNameHere'].functionName(varName)`
+
+You can learn more about prototyping in screeps from their [docs' prototype entry](https://docs.screeps.com/contributed/modifying-prototypes.html).

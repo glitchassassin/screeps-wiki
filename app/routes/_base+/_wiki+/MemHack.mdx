@@ -1,0 +1,26 @@
+---
+title: MemHack
+description: "MemHack (Memory Hack) refers to the strategy of storing a user's Memory object in global to skip the JSON.parse() normally required at first-access of Memory in a tick, thus saving CPU every tick. Note that the hack is exactly that: a hack. It relies on the underlying implementation of the API, not the published API itself, giving it the potential to become obsolete or broken in the future."
+---
+
+## Memory Implementation
+
+The way the `Memory` object works is when first accessed in a game tick it is run though a `JSON.parse()` which converts it to an object from its stored-as-a-string state, then after any changes have been made end-of-tick it is run though a `JSON.stringify()` for storage. The user running the code pays for this parsing/stringifying with [CPU](/CPU): the larger the `Memory` object, the more costly it is to process.
+
+When Memory is parsed naturally, the parsed object is stored in `RawMemory._parsed`. At the end of the tick (after your code ends), the engine serializes the value in `RawMemory._parsed` into the database, for use in the next tick. The time taken for serialization is included in your CPU usage. You can read more about the `Memory` object in [Screep's official docs](https://docs.screeps.com/global-objects.html#Memory-object).
+
+## Operation
+
+MemHack works by creating an object in `global` to store the `Memory` object when initializing the global (and needs to be rebuilt if global dies due to code push, global reset, ect). At the start of subsequent ticks (start of a user's main loop before any other `Memory` related calls) deletes the 'normal' `Memory` object and replaces it with the global version which due to global persisting between ticks does not need to be parsed. Then it sets `RawMemory._parsed` to the current global MemHack obj as well, this insures changes are updated to the normal `Memory` object, so that in the event of a global reset the `Memory` object will still have the changes and, that the Memory watcher / console changing still work. It is important to note, that `RawMemory._parsed` is not officially documented in the API however, it has been around and accessible for several years. It is possible for this strategy to become defunct in the future, should this be changed.
+
+## Risky Business
+
+If you are not risk adverse or want additional savings, you can delete `RawMemory._parsed` for a tick, preventing serialization for that tick. You can add a control structure using `Game.time % x === 0` to have it only serialize every 5, 10, etc ticks. The lower the gap between saves, the easier it would be to recover from the older copy of Memory serialized in the backend. This could lose data such as recent [Market](/Market) transactions, intelligence gathered from Observers, and other things.
+
+## Code Examples
+
+There are a few places you can view examples of this code:
+
+- [postCrafter - Screepers' Snippets](https://github.com/screepers/screeps-snippets/blob/master/src/misc/JavaScript/Memory%20Cache.js)
+- [ags131 - ZeSwarm](https://github.com/ags131/ZeSwarm/blob/v1.1/src/MemHack.js)
+- [bencbartlett - OverMind](https://github.com/bencbartlett/Overmind/blob/master/src/memory/Memory.ts#L83)
