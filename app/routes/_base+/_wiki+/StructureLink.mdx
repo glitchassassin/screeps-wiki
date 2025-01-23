@@ -1,0 +1,50 @@
+---
+title: StructureLink
+description: StructureLinks ('links') are structures that allow the transfer of energy from one link to another in the same room instantaneously while incurring a cost of total * 0.03 energy per transmission. Links can hold up to 800 energy at a time and do not allow other resources. Once an energy transfer is initiated, the sending link has a cooldown equal to the linear distance between the sending and receiving links. StructureLink inherits the methods and values of RoomObject, Structure, and OwnedStructure.
+categories:
+  - In-Game_Objects
+  - Game_Knowledge
+---
+
+## Common Usage of Links
+There are multiple uses of links, all of which either directly or indirectly reduce the need for [creep](/Creep) travel/[pathfinding](/Pathfinding), thereby reducing overall [CPU](/CPU) costs.
+
+### Storage Link
+
+A link near a [storage](/StructureStorage) is referred to as a storage link. This is typically a link that receives energy from other links, which are then transferred into the storage in the room.
+
+### Source Link
+
+A link near a [source](/Source) of energy is referred to as a source link. These are typically used as senders in conjunction with a [storage link](#storage-link) to perform [link mining](/Static_Harvesting#link-mining).
+
+### Controller Link
+
+Controller links are in range of a [StructureController](/StructureController), allowing for static upgraders, who move in range of the room's controller and stay in a single position for the remainder of their ticksToLive, upgrading and withdrawing from a link or container.
+
+### Remote Link
+
+Remote links are placed close to the exit of a room to save distance that creeps bringing in energy from remote rooms have to travel into the room.
+
+### Extension Link
+
+If it is infeasible to place your extension farm close to your [storage](/StructureStorage), the creeps that fill your extensions could withdraw from an Extension Link located closer to your extensions.
+
+### Tower Link
+
+A tower link is used to provide energy to tower filler creeps, and allow for towers closer to likely avenues of approach, instead of keeping them close to your storage.
+
+## Common Implementations
+
+All of the below implementations typically involve the use of thresholds to identify when a link is eligible to send or receive. These thresholds are used to prevent a link from either running completely empty, or becoming full for too long.
+
+### Link Priorities
+
+This method of implementing links involves assigning priorities to each link in the room. When a lower priority link becomes full or reaches a threshold, it will attempt to send to the highest priority link that is below a specific threshold. If the highest priority link is not below its receive threshold, the sending link attempts to send to the second highest priority link. The process is continued until the energy is sent, or it cannot find a link with a higher priority than itself. This can be used if multiple destination links are in place.
+
+### Static Type to Type Transfers
+
+This method involves identifying each applicable type of links, and attempt sends from a single type to another single type. Multiple type-to-type send attempts are typically performed, such as storageLink → controllerLink, remoteLink → storageLink, sourceLink → storageLink. This implementation is typically used if you have a very small number of destination links.
+
+### Link Balancing
+
+This method attempts to ensure that each link is filled to exactly an identified amount as often as possible. If one link is above the target amount and another is under, a send is executed to balance out the link infrastructure. This is most often used when most of the links in a room are multi-use, which require both sends and receives.

@@ -1,0 +1,76 @@
+---
+title: Static Harvesting
+description: Many harvesting strategies revolve around static mining. Static mining refers to a harvester which does not move from the source after arriving. This allows the player to spawn a creep with fewer move parts. Another creep, usually called a 'courier' or 'hauler', is used to carry the energy to where it is needed. For example, the 'hauler' can bring energy to storage, a container, or directly to spawns or extensions.
+categories:
+  - Strategy
+---
+
+import { Image } from '../../../components/Image'
+
+## Drop Mining
+
+Drop mining is the harvesting of resources without a container or link nearby. While it is the simplest form of static mining, it can still be very efficient.
+
+### No Carry Parts
+
+When a harvester without carry parts mines a source, all of the energy drops onto the ground. This energy is subject to [resource decay](https://docs.screeps.com/api/#Resource). This dropped energy will decay at a rate of 1 per 1000 (rounded up) energy per tick. To minimize the loss of energy due to decay, the 'hauler' would need to stay near the harvester. These savings would need to compared against the cost of the 'hauler's lifetime.
+
+### Carry part buffer
+
+Rather than dropping the harvested energy directly on the ground, you can use a static miner with carry parts as a buffer. Note, energy harvested above the buffer will still drop onto the ground. In this scenario, the static miner would need to transfer the energy to another creep for transportation.
+
+Mining with a buffer can be more efficient than container mining (below), however it is best to calculate for yourself based on [spawn](StructureSpawn) time, [terrain](Terrain), and the travel distance.
+
+## Container Mining
+
+<Image src="/images/Canmining.gif" alt="An example of container mining" float="left" />
+
+Container Mining (sometimes referred to as "can" mining) is the process of using [Containers](https://docs.screeps.com/api/#StructureExtension) to store mined [resources](https://docs.screeps.com/resources.html) while waiting for a hauler to gather them, rather than dropping the resource and allowing it to decay, such as in [drop mining](#drop-mining) or storing the resource internally.
+
+### Uses
+
+Container mining can be seen as the combination of drop mining's high capacity and internal mining's high efficiency. Containers are cheap and have a low decay rate, and any resource that falls on the tile in question will fall into the container. For an energy source, this ends up reducing losses compared to drop mining by about 90%.
+
+### Variations
+
+Some people choose to drop mine at earlier [Room Control Levels](/Room_Control_Level), then container mine later when they decide they can afford to build the containers, instead of building the containers as early as possible.
+
+Repairing the container due to its decay can be done by the mining creep, or other workers in the room. If the miner maintains it, it will need at least 1 CARRY part to hold the energy used in the repairs. Once the creep tries to harvest more than it's carryCapacity, it will continue to drop the energy into the container.
+
+[Remote Mining](/Remote_Mining) and [Source Keeper](/Source_Keeper) mining also often takes the form of container mining to deal with the large amounts of energy mined or higher travel times the carriers require to return the energy to a claimed room. The benefit is less clear in non-owned rooms though, because of the increased (*5) decay rate (see [doc](http://support.screeps.com/hc/en-us/articles/208435885-StructureContainer) )
+
+[Mineral Mining](/Mineral_Mining) often takes the form of can mining to minimize the loss of valuable minerals.
+
+### Potential Problems
+
+The player must be able to repair the container occasionally. This is often handled by the harvester.
+
+You will also need to identify a way to ensure a newly spawned miner stands on top of the assigned container before it starts mining, or it will turn into [Drop Mining](#drop-mining) again, and the container maintenance costs are wasted.
+
+The carriers/workers you develop for this type of static mining will have to be able to withdraw() from the containers for it to be effective. You will also have to check to see if the container has overflowed, and pickup() the energy like [Drop Mining](#drop-mining) to save it from decay.
+
+## Link Mining
+
+Link mining is a static mining method for [Sources](/Source). It takes advantage of [links](/StructureLink) to transfer the energy instead of Creep carriers.
+
+<Image src="/images/Link_mining.gif" alt="An example of link mining" float="right" />
+
+### Uses
+
+Link mining is commonly used to mine out-of-the-way sources in your rooms without needing so many haulers. Since links are limited in number, care should be used in deciding when a Source should be link mined or other methods should be used. Sending from one link to another incurs a 3% loss during the transfer, so care should also be used in determining savings versus other mining practices.
+
+### Variations
+
+Links can also be used to help transfer energy from other rooms, especially remote mining and source keeper rooms. This way, haulers have less distance to travel to bring energy to the next room.
+
+Since links have a cool down based on distance, some players will place a link between two other links to reduce cool down times. This would incur a loss of 5.91% loss instead of 3% for a single link transfer.
+
+Some players combine this method with [container mining](#container-mining) to store surplus energy until it can be linked elsewhere in the room.
+
+### Potential Problems
+
+Links are only available at RCL 5 and above. Also, rooms are capped at 6 links even at RCL 8, so players must budget their link usage wisely.
+
+Links have a cool-down equal to the distance they transfer energy. This may limit the amount of energy that can be transferred through a link.
+
+The destination link needs to be emptied constantly, or the link may back up, failing over to an alternate method of harvesting or simply stopping altogether.

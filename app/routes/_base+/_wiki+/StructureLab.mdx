@@ -1,0 +1,51 @@
+---
+title: StructureLab
+description: A lab is a mid-to-late room structure that allows for the creation of boosts/compounds using minerals and boosting creep's body parts to improve their effectiveness. You get three labs at RCL six, six total at RCL seven and, ten total at RCL eight.
+categories:
+  - Game_Knowledge
+  - In-Game_Objects
+---
+
+## Creating Boosts
+
+To create a boost/compound you need to have two labs supply the minerals you are using, and at least one other lab running the reaction. However multiple labs can run a reaction in the same tick as long as they are in a range of two from each supplying lab and the lab does not have a cooldown. At RCL eight, if placed correctly this means you can have two supplying labs and eight reacting labs per room. The user can also set up their labs however they wish, including making chains of labs where different tiers of compounds/boosts are produced in sequence as the previous part of the chain creates them. A cooldown is placed on the lab on running the reaction, it varies in length depending on the boost/compound created.
+
+Boosts have three tiers numbered one though three, each level increasing the effect that the boost gives to the creep's body part effected. The first tier is created by combining a mineral/compound with either hydrogen or oxygen to create a base boost.
+
+The second tier is combining the first tier boosts with the compound Hydroxide, Hydroxide is produced by labs when Hydrogen is reacted with Oxygen.
+
+The third and final tier is created by combining a second tier boost with the mineral Catalyst. As this creates the most powerful version of boosts, catalyst tends to be the most valuable mineral.
+
+### Compounds
+
+Though not directly used as boosts, compounds can be created in the lab from the base minerals for use in creating boosts or as fuel for some special actions in-game. The most basic compound is Hydroxide, which is hydrogen and oxygen reacted in a lab, which is used in the creation of tier two boosts. Zynthium-Keanite and Utrium-lemergite are created by combining the minerals Zynthium & Keanite and Utrium & Lemergium respectively. These compounds at current have no use of their own beyond market value but are used by combining the two to make the compound Ghodium.
+
+Ghodium is a very useful resource as it is not only used in the creation of very powerful boosts, but it is also used as the warhead for nukers and, can be used at an owned controller to increase its number of safemodes.
+
+## Boosting
+
+A lab containing a boost and energy can be used to boost a creep's bodyparts with the contained boost at a rate of 30 boost compounds and 20 energy. If there is not enough contained to boost all the creep's body parts they are done in order of the creep's body to whatever amount can be afforded. Once boosted, depending on the type of boost applied to the bodypart, that bodypart is given increased effectiveness. This can be useful for various economy tasks however, it is direly useful in late-game combat and healing. Boosted creeps can easily out-preform one or multiple non-boosted ones, and have an easier time getting or tanking though room defenses.
+
+## Un-Boosting
+
+A lab can remove the boosts from a creep and drop half of the used boost on the ground. You can then pick the reosurces up, or catch them with a container to be used again. This does however, apply a cooldown which dependent on total-lab reaction time in all steps, can be quite large. While the lab is in cooldown it can not react or unboost.
+
+## Reverse Reaction
+
+Labs can also be used to break down boosts & compounds into their base parts. This is useful if you have too much, or if you simply want the base elements. In a swap from running a reaction, you need only 1 lab that is providing the boost/compound to break down and can use however many other labs to receive the result, however keep in mind this will be two compounds.
+
+## Basic Automatic Lab usage.
+
+To automatically create compounds and boosts you need a few systems. First, you will need a creep or creeps to supply the source labs with the mineral/compounds to use in the reaction. Then, you need a system to detect when the source-lab has enough resource to continue the reaction and, that the reacting labs are not on a cooldown. After reaction(s), you then need a creep or creeps to withdraw the produced boost/compound and transfer it to a storage.
+
+That is the very basic setup, however it can get far more complicated chaining boosts. You first, need a source of the mineral/compounds you want to use either by mining them in a room, purchasing them form the market, or reacting them from other elements in the lab. You can set a threshold or condition to stop production of whatever your working on, and then move on to the next production target. This requires emptying all the labs, then filling the source labs with the new mineral/compounds. Using provided constants in the game, you can figure out dependent on what you have on hand what boosts you can make.
+
+If you chain-link labs in-order of tier, it is possible to produce though all tiers of a boost, however you will need at some point to produce/buy Hydroxide as it is needed for Tier 2.
+
+Some complications you can find will be:
+
+- As labs have a limited store size of 3000, supplying and maintaining an amount requires a creep to only put in an amount needed, possibly leaving leftovers being carried if care is not taken to manage it.
+- When switching over to a new boost, if all labs are not emptied properly this can cause loss of efficiency and wasted runReaction checks.
+- Maintaining levels of compounds/boosts on-hand to produce more, while not sliding back into another level of production as soon as your condition/level is met.
+- Determining what order & importance any given boost needs to be in the production considerations.
+- Sending information from your lab-system back to your creep if an error has happened, or if something is preventing a reaction.

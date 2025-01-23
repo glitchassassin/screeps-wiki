@@ -1,0 +1,25 @@
+---
+title: StructureTower
+description: A tower is a powerful defensive structure that users can build in an owned room. A user gets one tower at RCL 3, an additional one at both RCL 5 and 7 and, three more at RCL 8 for a total of six when at RCL 8. Towers can Attack, Heal and repair, at the cost of ten energy per action taken.
+categories:
+  - In-Game_Objects
+  - Game_Knowledge
+---
+
+## Tower's range
+
+A tower's range is unlimited in its room, however it has a falloff of effectiveness dependent on the range to the target. Any target within five or less tiles/roomPositions of the tower will be at its max effect (600 hits for attack, 400 hits for heal and, 800 hits for repair), anything at a range of 20 tiles/RoomPositions or more will be capped out at a minimum (150 hits for attack, 100 hits for heal and, 200 hits for repair). Anything between these values varies dependent on the range, `amount -= amount * C.TOWER_FALLOFF * (range - C.TOWER_OPTIMAL_RANGE) / (C.TOWER_FALLOFF_RANGE - C.TOWER_OPTIMAL_RANGE);` is the calculation (see: https://github.com/screeps/engine/blob/master/src/processor/intents/towers/attack.js#L38 for source) Where amount starts off as the maximum effectiveness and is reduced based on range.
+
+## Tower placement
+
+Tower placement in a room is very important due to several factors. First, due to the range falloff, for a tower to be at its maximum effect (either attacking, healing or repairing) they should be closest to what action you wish to have them preform. For example, if you intend to use your towers only for defense, then you want them as close to any defensive walls you have so the other side/roomPosition of the wall is within its maximum range, same goes for healing.
+
+Some players also will group their towers into an area so all are reachable from one room position, this allows for easy refilling with creeps in a speedy manor without having to travel long distances. This also allows for all towers to be similarly effective at w/e range their 'centered' around, this does however weaken the power they could have in other spots if they were placed differently.
+
+Its up to the user to determine their use case for their towers, many different users have many different placements.
+
+## Tower repairing vs creep repairing
+
+Since a tower has unlimited range, it can be fairly convenient to repair decaying structures in an owned room with towers. Depending on case, this can save on creep travel to the structure to repair/get energy, however due to fall-off and each action costing ten energy, vs a creep's one per work part, it can quite vary in effectiveness.
+
+Again, it is up to the user to determine their use-case.

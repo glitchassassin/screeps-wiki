@@ -1,0 +1,45 @@
+---
+title: StructureController
+description: The StructureController is the heart of a Room. A Room's Room Control Level (RCL) is increased by upgrading a claimed room controller, and will increase the number of Structures available and allow the building of larger Creeps.
+categories:
+  - Game_Knowledge
+  - In-Game_Objects
+---
+
+Rooms with a controller can be either unowned, claimed or reserved. These rooms form the core of a player's empire, from their first spawn to their lofty empire of 30+ claimed rooms, and many more "[remotes](/Remote_Harvesting)."
+
+[Source Keeper](/Source_Keeper) rooms and highways do not have controllers. SK room [Sources](/Source) have 4000 [Energy](/Energy) every 300 ticks and may have [Minerals](/Mineral), but are defended. Highways do not have Sources or Minerals. You can still build unowned structures in these rooms, including Roads and Containers.
+
+## Actions on a controller
+
+### Claiming
+
+Claiming a room controller gives you ownership of the room, and allows you to build [OwnedStructures](/OwnedStructure) in that room. A player's first action in the game is claiming their first room. Any additional rooms need to be programmatically claimed by a creep. Claiming a room doubles the energy you can harvest from 1500 to 3000 energy per 300 tick cooldown for each [Source](/Source).
+
+### Upgrading
+
+Upgrading a claimed controller is how both [Room Control Level](/Room_Control_Level) and [Global Control Level](/Global_Control_Level) are increased. Upgrading requires Energy to do, at a 1:1 ratio. Once at RCL 8, you can only put 15 Energy per tick into a controller.
+
+### Reserving
+
+Reserving a room's controller allows you to maintain control of a room without actually claiming it. This will also prevent other players from claiming the room, and shrink the size of projected respawn/novice zones. Reserving a room controller does not allow you to build [OwnedStructures](/OwnedStructure) in it, but will increase the energy per [Source](/Source) to the same amounts as claimed rooms. This is important for [Remote Harvesting](/Remote_Harvesting).
+
+### Signing
+
+Signing a controller allows you to leave a message on that room until it is either overwritten or removed. You do not need to claim or reserve a controller in order to sign it, and it is possible to sign controllers belonging to other players.
+
+### Attacking
+
+During or after [combat](/Combat) between players, a player's suitably equipped creeps can attack a controller belonging to another player, downgrading the controller's claim timer by 300 ticks per `CLAIM` body part, or reservation timer by 1 tick per `CLAIM` body part. If the controller under attack is claimed, it cannot be upgraded or attacked again for the next 1,000 ticks.
+
+### Activate Safe mode
+
+A claimed controller starts with one use of Safe Mode available at RCL 1, and gains another for each additional control level.
+
+### Adding additional safe modes
+
+A creep carrying 1000 [Ghodium](/Minerals) can call `generateSafeMode()` in range 1 of a controller, and add an additional safe mode to the room.
+
+### Enabling PowerCreeps
+
+[Power](/Power) has to be enabled in a room for [PowerCreeps](/Power) to be used. Once a player spawns their first power creep, they can enable power in any room with a controller by using a PowerCreep's `enableRoom()` while adjacent to it.

@@ -1,0 +1,65 @@
+---
+title: Source Code Reference
+description: Occasionally or for curiosity it is useful to see how the Screep's game itself handles things. The private server source code is available to view on github, along with the source docs and some other things. It is important to note, that this does not provide all data on the MMO (main server) code-side of screeps as some things are not available to view. Things such as Shards, deep market information to name a few, can not be found here as their exclusively MMO and not publicly published. However, there are still many useful things to find. This list is sorted alphabetically for topic with a short description of the links, CTRL+F or whatever your native search is for browser to search keywords or look find what your looking for.
+---
+
+## A
+
+## B
+
+## C
+
+- [Creep.js](https://github.com/screeps/engine/blob/master/src/game/creeps.js) - Here is all creep methods such as transfer, withdraw, moveTo, ect. These actions go though various 'checks' as most methods to either return errors or create [intents](/Intent) for the game to process.
+- [Cronjobs.js](https://github.com/screeps/backend-local/blob/master/lib/cronjobs.js) - Here various [cronjobs](https://en.wikipedia.org/wiki/Cron) are set and scheduled, this includes things such as [Invader](/Invader) and [Stronghold](/Stronghold) generation, [powerBanks](/Power) and [deposits](/StructureFactory),
+
+## D
+
+## E
+
+## F
+
+## G
+
+## H
+
+## I
+
+## J
+
+## K
+
+## L
+
+## M
+
+## N
+
+## O
+
+## P
+
+## Q
+
+## R
+
+- [room.js](https://github.com/screeps/engine/blob/master/src/game/rooms.js) - Various room methods are here,
+- [runtime.js](https://github.com/screeps/driver/blob/master/lib/runtime/runtime.js) - [Intents](/Intent) are calculated cost wise here, rawMemory and other various things are here.
+
+## S
+
+- [strongholds.js](https://github.com/screeps/common/blob/master/lib/strongholds.js) (screeps/common) - Templates for strongholds are stored here, and rewards
+- [stronghold.js](https://github.com/screeps/engine/blob/master/src/processor/intents/invader-core/stronghold/stronghold.js) (engine/intents) - Various tasks are here such as refilling towers, creeps, preforming maintenance with towers, tower attack logic, anti nuke logic, different decks (invader creeps) for levels and their logic.
+
+## T
+
+## U
+
+## V
+
+## W
+
+## X
+
+## Y
+
+## Z

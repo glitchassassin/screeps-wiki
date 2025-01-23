@@ -1,0 +1,32 @@
+---
+title: StructureSpawn
+categories:
+  - In-Game_Objects
+  - Game_Knowledge
+---
+
+import { Image } from "../../../components/Image"
+
+Please view the [API documentation for StructureSpawn](http://support.screeps.com/hc/en-us/articles/205990342-StructureSpawn).
+
+This page is meant to provide some extra information that is not included in the documentation.
+
+## Creep Spawn Direction
+
+When a creep is finished spawning, it will emerge from the spawn one position above the spawn. If this location is blocked somehow it will spawn in the next adjacent location in clock-wise order, following the game's direction constants.
+
+TOP: 1, TOP_RIGHT: 2, RIGHT: 3, BOTTOM_RIGHT: 4, BOTTOM: 5, BOTTOM_LEFT: 6, LEFT: 7, TOP_LEFT: 8
+
+<Image src="/images/SpawnDirection.gif" alt="Spawn Direction" />
+
+## Spawn Stomping
+
+If all locations around the spawn are blocked by structures or your own creeps, the spawning creep will not emerge, and will instead wait until a location becomes available and then spawn in that direction. If all locations around the spawn are blocked and there is a hostile creep blocking any of the locations the spawn will treat those locations as available and spawn the creep on top of the first location available, KILLING the hostile creep that is in that location.
+
+<Image src="/images/SpawnStomping.gif" alt="Spawn Stomping" />
+
+## Transparent Spawning
+
+While spawning, the body of a creep exists underneath the visual of the Spawn structure. Injecting CSS to make the spawn transparent can enable you to see the spawning creep. This works for all spawns, both friendly and hostile.
+
+<Image src="/images/TransparentSpawning.gif" alt="Transparent Spawning" />

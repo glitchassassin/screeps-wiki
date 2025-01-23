@@ -1,0 +1,42 @@
+---
+title: Shard
+description: A Shard an instance of a server on Screeps, normally interconnected with portals to other Shards on highway crossroads.
+categories:
+  - Game_Knowledge
+---
+
+## MMO Shards
+
+### Shard 0
+
+The original Screeps world, larger (and therefor, slower) than all other shards. Large portions of the shard are in a 'shut down' state, to speed up the [tick](/Tick) rate. Many older players reside here as do many zombies.
+
+### Shard 1
+
+The first shard launched in September 2017, a grace period of 60 days was set where new and old players could respawn on the shard without interShard travelers from established Shard 0 colonies could expand. The shard is currently (as of 2020) largely controlled by the [Ypsilon-Pact](/Community_Communication) [alliance](/Alliances).
+
+### Shard 2
+
+Launched October 2017, Another grace-period was set for new settlers. This shard is known for its wild Tiger, who's bot is notorious on the shard.
+
+### Shard 3
+
+Launched in November 2018, Shard 3 was billed as a 'non-subscription' shard. All players on this shard are limited to a max of 20 [CPU](/CPU) (regardless of GCL/Sub/unlock status), which slightly evens the playing field for older players vs new ones. This shard again had a 60 day cooldown where travelers could not come from other shards, you could only respawn or spawn onto the shard.
+
+## Inter-Shard Travel & Claiming
+
+Known as InterSharding, you first need to insure you have [CPU](/CPU) allocated to the new shard before starting. Then to send a [creep](/Creep) to another shard you first need to find a [highway](/Room) room at a crossroads that contains an [interShard Portal](/StructurePortal). The creep then must step on the portal and they will be transported to the new shard.
+
+The creep will then emerge shortly after around the corresponding interShard portal within an area of 10x10 of it (there is no way to set where in this area it will appear), only its name and ticks-to-live will be the same. The creep's ID will be new and it will start with no memory regardless of what was assigned to it previously.
+
+If a creep exists already on-shard with the same name as the creep transported, the transported creep will die, leaving a [tombstone](/Tombstone). As such, setting up a system to give the creep memory and insure unique names is ideal.
+
+Once your creep is on the new shard, your code should start executing independently of your previous shard. You can start colonizing a new room as you would on your current shard. A useful way to keep specific code separate is to simply check which shard your code is running on using `Game.shard`.
+
+## Inter-Shard Memory
+
+[Inter-Shard Memory](/Memory#intershard-memory) is separate from normal [memory](/Memory) and is able to be retrieved across shards but, only written to on its own shard up to 100 KB of data. This allows for communication across Shards by reading other shard's data, see: https://docs.screeps.com/api/#intershard-memory
+
+## Known Issues
+
+There is a rare bug that can happen, where [interShardPortals](/StructurePortal) can 'store/eat' creeps. Creeps do eventually emerge on the other side, but can be many ticks later.

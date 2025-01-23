@@ -1,0 +1,40 @@
+---
+title: StructureFactory
+description: A factory is a user built structure that can be built in owned rooms at Room Control Level 7. Factories are used for the production of commodities, which are valuable resources produced from minerals and deposits and, are mainly for selling on the in game market to NPCs for credits. Factories can also produce batteries & bars of minerals, which is useful not only for the market but storing larger amounts of energy and minerals. A factory starts off with its .level property undefined and is effectively 'level 0'. It can only produce commodities that do not have a level requirement. A factory must have a powerCreep use the operate_power power to apply a level, dependent on what level power the powerCreep used. Once this level is set, it can not be changed. The factory can only produce at the level it is set when it has the effect of operate_power active on it, elsewise can produce any commodities that do not have a level requirement. Each production of a commodity sets the factory into a cooldown phase where it can not produce anything until it ends, this time is variably depending on the commodity produced.
+categories:
+  - Game_Knowledge
+  - In-Game_Objects
+  - In-Game_Resources
+---
+
+## Deposits
+
+There are four types of deposits, Metal, Biomass, Silicon and, Mist. These deposits spawn in highway rooms across the map each region spawns a different deposit and each shard has a different deposit in its respective region. Creeps can harvest from deposits like minerals using work parts, and deposits are one of the base resources used in the creation of commodities.
+
+### Deposit Harvesting
+
+Harvesting from deposits first requires locating a deposit, this can be done by creep scout or observer detection. Once located creeps can be dispatched to harvest from the deposits and bring back the resource. The difference from mineral harvesting is that a deposit's cooldown between harvest actions increases as it is harvested more. The more you harvest, the longer the cooldown between harvest actions. Multiple creeps can simultaneously harvest one deposit as long as they are preforming their harvest actions in the same tick, and there is no cooldown active that tick. Deposits do not de-spawn until 50,000 ticks of no harvesting, meaning that if you continually harvest a deposit, you can keep it around for longer however, the cooldown will only increase until you stop harvesting and let it despawn naturally, or the cooldown becomes greater than is possibly to harvest (Ie: 50,000 tick cooldown). It is up to the user to decide how profitable it is to continually harvest a deposit. As deposits are in highway rooms, expect competition from other user's also attempting to harvest them.
+
+## Commodities
+
+Commodities are used for creation of higher tier commodities and for sale on the in-game market. They range from level zero or 'basic', to level five. Each commodity requires different resources to be produced and each level can only be produced in a factory that matches the level of the commodity precisely. Meaning, a level five factory can not make a level two commodity and vice-versa.
+
+Beyond in-market trading & producing other commodities, they have no other current use in screeps. However, by selling to NPC orders they are the current largest source of introducing in-game credits into to the game. The value of the commodity scales with its level, with level 5 being worth the most.
+
+Commodities are also dropped by strongholds as loot for destroying their core and, in containers contained the the stronghold itself.
+
+### Producing Commodities
+
+As each step of commodity beyond the first step requires a separate leveled factory, producing from deposit & minerals all the way up to tier five commodities requires at minimum the user controls five RCL 7 rooms and several power creeps, meaning if your GCL is below five and your GPL below X?, you can not produce an entire chain on your own. You could, however purchase commodities from other players using the in-game market, or loot them from strongholds in order to skip parts of the process.
+
+For constant rates of production as cooldowns of productions increases as the tier of commodity increases as well as the cost, you will need several lower-tier factories producing lower-tier resources to supply the higher-tier ones.
+
+#### Automatic Production
+
+For fully automatic production of commodities across your colony requires several systems to be in place. First, you will need a source of energy, minerals and, deposits. Either though harvesting or purchasing on the in-game market. You then need powerCreeps, which requires at least one room at RCL 8 to have a power spawn gather or buy power to process there and get more GPL levels, you will also need a supply of Ops to use the operate_factory power, but power-creeps can generate this in their downtime. Once that is in place and you have your factories ready and powered, you need to have a creep or creeps supply your factories with energy, minerals and deposits/commodities dependent on what you are making and maintain the balance of what you put in, vs what you are making. You can use the commodities constant (found in the API) to determine what you can make, given what you have, and tell your factory to run .`produce()` accordingly. You then need to set up a supply chain either by creeps or terminals to transport the products along the rooms to the next stage until the final room. This can be considered a late-game task, as by the time you reach enough base-resources to preform these tasks fully, you have likely already created some of these systems for other things in your colony.
+
+However, you do not have to use a factory for an entire chain or even powerCreeps at all. Basic or level 0 commodities still have value on the market to NPCs and players, and do not require a powerCreep in order to power the factory. Thus, you can produce these items with just the factory, a creep to balance the resources in the factory and, a system for the factory to determine what to/what it can make. This is also a good step to getting more expanding this production later.
+
+### Batteries
+
+Batteries are compressed energy you can create at a factory, NPCs will not place orders for batteries unlike other commodities but players still may. They are useful for storing energy long-term while taking up space, you do however lose some of the energy in the compression/decompression process, and you have to run factory actions on them. They are however, more efficient to transport energy over long-distance on the map, as they are compressed energy it therefor takes less energy to send more energy a longer distance. Batteries can not be used as a direct substitute for energy in any given situation, they must be decompressed back into energy to be used.

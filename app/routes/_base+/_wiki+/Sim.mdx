@@ -1,0 +1,33 @@
+---
+title: Sim
+categories:
+  - Stubs
+  - Game_Knowledge
+---
+
+The simulator, often called sim, is a simulator of a screeps server that runs in your browser, on the webpage it can be found on this page by clicking survival https://screeps.com/a/#!/sim
+
+The simulator gives you 1 room and the ability to change tickrate and spawn any structure
+
+The following are notes gathered by the screeps community about the differences compared to playing on the official server or on a [private server](/Private_Server)
+
+A large part of the community members suggest testing on your own private server or directly on the mmo servers
+
+## Comments from other players
+
+- `room.controller.safeMode` is not started when the sim starts like when you spawn on official or PS
+- global resets after ~10 seconds
+  - I think it might be exactly every 12 ticks that it global resets, though don't quote me on that unless someone verifies
+  - Left a test running for a bit - every time a global reports it's been running more than 10 seconds in the user loop, the very next tick is always a reset.  Definitely seems to be based just on wall clock.
+- I'm working in sim right now. So far what I've run into is an issue with roomVisuals. I had to turn off room visuals in the graphics interface and turn it back on for it to paint them. Tick speed seems to be dependent on the graphics as well. If I zoom way out, the frame rate goes up, and tick speed seems to improve as well.
+- Yeah. Incidentally, on mmo roomvisuals don't work if you have particular other graphics options turned off. No idea why
+- I've never had any problems with visuals on sim
+  - `Game.cpu.getUsed()` always returns 0
+  - I also had a problem with `Game.map.describeExits`, because it returns what you would expect from a room completely surrounded by walls, which confused my room planner, since there were exit tiles without walls
+  - Game.cpu.bucket is undefined
+  - Well, in sim, you're limited by your browser, so I had to stop using object spread
+- Also the simulation room seems to be messed up with structure limits at level 2 i was able to place like 16 extensions
+- `Game.cpu.getHeapStatistics()` aint gonna work in sim
+- No way to test boosts. You cant buy them and you cant set the resources that a storage/terminal has.
+  - needs to be verified
+- Room positions have name "sim" but their `__packedPos` representations are for `W127N127`
