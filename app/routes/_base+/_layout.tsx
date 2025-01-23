@@ -104,7 +104,7 @@ export default function WikiLayout({
 
         {/* Main Content */}
         <main className="flex-1">
-          <div className="bg-white dark:bg-gray-800 shadow-sm p-6 prose prose-neutral dark:prose-invert max-w-none prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline">
+          <div className="bg-white dark:bg-gray-800 shadow-sm p-6 prose prose-neutral dark:prose-invert max-w-none prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-pre:whitespace-pre-wrap">
             {handle && (
               <>
                 {handle.frontmatter.title && (
