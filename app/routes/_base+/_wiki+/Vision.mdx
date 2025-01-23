@@ -1,0 +1,18 @@
+---
+title: Vision
+description: "While there is no 'fog of war' in screeps as the user can see all rooms at all times using the client/browser, your code can not. Having vision on a room means that the room shows up in your Game.rooms and subsequently allows access to (but not necessarily control of) the room object and objects in the room. If you do not have vision in a room, trying to use or get objects in that room will fail. There are several ways of getting vision in a room."
+categories:
+  - Game_Knowledge
+---
+
+## Owned rooms
+
+Your owned rooms where you have claimed the [controller](/StructureController) will always give you vision.
+
+## Creeps, tombstones and owned objects
+
+If you have a creep in a room, you will have vision in that room. Similarly if a creep dies and leaves a tombstone, you will have vision in that room as long as they tombstone exists. Owned objects also give vision.
+
+## Observers
+
+The [observer](https://docs.screeps.com/api/#StructureObserver) that can be built in a room at [RCL](/RCL) eight, can grant vision to a distant room up to ten rooms away by default, or up to unlimited on [shard](/Shard) range using a [powerCreep's power](/Power#Power_Observer). The vision will only be available for the next game [tick](/Tick) after calling `observeRoom()` and, will need to be constantly applied if continual vision is required.

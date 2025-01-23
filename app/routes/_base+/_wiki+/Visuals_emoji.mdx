@@ -1,0 +1,77 @@
+---
+title: Visuals emoji
+categories:
+  - Stubs
+  - Development
+---
+
+| Name | Emojii | Unicode |
+| --- | --- | --- |
+| ICON_ANGER | 💢 |  |
+| ICON_ANTENNA | 📡 | U+1F4E1 |
+| ICON_ATTACK | ⚔️ | U+2694 |
+| ICON_ATTACKCONTROLLER |  | \uD83D\uDDE1 |
+| ICON_AXE | 🪓 | U+1FA9 |
+| ICON_BUILD |  | \uD83D\uDD28 |
+| ICON_CHASE | 🪕 |  |
+| ICON_CIGARETTE | 🚬 | U+1F6AC |
+| ICON_CLAIMCONTROLLER |  | \uD83D\uDDDD |
+| ICON_COMPASS | 🧭 | U+1F9ED |
+| :shield: | 🛡️ | U+1F6E1 |
+| :hammer_and_spanner: | 🛠️ | U+1F6E0 |
+| :hammer_and_pick: | ⚒️ | U+2692 |
+| :pick: | ⛏️ | U+26CF |
+| bandage | 🩹 | U+1FA79 |
+| :place_of_worship: | 🛐 | U+1F6D0 |
+| :building_construction: | 🏗️ | U+1F3D7 |
+| :scales: | ⚖️ | U+2696 |
+
+## Structure Icons
+
+| Name | Emojii | Unicode |
+| --- | --- | --- |
+| ICON_STRUCTURE_CONTAINER |  | \uD83D\uDCE4 |
+| ICON_STRUCTURE_CONTROLLER |  | \uD83C\uDFF0 |
+| ICON_STRUCTURE_EXTENSION |  | \uD83C\uDFEA |
+| ICON_STRUCTURE_EXTRACTOR |  | \uD83C\uDFED |
+| ICON_STRUCTURE_KEEPER_LAIR |  |  |
+| ICON_STRUCTURE_LAB | ⚗️ | \u2697 |
+| ICON_STRUCTURE_LINK |  | \uD83D\uDCEE |
+| ICON_STRUCTURE_NUKER | ☢️ | \u2622 |
+| ICON_STRUCTURE_OBSERVER |  | \uD83D\uDCE1 |
+| ICON_STRUCTURE_PORTAL |  |  |
+| ICON_STRUCTURE_POWER_BANK |  |  |
+| ICON_STRUCTURE_POWER_SPAWN |  | \uD83C\uDFDB |
+| ICON_STRUCTURE_RAMPART |  | \uD83D\uDEA7 |
+| ICON_STRUCTURE_ROAD |  | \uD83D\uDEE3 |
+| ICON_STRUCTURE_SPAWN |  | \uD83C\uDFE5 |
+| ICON_STRUCTURE_STORAGE |  | \uD83C\uDFE6 |
+| ICON_STRUCTURE_TERMINAL |  | \uD83C\uDFEC |
+| ICON_STRUCTURE_TOWER |  | \uD83D\uDD2B |
+| ICON_STRUCTURE_WALL | ⛰️ | \u26F0 |
+
+## Energy Icons
+
+http://unicode.org/emoji/charts/full-emoji-list.html#sky_&_weather
+
+| Name | Emojii | Unicode |
+| --- | --- | --- |
+| new moon | 🌑 | U+1F311 |
+| waning crescent | 🌘 | U+1F318 |
+| last quarter moon | 🌗 | U+1F317 |
+| waning gibbous moon | 🌖 | U+1F316 |
+| full moon | 🌕 | U+1F315 |
+
+## References
+
+- Most of these ported from dragoonreas github: https://github.com/dragoonreas/Screeps/blob/9a1c6dbccad327d481a774f20b8152ecce117a0b/scripts/globals.js
+- medical http://unicode.org/emoji/charts/full-emoji-list.html#medical
+- ​https://apps.timwhitlock.info/emoji/tables/unicode
+- its probably better to use them like "\u{2795}" instead of calling a function
+- energy levels using moons http://unicode.org/emoji/charts/full-emoji-list.html#sky_&_weather
+- https://emojipedia.org/
+- http://unicode.org/emoji/charts/full-emoji-list.html#tool http://unicode.org/emoji/charts/full-emoji-list.html#place-building matches screeps font https://emojipedia.org/
+
+```js
+​export const UNICODE_ARROWS = { [TOP]: "\u2191", [TOP_RIGHT]: "\u2197", [RIGHT]: "\u2192", [BOTTOM_RIGHT]: "\u2198", [BOTTOM]: "\u2193", [BOTTOM_LEFT]: "\u2199", [LEFT]: "\u2190", [TOP_LEFT]: "\u2196", };​
+```
