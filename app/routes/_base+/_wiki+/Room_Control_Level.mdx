@@ -1,0 +1,62 @@
+---
+title: Room Control Level
+description: A room's control level (RCL) determines what and how much a player can build in a given room, and ultimately how useful it will be to the player. It only applies to owned rooms, and it can be upgraded by a creep using energy. When a room is first claimed, it is at RCL 1. Each level takes exponentially more energy to complete, until the transition from RCL 7 to 8, which costs 10,935,000 energy.
+categories:
+  - Stubs
+  - Game_Knowledge
+  - In-Game_Resources
+---
+
+## Increasing RCL
+
+A room's level can be increased by `upgrade()`ing its [controller](/StructureController) using a creep with a work part carrying energy. The energy used will be added to the RCL at a 1:1 ratio by default. This ratio can be improved by applying any [boost](/Boosts) of the GH category to the creep's work parts. The resulting amount of points added to the room's control level is automatically added to the player's [GCL](/Global_Control_Level) as well.
+
+## Maintaining RCL
+
+At RCL 8 there is no next level, and as such there is no further progress to be made on the room's controller. However, you can still upgrade the controller for up to 15 per tick, or more by using a [power creep's power](/Power#operate_controller). Doing so does contribute to your GCL as it did while upgrading.
+
+Whether or not the room controller is maxed, it is also necessary to upgrade every now and then, as otherwise the controller will decay and ultimately downgrade after a given number of ticks, depending on the controller's level. By default each tick with an upgrade action performed on the controller increases the decay timer by 100 (a higher number being better, as it is a countdown).
+
+## Decreasing RCL
+
+Decreasing a room controller's level is generally only a strategy for [combat](/Combat). By [attacking](https://docs.screeps.com/control.html#Attacking-controllers) the controller the decay is fast forwarded by a number of ticks, depending on the number of claim parts the attacking creeps have. In addition the controller is blocked from being upgraded for a given number of ticks.
+
+## Levels
+
+After claiming a room (or spawning in) it starts out at level 1 and can be raised up to level 8. The higher the level, the more [structures](/Structure) can be built. The full detailed list of structures available to each RCL is available at the official docs for [Control](https://docs.screeps.com/control.html#Available-structures-per-RCL). In the following a short list of notable structures per level. Note that many structures are not available to their full capacity from when they're first introduced. Many of them will give you a certain amount to be able to be built and add more every or every other level. One exception are ramparts, which dont have their numbers, but their `maxHits` increased instead.
+
+### Level 0
+
+Roads and containers can be built in any room, regardless of a presence or absence of a controller.
+
+### Level 1
+
+The most notable (and only new) structure at level 1 is the [spawn](/StructureSpawn), which enables a room to be self-sufficient as it can now spawn its own creeps.
+
+### Level 2
+
+Level 2 adds [ramparts](/StructureRampart) and extensions. The former is good for safety purposes, but the latter is what helps with progressing faster.
+
+### Level 3
+
+RCL 3 is regarded as one of the "milestones", as it adds the first [tower](/StructureTower), giving the player access to passive defense that is easily implemented code-wise.
+
+### Level 4
+
+At level 4 the [storage](/StructureStorage) can be built, which enables the player to manage their energy (and potentially other resources) more effectively, as they now have a much bigger buffer.
+
+### Level 5
+
+Level 5 adds the first [links](/StructureLink), which are immensely useful for increasing a room's efficiency as they remove the need for haulers between the positions they're built in. This way spawn availability is freed up and energy for spawning said haulers is saved.
+
+### Level 6
+
+With RCL 6 the room has access to the [terminal](/StructureTerminal), which enables market activities and market-independent inter-room transfers across the whole shard. In addition to that the room can now build [labs](/StructureLab) and the extractor, which are important for getting economic access to boosts.
+
+### Level 7
+
+Level 7 gives access to the [factory](/StructureFactory), which is used for either compressing resources or creating commodities to be traded for credits on the [market](/Market). A second Spawn is available now, effectively doubling spawn speed, and Extensions' capacity also gets doubled, enabling spawning of much larger creeps than before.
+
+### Level 8
+
+This is the highest level a room can reach and gives access to the nuker and the power spawn. With the last Spawn and another doubling of Extension capacity spawn speed and available creep size are increased again.

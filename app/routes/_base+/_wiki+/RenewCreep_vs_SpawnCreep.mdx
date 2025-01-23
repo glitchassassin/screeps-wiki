@@ -1,0 +1,46 @@
+---
+title: RenewCreep vs SpawnCreep
+description: Creeps have a limited life-span once created from a spawn. Every creep (without a claim part) starts with a 1500 ticksToLive property that decreases at a rate of 1 per game tick. Once ticksToLive reaches 0, the creep dies leaving a tombstone.
+---
+
+While creeps do have to be first-created with the spawnCreep method, once created it is possible using the spawn's renewCreep method to increase their ticksToLive possibly, forever (as long as they do not have a claim part and to maximum of 1500 ticksToLive).
+
+There are advantages and disadvantages to both methods, its quickest to say that spawnCreep is less CPU but locks up your spawn for longer, while renew creep costs more CPU, but allows the spawn to be free to spawn a creep if necessary.
+
+It is up to the user to decide what is best to implement and when for their bot
+
+## renewCreep
+
+To read about how renewCreep works and how to use it, please see the [API article](https://docs.screeps.com/api/#StructureSpawn.renewCreep).
+
+### Advantages
+
+- Less waiting while renewing the creep, vs spawning
+- Same cost as spawning.
+- A lower Room Control Level (RCL) room can renew a larger creep than it can't create.
+- Can 'opportunity' renew to keep active creeps active longer, and the spawn free.
+- Can have longer-lived 'static' fillers who tend to the spawn and surrounding structures.
+- Creep keeps Memory and can return to its assigned task (if it has one)
+
+### Disadvantages
+
+- Creep looses boosts
+- Can cost multiple [intents](/Intent) to get the creep back up to a higher ticksToLive, adding up to a higher [CPU](/CPU) cost
+- The creep can not do its job/task/role while renewing, it has to be adjacent to the spawn.
+- if opportunity renewing, have to be scanning for creeps or spawns (or by room, w/e manager is doing the detection)
+- Can cost even more CPU in travel to the spawn (one per each move intent, and any pathfinding to the spawn)
+
+## spawnCreep
+
+To read about how spawnCreep works and how to use it, please see the [API article](https://docs.screeps.com/api/#StructureSpawn.spawnCreep).
+
+### Advantages
+
+- Same cost as renewing.
+- Only one [intent](/Intent) is generated from calling the spawnCreep method and no subsequent intents are required (less CPU used overall).
+- Can 'preSpawn' to insure dying/creeps with low ticksToLive are replaced in a timely manner (when there is enough availability at the spawn, aka 'capacity' for it to keep the currently assigned creep pop/tasks.)
+
+### Disadvantages
+
+- Spawn is locked up (can't be used to spawn other things or renew) while spawning.
+- Have to rebuild/assign Memory to the creep for its task/role/job (often, meaning detecting what task/role/job is not being done, costing CPU)

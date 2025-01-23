@@ -1,0 +1,10 @@
+---
+title: RoomObject
+categories:
+  - Stubs
+  - Game_Knowledge
+---
+
+RoomObjects are what objects that can exist in a [room](/Map#room) are derived from. The prototype contains three properties, which any objects derived from it contain as well: Effects, which are currently applied using [power creeps' powers](/Power#Power_Creeps), [RoomPositions](/Map#roomposition), and the [Room](/Map#room) the object is in. Aside from [creeps](/Creep) RoomObjects cannot leave the room they belong to, even if they are on exits (as in the case of [tombstones](/Tombstone)).
+
+Note that [terrain](/Terrain) is not part of the RoomObjects. As a rule of thumb, anything where clicking will bring up the section with details on the interface's right panel is part of the RoomObject prototype.

@@ -1,0 +1,170 @@
+---
+title: Remote Harvesting
+description: Remote harvesting is a strategy used by many players to harvest more energy than is available in the rooms they own. It involves sending creeps into a nearby room, either an unowned room or a Source Keeper room, and harvesting the energy from those rooms and bringing it back.
+categories:
+  - Stubs
+  - Strategy
+---
+
+## Restrictions
+
+There are multiple obstacles with remote mining. These include gaining [vision](/Vision) to the room, making sure your code supports multiple room [pathing](/Pathing), hauling resources back from the remove rooms, the threat of [invaders](/Invader), and the logistics of reserving the room.
+
+## Strategies
+
+### Generic & Long-range harvesters
+
+The first and most basic of remote harvesting, generally generic body creeps or 'harvesters' can be allowed to either roam, or target adjacent rooms to look for more energy. On finding a source, they harvest their fill as their carry parts allow and return to their home room to use it on whatever task/goal/role they are assigned. While this can be a very easy method of gaining more energy than you could normally with the one-to-two sources provided in your default room, it does take your generic creeps outside the safety of your home room and, unless alot of creeps are involved it is hard to maximize the sources as time is required for the creeps to travel back and forth.
+
+### Miners & Haulers
+
+The most common tactic for harvesting a nearby room for energy, each source is normally set up with a miner to dedicatedly harvest the energy and hauler(s) to transport it.
+
+#### Miner
+
+A Miner's job when spawned is to go to its designated [source](/Source) or [roomPosition](/RoomPosition) and spend its life-time solely harvesting energy. Known as [Static Harvesting](/Basic_Harvesting) the creep can normally be configured in a number of ways. If there are roads to the location, less move parts are needed saving energy spawning the creep, but requiring repair of the roads. There is also a trade-off to be gained with the number of work parts the miner was spawned with. Larger (more work parts) miners can strip a source faster, thus saving CPU by issuing less harvest [intents](/Intent) they are however more expensive to spawn. Conversely, a smaller (less work parts) miner costs less to spawn but will have to issue more harvest intents to strip the source, using more CPU. Ultimately it is up to the user to determine what trade off is right for them/their bot.
+
+#### Hauler
+
+A Hauler's job is primarily to transport energy from the location the miner is mining, back to the home-room for storage/use. Similar to miners, hauler's bodies can come in different sizes/forms. Larger haulers can be used to fetch large amounts of energy and do so from multiple locations but cost more to spawn, while smaller haulers can be used to constantly transport back and forth but tend to stick to one location. To maintain roads, some users even attach work part(s) to haulers to enable them to repair as they move back and forth. This does of course, cost energy on spawning and use some of their energy in-transit but does save on having a dedicated repair creep make the journey.
+
+### Reserving
+
+Sources start out with 1500 energy in non-claimed or reserved rooms, so reserving them allows the sources to regenerate up to 3000 instead, allowing for more energy to be gained from the room. However, claim parts are expensive and so is having a creep constantly spam [intents](/Intent), which increases the more rooms you reserve. A creep with claim parts can reserve the controller in a proxy room (as long as it is not claimed) for one tick each claim part it has, and the 'reservation' will decay one each tick. The controller can have up to 5000 'reserved ticks' (effectively 4999 shown at any time), meaning you can have quite some time without a creep attending it. As claim (reserve) part creeps last only 600 ticks, balancing sending a creep to reserve and for how long, is important to both save energy & CPU.
+
+### Defense
+
+As with any room you harvest energy in, around every 100,000 energy harvested, as long as there is one exit open to a neutral room [invaders](/Invader) will attack. As creeps that harvest/transport/claim are normally non-combat creeps, and invaders by default live for 1500 ticks, simply letting them be can result in a large loss of energy. Effectively detecting, spawning and, deploying a combat creep to deal with the invaders automatically in a timely manner helps improve overall energy gains due to not needing downtime to avoid/respawn harvesting creeps.
+
+With the advent of [strongholds](/Invader) invaderCores can now spawn in rooms that are not owned by a user and start attacking/reserving a controller which can block your creeps from being able to harvest. As invaderCores are 'alien' technology and can not be dismantled by worker/harvester creeps, a creep needs to be dispatched to attack and remove the invaderCore. As some strongholds can spawn these quite often, dealing with them quickly and in a timely manner is critical.
+
+Beyond NPC threats, other users can also disrupt your proxy harvesting. Other user's attacks tend to be more dynamic / threating so require some [combat](/Combat) code to effectively deal with. But at base level, detecting the threat and responding to it is more or less the same as with an invader.
+
+### Transport & Storage
+
+Once the energy has been hauled back to the main room, transporting it and storing it is the next step. With a generic/long range harvesters they can generally go about whatever task until they have to harvest energy again, while haulers normally will bring the energy back to one spot to be distributed to other tasks. This job is normally taken up by the [Storage](https://docs.screeps.com/api/#StructureStorage) as it has a large capacity. [Links](/StructureLink), can also be used to help cut down on the movement [intents](/Intent) when moving the energy around the main room. Known as edge links, haulers can transfer their energy into the link close to the rooms edge, and head back for another load allowing for faster back-and-forth travel from the proxy mining site. The link can then send the energy to another link in the room to be taken into storage or used for whatever purpose it needs.
+
+### In-Depth Analysis
+
+**Roles**
+
+|            | Miner          | Hauler            | Reserver            | Guard           | Repairer        |
+| ---------- | -------------- | ----------------- | ------------------- | --------------- | --------------- |
+| Reserved   |[3M1C6W] (800e) | n*[1M2C] (n*150e) | n*[1M2Cl] (n*1250)e | 10M8R2H (2200e) | 10M7C3W (1150e) |
+| Unreserved |[2M1C3W] (550e) | n*[1M2C] (n*150e) | n*[1M2Cl] (n*1250)e | 10M8R2H (2200e) | 10M7C3W (1150e) |
+
+Structures Involved: Roads & Containers
+
+ALL CALCULATION ARE BASED ON energy (e) PER TICK BASIS
+
+Cost for each role involved:
+
+- Miner == 800e / (1500 - dist);
+- Hauler == 150e * n;
+  - for 100 carryCapacity every n multiple 100 carryCapacity can serve single source for dist == 5
+  - n == dist / 5;
+  - A hauler can do m times round trip during 1500 ticks
+  - m == Math.floor(1500 / (2 * dist)) == Math.floor(750 / dist);
+  - where the remaining ticks, not enough to make a round trip, is wasted.
+  - The hauler is then effectively lived for
+    - t == (2 * dist) * Math.floor(750 / dist);
+    - cost == (150e * dist / 5) / ((2 * dist) * Math.floor(750 / dist));
+      - cost == 15e / Math.floor(750 / dist);
+- Reserver reserves the controller for 2 * (600 - dist) ticks.
+  - cost == 1250e / (2 * (600 - dist));
+    - final cost == 625e / (600 - dist);
+- Guard can guard for 9rooms while standing at the center room.
+  - 9 rooms can contain up to 12 sources.
+    - cost == 2200e / (12 * 1500);
+      - final cost == 0.122e;
+- Repairer can repair the roads of 9 rooms while patrolling.
+  - Assume the roads leading to 12 sources has been take care of
+    - cost == 1150e / (12 * 1500);
+      - final cost == 0.064e;
+- Container
+  - Miner should repair its own container.
+  - Cost of container == 50e / 100 == 0.5e;
+- Roads
+- Number of roads involved == dist;
+  - cost of natural decay == dist;
+    - To calculate total decay, for each creep stepping on it, The body size is divided by walking interval, times the dist
+    - Decay of miner stepping on it:
+      - decay == 10 body every (1500 - dist) ticks;
+        - decay == 10 * dist / (1500 - dist);
+    - Decay of hauler stepping on it:
+      - decay == 3 * n every tick;
+        - decay == 3 * dist / 5 == 0.6 * dist;
+    - Decay of reserver stepping on it:
+      - decay == 3 * dist every (2 * (600 - dist)) ticks;
+        - decay == 1.5 * dist / (600 - dist);
+    - Guard and repairer should use off-road mode, while performing their duty.
+      - decay == 0;
+  - Total decay == dist + 10 * dist / (1500 - dist) + 0.6 * dist + 1.5 * dist / (600 - dist);
+    - Total decay == 1.6 * dist + 10 * dist / (1500 - dist) + 1.5 * dist / (600 - dist);
+    - Total road cost == (1.6 * dist + 10 * dist / (1500 - dist) + 1.5 * dist / (600 - dist)) * 0.001e;
+
+#### Summary:
+
+The cost of remote mining per tick versus dist:
+
+```
+cost == 800e / (1500 - dist) + 15e / Math.floor(750 / dist) + 625e / (600 - dist) + 0.122e + 0.064e + 0.5e + (1.6 * dist + 10 * dist / (1500 - dist) + 1.5 * dist / (600 - dist)) * 0.001e;
+```
+
+```
+cost == 800e / (1500 - dist) + 15e / Math.floor(750 / dist) + 625e / (600 - dist) + 0.686e + (1.6 * dist + 10 * dist / (1500 - dist) +  1.5 * dist / (600 - dist)) * 0.001e;
+```
+
+With hauler being major cost, and the road costs about half of the miner cost.
+
+**Single source room (reserved)**
+
+| Dist | Cost  | Efficiency |
+| ---- | ----- | ---------- |
+| 0    | 2.261 | 77%        |
+| 50   | 3.455 | 65%        |
+| 100  | 4.811 | 52%        |
+| 150  | 5.909 | 41%        |
+| 200  | 8.186 | 19%        |
+| 250  | 8.515 | 15%        |
+| 251  | 11.02 | -10%       |
+
+*Note: Efficiency is obtained by subtracting the cost from 10e
+
+Mining speed is 10e per source.
+
+**Double source room (reserved)**
+
+| Dist | Cost  | Efficiency |
+| ---- | ----- | ---------- |
+| 0    | 1.740 | 82%        |
+| 50   | 2,886 | 71%        |
+| 100  | 4.186 | 58%        |
+| 150  | 5.214 | 48%        |
+| 200  | 7.404 | 26%        |
+| 250  | 7.621 | 24%        |
+| 251  | 10.12 | -2.4%      |
+
+*Note: Efficiency is obtained by subtracting the cost from 10e
+
+Mining speed is 10e per source.
+
+**Unreserved room (1 or 2 sources)**
+
+| Dist | Cost  | Efficiency |
+| ---- | ----- | ---------- |
+| 0    | 1.019 | 80%        |
+| 50   | 1,596 | 68%        |
+| 100  | 2.245 | 55%        |
+| 150  | 2.752 | 45%        |
+| 200  | 3.832 | 23%        |
+| 250  | 3.912 | 22%        |
+| 251  | 5.164 | -3.2%      |
+
+*Note: Efficiency is obtained by subtracting the cost from 5e, since without reserving, the mining speed is 5e.
+
+## Source Keeper Rooms
+
+Each 10x10 sector of the map contains 8 source keeper rooms in a ring around the center. These rooms have no controller, so they cannot be owned. However, they contain 3 sources each, and each source contains a maximum of 4000 energy rather than 3000. This makes them a good source of energy. They also contain a mineral, just like other rooms, with an extractor already built on top that allows for harvesting.
+
+However, these rooms are guarded by non-player Source Keepers, which will attack creeps that try to harvest the sources. In addition, non-player Invaders will appear in greater numbers with increased frequency and strength. Extra precautions must be taken to ensure the safety of your harvesters.
