@@ -1,0 +1,250 @@
+---
+title: Power
+description: Power is a resource in Screep's that is used in increasing a user's Globasl Power Level by feeding it into a powerSpawn.
+categories:
+  - Game_Knowledge
+  - In-Game_Objects
+  - In-Game_Resources
+---
+
+Power is a resource in Screep's that is used in increasing a user's Globasl Power Level by feeding it into a powerSpawn and executing [https://docs.screeps.com/api/#StructurePowerSpawn.processPower](https://docs.screeps.com/api/#StructurePowerSpawn.processPower) at the cost of 50 energy per 1 power. Global Power Level allows you to spawn powerCreeps which have special powers and are considered the hero units of screeps. Power is also a resource that can be sold/bought in the [market](/Market). It is naturally created in PowerBanks which spawn in highway rooms on the map. Global Power Level is determined via `Math.floor(Math.pow((runtimeData.user.power || 0) / C.POWER_LEVEL_MULTIPLY, 1 / C.POWER_LEVEL_POW))` where 'runtimeData.user.power' is your current processed power, and 'C.POWER_LEVEL_MULTIPLY' and 'C.POWER_LEVEL_POW' are constants which can be seen in the [official api](https://docs.screeps.com/api/).
+
+## PowerBanks
+
+Power-banks are structures that spawn in highway rooms and contain power. They exist for 5000 ticks, decaying at a rate of 1 per tick. They will contain some amount of power (randomly) between 500 - 10,000. They have a health of 2,000,000 hits and need to be destroyed to drop the power, which they will in a ruin for 5 ticks, then on the ground subsequent ticks. Attacking a powerBank reflects half of the damage back to the attacking creep.
+
+### Power Harvesting
+
+Power harvesting is action of locating, destroying, and retrieving power from powerBanks. You first need to locate a powerBank in a highway room via creep scout or Observer, then spawn creeps to attack it, and creeps to heal (or however you choose to configure your creeps). You then need to attack the bank till it runs out of HP, once dead, it is wise to have carrier creeps already in position to take the power from the ruin/ground and transport it back to one of your rooms for processing/the market.
+
+## Power Creeps
+
+Power creeps are considered hero units in screeps, they have their own unique look and while they do have ticksToLive of 5000, they are effectively immortal as even if they die they can be respawned after a short cooldown of 8 hours. You create powerCreeps with your Global Power Levels on the manage power creeps section of your overview page, and then spawn them into the world using https://docs.screeps.com/api/#PowerCreep.spawn and a powerSpawn. Their TicksToLive can be extended by using https://docs.screeps.com/api/#PowerCreep.renew targeted at a powerSpawn or powerBank, and they will have a carry capacity & Hit points based on their level. Powercreeps can use a variety of powers which most cost a resource tied to that type of creep. Currently, the operator creep is the only powerCreep released.
+
+When creating/upgrading a powerCreep, you spend GPL to increase the level of its powers. Powers start at level 0 (Meaning the power creep does not have access to them) and can be leveled 1 - 5 which increases the effectiveness of that power. Each level of a power you apply to the powerCreep increases its overall level which starts at 0 (no powers) and goes to level 25. A powerCreep of level 25 can not have any more powers or levels applied to them. As the powerCreep increases in level, its carry capacity and overall hitpoints increases at a rate of 1000 hit points per level and 100 capacity per level. A level 0 power creep starts with 1000 hitpoints and 100 carry capacity. You can only upgrade certain powers to a new level when the powerCreep itself has reached a certain level. This often means that you can not make a pure 1 power creep, as the higher levels of a power requires a high overall powerCreep level.
+
+Its important to note, that removing/deleting a powerCreep from your account costs 1 GPL and takes 24 hours, unless you activate an experimentation period which allows you to delete without a cost instantly for 24 hours. These periods are normally granted during times of new releases (such as when powerCreeps released, or factories) to allow for players to adjust to the new mechanics without penalty. You can only have a maximum of 30 experimentation periods at a time and, there is not set schedule or time that they replenish.
+
+### Operator
+
+The first released class of powerCreep, operators can handle a wide variety of tasks from economy to defense and attacking. They have several powers, some which cost the resource Ops, but not all cost this resource to use.
+
+#### Generate_Ops
+
+A power that generates the resource Ops that is used in a variety of the operator's powers as a required resource. It can also be sold/purchased though the market. The effect is instant, granting ops to the powerCreeps' carry as long as there is space to do so and, has a cooldown of 50 ticks.
+
+| Level | Effect | Required PC level |
+| ----- | ------ | ----------------- |
+| 1     | 1 Ops  | 0                 |
+| 2     | 2 Ops  | 2                 |
+| 3     | 4 Ops  | 7                 |
+| 4     | 6 Ops  | 14                |
+| 5     | 8 Ops  | 22                |
+
+#### Operate_Spawn
+A power that reduces the time it takes to spawn a creep, the amount of time depends on the level of the power and, has a duration of 1000 ticks. It costs 100 ops to use with a range of 3 and, a cooldown of 300 ticks.
+
+| Level | Effect        | Required PC level |
+| ----- | ------------- | ----------------- |
+| 1     | 10% reduction | 0                 |
+| 2     | 30% reduction | 2                 |
+| 3     | 50% reduction | 7                 |
+| 4     | 65% reduction | 14                |
+| 5     | 80% reduction | 22                |
+
+#### Operate_Tower
+A power that increases the damage, repair and, healing of a tower for a duration of 100 ticks. It costs 10 ops to use with a range of 3 and, has a cooldown of 10 ticks.
+
+| Level | Effect       | Required PC level |
+| ----- | ------------ | ----------------- |
+| 1     | 10% increase | 0                 |
+| 2     | 20% increase | 2                 |
+| 3     | 30% increase | 7                 |
+| 4     | 40% increase | 14                |
+| 5     | 50% increase | 22                |
+
+#### Operate_Storage
+A power that increased the total capacity of a storage structure for 1000 ticks. It costs 100 ops to use with a range of 3 and, has a cooldown of 800 ticks. If the effect is applied runs out and more resources are in the storage then the default 1m capacity, the resources remain in the storage however nothing new can be transferred to it until the effect is reapplied or enough resources are removed to bring it below the default capacity.
+
+| Level | Effect        | Required PC level |
+| ----- | ------------- | ----------------- |
+| 1     | 500K increase | 0                 |
+| 2     | 1M increase   | 2                 |
+| 3     | 2m increase   | 7                 |
+| 4     | 4M increase   | 14                |
+| 5     | 7M increase   | 22                |
+
+#### Operate_Lab
+A power that increases the amount a lab can process on a runReaction() call for 1000 ticks. It costs 10 ops to use with a range of 3 and has a cooldown of 50 ticks. An important note is that this does not create additional resources, but merely allows the lab to use more of the already supplied resource in one tick then it would otherwise.
+
+| Level | Effect                 | Required PC level |
+| ----- | ---------------------- | ----------------- |
+| 1     | 2 more units per tick  | 0                 |
+| 2     | 4 more units per tick  | 2                 |
+| 3     | 6 more units per tick  | 7                 |
+| 4     | 8 more units per tick  | 14                |
+| 5     | 10 more units per tick | 22                |
+
+#### Operate_Extension
+A power that allows you to instantly fill an amount all extensions in a room dependent on level of the power (up to 100%), by targeting a Storage, Terminal or Container that contains enough energy to do so, the effect is instantaneous. It costs 2 ops to use with a range of 3 and a cooldown of 50 ticks.
+
+| Level | Effect                 | Required PC level |
+| ----- | ---------------------- | ----------------- |
+| 1     | 20% of total capacity  | 0                 |
+| 2     | 40% of total capacity  | 2                 |
+| 3     | 60% of total capacity  | 7                 |
+| 4     | 80% of total capacity  | 14                |
+| 5     | 100% of total capacity | 22                |
+
+#### Operate_Observer
+A power that grants unlimited range to an observer structure (normally a range of 10 rooms) who's duration is dependent on the level of the power. It costs 10 ops to use with a range of 3 and, a cooldown of 400 ticks.
+
+| Level | Effect     | Required PC level |
+| ----- | ---------- | ----------------- |
+| 1     | 200 ticks  | 0                 |
+| 2     | 400 ticks  | 2                 |
+| 3     | 600 ticks  | 7                 |
+| 4     | 800 ticks  | 14                |
+| 5     | 1000 ticks | 22                |
+
+#### Operate_Terminal
+A power that decreases the energy cost of deals and the cooldown when dealing of the affected terminal for 1000 ticks. It costs 100 ops to use with a range of 3 and, has a cooldown of 500 ticks.
+
+| Level | Effect        | Required PC level |
+| ----- | ------------- | ----------------- |
+| 1     | 10% reduction | 0                 |
+| 2     | 20% reduction | 2                 |
+| 3     | 30% reduction | 7                 |
+| 4     | 40% reduction | 14                |
+| 5     | 50% reduction | 22                |
+
+#### Operate_Disrupt_Spawn
+A power that pauses the spawning process of a targeted spawn, its duration is determined by level of the power. It costs 10 ops to use with a range of 20 and, a cooldown of 5 ticks.
+
+| Level | Effect  | Required PC level |
+| ----- | ------  | ----------------- |
+| 1     | 1 tick  | 0                 |
+| 2     | 2 ticks | 2                 |
+| 3     | 3 ticks | 7                 |
+| 4     | 4 ticks | 14                |
+| 5     | 5 ticks | 22                |
+
+#### Operate_Disrupt_Tower
+A power that reduces the damage, healing and, repair of a tower, its duration is 5 ticks. It costs 10 ops to use with a range of 50, there is no cooldown for this power.
+
+| Level | Effect        | Required PC level |
+| ----- | ------------- | ----------------- |
+| 1     | 10% reduction | 0                 |
+| 2     | 20% reduction | 2                 |
+| 3     | 30% reduction | 7                 |
+| 4     | 40% reduction | 14                |
+| 5     | 50% reduction | 22                |
+
+#### Operate_Disrupt_Source
+A power that pauses the regeneration of source, the duration is determined by the level of the power. It costs 100 ops to use with a range of 3 and, has a cooldown of 100 ticks.
+
+| Level | Effect    | Required PC level |
+| ----- | --------- | ----------------- |
+| 1     | 100 ticks | 0                 |
+| 2     | 200 ticks | 2                 |
+| 3     | 300 ticks | 7                 |
+| 4     | 400 ticks | 14                |
+| 5     | 500 ticks | 22                |
+
+#### Shield
+A power that creates a un-repairable rampart ontop of the powerCreep for 50 ticks. It does not cost ops to use with a range of 0 and, has a cooldown of 20 ticks. The health of this rampart is variable depending on the power level and it can not be created on an existing rampart.
+
+| Level | Effect | Required PC level |
+| ----- | ------ | ----------------- |
+| 1     | 5K HP  | 0                 |
+| 2     | 10K HP | 2                 |
+| 3     | 15K HP | 7                 |
+| 4     | 20K HP | 14                |
+| 5     | 25K HP | 22                |
+
+#### Fortify
+A power that makes a wall or rampart invulnerable to all attacks and powers, the duration is determined the level of the power. It costs 5 ops to use with a range of 3 and, has a cooldown of 5 ticks.
+
+| Level | Effect  | Required PC level |
+| ----- | ------- | ----------------- |
+| 1     | 1 tick  | 0                 |
+| 2     | 2 ticks | 2                 |
+| 3     | 3 ticks | 7                 |
+| 4     | 4 ticks | 14                |
+| 5     | 5 ticks | 22                |
+
+#### Operate_Factory
+A power that is applied to a factory structure for the duration of 1000 ticks. If the factory has no previously set level, the effect will set the level of the factory allowing for the production of more advanced commodities. Once a factory's level is set, it can not be changed. A factory can only produce at the level it is set to, while this power's effect is applied to it, else wise it will allow for level 0 productions, as if its level had not been set. It costs 100 ops to use with a range of 3 and, has a cooldown of 800 ticks.
+
+| Level | Effect                | Required PC level |
+| ----- | --------------------- | ----------------- |
+| 1     | L1 set and/or enabled | 0                 |
+| 2     | L2 set and/or enabled | 2                 |
+| 3     | L3 set and/or enabled | 7                 |
+| 4     | L4 set and/or enabled | 14                |
+| 5     | L5 set and/or enabled | 22                |
+
+#### Regen_Source
+A power that regenerates an amount of energy based on the power's level, every 15 ticks for a duration of 300 ticks. It costs no ops to use with a range of 3 and, has a cooldown of 100 ticks.
+
+| Level | Effect     | Required PC level |
+| ----- | ---------- | ----------------- |
+| 1     | 50 Energy | 10                |
+| 2     | 100 Energy | 11                |
+| 3     | 150 Energy | 12                |
+| 4     | 200 Energy | 14                |
+| 5     | 250 Energy | 22                |
+
+
+#### Regen_Mineral
+A power that regenerates an amount of the targeted mineral based on the power's level, every 10 ticks for a duration of 100 ticks. It costs no ops to use with a range of 3 and, has a cooldown of 100 ticks.
+
+| Level | Effect      | Required PC level |
+| ----- | ----------- | ----------------- |
+| 1     | 2 minerals  | 10                |
+| 2     | 4 minerals  | 11                |
+| 3     | 6 minerals  | 12                |
+| 4     | 8 minerals  | 14                |
+| 5     | 10 minerals | 22                |
+
+#### Operate_Power
+A power that increases the amount a powerSpawn can process power dependent on the power's level, for a duration of 1000 ticks. It costs 200 ops to use with a range of 3 and, has a cooldown of 800 ticks. Its important to note, the increased power processing keeps the same energy consumption rate of 50 per 1 power processed. As such, the powerSpawn will use more energy per tick proportional to the level of power applied.
+
+| Level | Effect  | Required PC level |
+| ----- | ------- | ----------------- |
+| 1     | 1 power | 10                |
+| 2     | 2 power | 11                |
+| 3     | 3 power | 12                |
+| 4     | 4 power | 14                |
+| 5     | 5 power | 22                |
+
+#### Disrupt_Terminal
+A power which blocks withdrawing resources from a terminal for a duration of 10 ticks. It costs a variable amount of ops to use depending on the power's level with a range of 50 and, has a cooldown of 8 ticks.
+
+| Level | Effect | Required PC level |
+| ----- | ------ | ----------------- |
+| 1     | 50 ops | 20                |
+| 2     | 40 ops | 21                |
+| 3     | 30 ops | 22                |
+| 4     | 20 ops | 23                |
+| 5     | 10 ops | 24                |
+
+#### Operate_Controller
+A power that increases the maximum amount of energy that can be sent to a level 8 controller when upgrading, variably depending on the power's level for a duration of 1000 ticks. It costs 200 ops to use with a range of 3 and, has a cooldown of 800 ticks.
+
+| Level | Effect    | Required PC level |
+| ----- | --------- | ----------------- |
+| 1     | 10 energy | 20                |
+| 2     | 20 energy | 21                |
+| 3     | 30 energy | 22                |
+| 4     | 40 energy | 23                |
+| 5     | 50 energy | 24                |
+
+
+### Executor
+
+Announced, but awaiting release. The creep is stated as of last update to be a creep that works alone and if effective at Attacking & Economy.
+
+### Commander
+
+Announced, but awaiting release. The creep is stated as of last update to be a creep not useful on its own, but most powerful with other creeps that directly affects individual or groups of creeps.

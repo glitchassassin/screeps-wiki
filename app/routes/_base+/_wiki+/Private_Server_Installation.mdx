@@ -1,0 +1,50 @@
+---
+title: "Private Server Installation"
+description: This guide will help you get started with installing a Screeps Private Server.
+categories:
+  - Private_Server
+---
+
+## Community Solutions
+
+These are the community-preferred solutions for hosting a private server.
+
+### Screepers Launcher
+
+[Screepers Launcher](https://github.com/screepers/screeps-launcher) is developed by the community to streamline the launch process and offer additional features for managing the private server.
+
+The recommended way to install the Screepers Launcher is to use the Docker image. This will ensure that all dependencies are met and that the server is isolated from the host system. See the [Docker Install Instructions](https://github.com/screepers/screeps-launcher#docker-compose) for more information.
+
+### Jomik's Screeps Server
+
+[Jomik's Screeps Server](https://github.com/Jomik/screeps-server) focuses on ease of use and simplicity. It leverages Docker to provide a containerized environment, simplifying deployment and administration.
+
+To install Jomik's Screeps Server, follow the instructions in the [Getting Started Guide](https://github.com/Jomik/screeps-server/wiki/Getting-started).
+
+## Official Server Package
+
+The `screeps` package on npm is the most up-to-date version of the Screeps server and is the official private server package provided by the Screeps development team. However, it is not as user-friendly as the community solutions.
+
+### Requirements
+
+- Node 10 or Node 12 (Newer versions of node will not work)
+- Python 2 and Python 3
+- Build tools (`apt install build-essential` for Debian/Ubuntu, install Visual Studio for Windows)
+
+### Installation
+
+The GUI launcher is installed along with the Screeps client through Steam.
+
+To install the Screeps private server without a GUI, run the following commands. This will start the server on part 21025 by default. For the most up to date instructions and requirements, visit https://github.com/screeps/screeps.
+
+```bash
+npm install screeps
+npx screeps init
+npx screeps start
+```
+
+To connect to CLI server, in another shell run:
+
+```bash
+npx screeps cli
+```

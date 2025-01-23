@@ -1,0 +1,51 @@
+---
+title: Private Server Bot Development
+categories:
+  - Private_Server
+---
+
+## Private Server Bot Development
+
+### Release
+
+Add `"screeps_bot": true` to the `package.json`. Set the `main.js` as entry point and relase the code as npm package. The bot then needs to be added as a steam workshop item. This can be done via the screeps server interface.
+
+Read more in the official documentation: https://github.com/screeps/screeps#npc-bots
+
+### Development
+
+Well, the usual script could already be released as a bot.
+
+### Necessary features
+
+- Automatic structure placement
+
+### Nice to have
+
+- External room harvesting 
+- Mineral handling 
+- Power harvesting
+- New rooms claiming on GCL level up 
+- Automatic attack 
+- Rebuild of fallen rooms 
+
+### Hints
+
+- Be aware of random spawn positions.
+- Don't touch the interface while developing
+  - If a structure needs to be placed, write code
+  - If a creep is stuck, write code
+  - If a constructionSite is wrong, write code
+- Manage dynamic environments. Recheck external harvesting rooms from time to time, e.g. players can vanish
+- Handle migrations of code. As soon as the bot is released every version can be deployed and upated to the current one. Make sure that rooms can selfheal, remove wrong positioned structures, recreated from any kind of existing structures.
+
+### Considerations
+
+- A passive bot is boring
+- An agressive bot is annoying
+
+### Examples
+
+- [SimpleBot](https://github.com/screeps/launcher/tree/master/init_dist/node_modules/%40screeps/simplebot)
+- [TooAngelBot](https://github.com/TooAngel/screeps)
+

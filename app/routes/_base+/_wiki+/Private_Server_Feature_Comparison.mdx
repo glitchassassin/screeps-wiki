@@ -1,0 +1,43 @@
+---
+title: "Private Server Feature Comparison"
+description: Feature Comparison between official (MMO) and Private Server (PS)
+categories:
+  - Private_Server
+---
+
+## Legend
+
+| Legend | Description | Legend | Description |
+| --- | --- | --- | --- |
+| ✔️ | has feature | (✔️) | partial implementation |
+| 🚫 | does not have feature | ⛅️ | implemented by untested mod |
+| 🔬 | needs investigation |  |  |
+
+## Features
+
+| Feature | MMO | PS | MOD | Comment |
+| --- | --- | --- | --- | --- |
+| Creep convoys | ✔️ | 🚫 |  | logic for convoys needs to be implemented |
+| Power Banks | ✔️ | 🚫 |  | could probably be added to screeps-admin-utils, psy327 will probably work on this |
+| Sharding | ✔️ | 🚫 |  | ags131 is working on something |
+| Dynamic CPU | ✔️ | ⛅️ | [screepsmod-gcltocpu](https://github.com/ScreepsMods/screepsmod-gcltocpu) | Untested, psy327 has PR for admin utils for this feature |
+| Room Overview Stats | ✔️ | 🚫 |  |  |
+| Overview Stats | ✔️ | 🚫 |  |  |
+| Leaderboards | ✔️ | 🔬 |  |  |
+| Market | ✔️ | 🔬 | [screepsmod-market](https://github.com/ScreepsMods/screepsmod-market) | Is this an alternate code, or the same as official? |
+| Room History | ✔️ | ✔️ | [screepsmod-history](https://github.com/ScreepsMods/screepsmod-history) | Warning: Currently with AWS mode this produces a lot of PUT requests, this can easily become very expensive. For that reason, AWS mode is currently not recommended |
+| Authentication | ✔️ | ✔️ | [screepsmod-auth](https://github.com/ScreepsMods/screepsmod-auth) | This adds user/pass auth to the screeps private server |
+| Database | ✔️ | ✔️ | [screepsmod-mongo](https://github.com/ScreepsMods/screepsmod-mongo) | Replace LokiJS with MongoDB and Redis, loki should not be used for public private servers, official runs with mongo and redis |
+
+## Endpoints
+
+| Feature | MMO | PS | MOD | Comment |
+| --- | --- | --- | --- | --- |
+| Experimental PVP endpoint | ✔️ | ✔️ | [screepsmod-admin-utils](https://github.com/ScreepsMods/screepsmod-admin-utils) | GET /api/experimental/pvp |
+| Server Performance | 🚫 | ✔️ | [screepsmod-admin-utils](https://github.com/ScreepsMods/screepsmod-admin-utils) | GET /stats |
+| Dynamic World Start Room | ✔️ | ✔️ | [screepsmod-admin-utils](https://github.com/ScreepsMods/screepsmod-admin-utils) | GET /api/user/world-start-room |
+
+
+## A better launcher for Screeps private servers
+
+https://github.com/screepers/screeps-launcher

@@ -1,0 +1,50 @@
+---
+title: "Private Server Installation on Digital Ocean"
+categories:
+  - Private_Server
+---
+
+## Create the Droplet
+
+First create a Droplet running Ubuntu 16.04, then either SSH into the server or use the terminal from Digital Ocean's website. Next, enter the following commands step by step:
+
+- `apt update`
+- `apt upgrade`
+
+Screeps needs python
+
+- `apt install python`
+- `apt install python`
+
+nodejs is not installed on Ubuntu by default, and we want the new version so we need to add a new source before we install it because Ubuntu’s version is outdated This installs 8.x, see https://github.com/nodesource/distributions to grab sources for other versions
+
+- `curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -`
+- `apt install -y nodejs`
+
+The weak npm package, which is what my install was choking on, needs make apparently, which isn’t installed by default
+
+- `apt install make `
+
+Update: 11/12/2018
+
+After experiencing errors installing screeps as a global package, a solution was found here:
+
+- `apt install build-essential` https://github.com/screeps/screeps/issues/48#issuecomment-282206006
+
+We are only using sudo here so we can add --unsafe perm Weak (actually, node-gyp rebuild) couldn’t get a lock on a folder it needed to access without it More info at https://github.com/nodejs/node-gyp/issues/454 --loglevel verbose so we can watch and make sure it doesn’t fail
+
+- cd to a directory that’s empty that screeps init stuff can be stored, probably...
+- `cd ~`
+- `npm install screeps -g --loglevel verbose --unsafe-perm`
+- `screeps init` (will need to give this your Steam Web API Key, see https://github.com/screeps/screeps )
+- `screeps start`
+
+Test connecting to your server using your server's IP (see Digital Ocean for that) and the default port. If that works, kill your server with ctrl+c and run it perpetually in the background using...
+
+- `nohup screeps start &`
+
+And you're good!
+
+If you want to kill the server while it runs in the background, run...
+
+- `killall -9 node`

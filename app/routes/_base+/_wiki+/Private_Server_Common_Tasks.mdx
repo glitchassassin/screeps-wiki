@@ -1,0 +1,408 @@
+---
+title: Private Server Common Tasks
+description: This page provides a list of common tasks that can be performed on a Screeps Private Server using the CLI server.
+categories:
+  - Private_Server
+---
+
+The CLI server is accessed through the terminal or command prompt and can be used to control the server and modify server settings.
+
+## CLI Server Commands
+
+### Commands List
+
+Get a list of available commands.
+
+```js
+help()
+```
+
+Additional commands may be available depending on the server configuration and installed mods.
+
+## Server Config
+
+### System Commands
+
+Get the commands for managing the server.
+
+```js
+help(system)
+```
+
+### Pause Server Ticks
+
+Pause the server to prevent ticks from running.
+
+```js
+system.pauseSimulation()
+```
+
+### Resume Server Ticks
+
+Resume the server to allow ticks to run.
+
+```js
+system.resumeSimulation()
+```
+
+### Tick Rate
+
+Get the current tick duration.
+
+```js
+system.getTickDuration()
+```
+
+### Change Tick Rate
+
+Set the server tick duration to 1000 milliseconds per tick, default is 1000.
+
+```js
+system.setTickDuration(1000)
+```
+
+## Users
+
+### Global Control Level
+
+Change the GCL of a user.
+
+```js
+storage.db.users.update({ username: 'username' },{ $set: { gcl: 38000000 } })
+```
+
+### Global Power Level
+
+Change the GPL of a user.
+
+```js
+storage.db.users.update({ username: 'username' },{ $set: { power: 540000 } })
+```
+
+### Market Credits
+
+Change the credits of a user.
+
+```js
+storage.db.users.update({ username: 'username' },{ $set: { money: 2000000 } })
+```
+
+### CPU Limit
+
+Change the CPU limit of a user.
+
+```js
+storage.db.users.update({ username: 'username' },{ $set: { cpu: 500 } })
+```
+
+## Rooms
+
+### Controller Level
+
+Change the room's controller level (RCL).
+
+```js
+storage.db['rooms.objects'].update({ _id: 'idOfController' },{ $set: { level: 8 } })
+```
+
+### Controller Progress
+
+Change the progress amount of a controller.
+
+```js
+storage.db['rooms.objects'].update({ room: 'W7N3', type: 'controller' },{ $set: { progress: 10899000 } })
+```
+
+### Remove Objects
+
+Remove all Ruins from a room. This can be used to remove other game object types as well.
+
+```js
+storage.db['rooms.objects'].removeWhere({ type: 'ruin' })
+```
+
+## Resources
+
+### Mineral Amount
+
+Change the available amount of a mineral.
+
+```js
+storage.db['rooms.objects'].update({ type: 'mineral', room: 'W7N3' },{ $set: { mineralAmount: 250000 } })
+```
+
+### Mineral Regeneration Time
+
+Reset the mineral regeneration time.
+
+```js
+storage.db['rooms.objects'].update({ type: 'mineral' },{ $set: { nextRegenerationTime: 1000000 } })
+```
+
+### Add Energy to Storage
+
+Add energy to a storage structure.
+
+```js
+storage.db['rooms.objects'].update({ type: 'storage', room: 'W7N3' },{ $set: { store: { energy: 100000 } } })
+```
+
+### Add Minerals to Storage
+
+Add minerals to a storage structure.
+
+```js
+storage.db['rooms.objects'].update({ type: 'storage', room: 'W7N3' },{ $set: { store: { H: 25000, O: 25000, U: 25000, L: 25000, K: 25000, Z: 25000, X: 25000 } } })
+```
+
+## Construction Sites
+
+### Max Construction Progress
+Set max progress on all construction sites. As soon as a creep does any construction the structure will be built.
+
+```js
+storage.db['rooms.objects'].update({ type: 'constructionSite' },{ $set: { progress: 99999 } })
+```
+
+## Repair
+
+### Repair Ramparts
+
+Repair all rampart structures. The type can be modified to repair other structure types as well.
+
+```js
+storage.db['rooms.objects'].update({ type: 'rampart' },{ $set: { hits: 1000000 } })
+```
+
+### Repair Structure
+
+Repair a structure by id.
+
+```js
+storage.db['rooms.objects'].update({ _id: 'idOfStructure' },{ $set: { hits: 1000000 } })
+```
+
+## Map
+
+### Map Commands
+
+Get the commands for managing the world map.
+
+```js
+help(map)
+```
+
+### Insert New Room
+
+Generate a new room and add it to the world.
+
+```js
+map.generateRoom('W11N11', { sources: 2 })
+```
+
+### Open Room
+
+Make a room available for use.
+
+```js
+map.openRoom('W5N1')
+```
+
+### Open Room
+
+Open a room in 5 minutes.
+
+```js
+map.openRoom('W5N1', Date.now() + 300 * 1000)
+```
+
+### Close Room
+
+Make a room not available.
+
+```js
+map.closeRoom('W5N1')
+```
+
+### Update Terrain Data
+
+Update the cached world terrain data. Use this whenever there's a chance the terrain data has been modified so that the server reloads it from the database.
+
+```js
+map.updateTerrainData()
+```
+
+### Refresh Image Assets
+
+Refresh every room's image assets. Use this whenever the map images do not match the terrain.
+
+```js
+storage.db.rooms.find().then(rooms => Promise.all(rooms.map(({ _id }) => map.updateRoomImageAssets(_id))));
+```
+
+### Add NPC Terminals
+
+Add a NPC Terminal to a room. Repeat as many times as desired changing rooms (Use highway rooms or SK rooms). NPC orders should appear on the market automatically after a little while.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W0N0', x: 0, y: 0, type: 'terminal' })
+```
+
+### Add Power Banks
+
+Add a Power Bank to a room.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W4N10', x: 25, y: 25, type: 'powerBank', store: { power: 4000 }, hits: 10000, hitsMax: 10000, decayTime: 1000000 })
+```
+
+### Add Deposits
+
+Add a Deposit to a room, change the depositType to change type of the deposit.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W0N9', x: 16, y:26, type: 'deposit', depositType: 'mist' })
+```
+
+### Add Portals
+Add a Portal to a room. Run this command twice and create portals going both directions for the best result. You can alternatively set unstableDate as a timestamp (think Date.now()) instead of decayTime, in which case the portal will be stable up until the time expires, at which point the game will set decayTime to PORTAL_DECAY.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W5N5', x: 25, y: 25, type: 'portal', destination: { x: 25, y: 25, room: 'E5N5' }, decayTime: 100000 })
+```
+
+## Bots
+
+### Bot Commands
+
+Get the commands for managing bots.
+
+```js
+help(bots)
+```
+
+## Strongholds
+
+### Stronghold Commands
+
+Get the commands for managing strongholds.
+
+```js
+help(strongholds)
+```
+
+### Add Invader Core
+
+Add an Invader Core to a room. The number in the templateName is the stronghold level.
+
+```js
+strongholds.spawn('W4N5', { templateName: 'bunker3' })
+```
+
+### Remove Invader Cores
+
+Remove Invader Cores from all rooms.
+
+```js
+storage.db['rooms.objects'].removeWhere({ type: 'invaderCore' })
+```
+
+### Add Invader Core Ruin
+
+Add an Invader Core Ruin to a room. This can be used to prevent new invader cores from spawning.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W6N4', x: 25, y: 32, type: 'ruin', structure: { id: '652eb0d77373ad0040d22421', type: 'invaderCore', hits: 0, hitsMax: 100000, user: '2'}, user: '2', store: {}, destroyTime: 1, decayTime: 5000000 })
+```
+
+## NPC Invaders
+
+### Spawn NPC Invader
+
+Add a ranged attack NPC invader to a room.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W6N3', x: 0, y: 11, type: 'creep', user: '2', name: 'invader_small_ranged', body: [{ type: 'tough', hits: 100 },{ type: 'tough', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'ranged_attack', hits: 100 },{ type: 'ranged_attack', hits: 100 },{ type: 'ranged_attack', hits: 100 },{ type: 'move', hits: 100 } ], hits: 1000, hitsMax: 1000, ticksToLive: 1500, fatigue: 0, store: {}, storeCapacity: 0 })
+```
+
+Add a melee NPC invader to a room.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W6N3', x: 1, y: 40, type: 'creep', user: '2', name: 'invader_small_melee', body: [{ type: 'tough', hits: 100 },{ type: 'tough', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'attack', hits: 100 },{ type: 'attack', hits: 100 },{ type: 'attack', hits: 100 },{ type: 'move', hits: 100 } ], hits: 1000, hitsMax: 1000, ticksToLive: 1500, fatigue: 0, store: {}, storeCapacity: 0 })
+```
+
+Add a healer NPC invader to a room.
+
+```js
+storage.db['rooms.objects'].insert({ room: 'W6N3', x: 1, y: 41, type: 'creep', user: '2', name: 'invader_small_healer', body: [{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'move', hits: 100 } ], hits: 1000, hitsMax: 1000, ticksToLive: 1500, fatigue: 0, store: {}, storeCapacity: 0 })
+```
+
+## Find
+
+### Find Users
+
+Find all users.
+
+```js
+storage.db.users.find()
+```
+
+### Find a User
+
+Find a user by their username to get data such as the user id.
+
+```js
+storage.db.users.findOne({ username: 'username' })
+```
+
+### Find Objects
+
+Find all room objects of a certain type.
+
+```js
+storage.db['rooms.objects'].find({ room: 'W7N3', type: 'constructionSite' })
+```
+
+## Memory
+
+### Get User Memory
+
+Get the memory of a user by their user id.
+
+```js
+storage.env.get('memory:41dbd8207f1bf62')
+```
+
+Alternatively you can find the user by their username and chain together the commands to get the memory.
+
+```js
+storage.db.users.find({ username: 'username' }).then(([first]) => storage.env.get(storage.env.keys.MEMORY + first._id ))
+```
+
+## Wipe Server
+
+### Reset Server Data
+
+Wipe the map and reset all user data, rooms, GCL, GPL, server settings, etc.
+
+```js
+system.resetAllData()
+```
+
+## Server Fixes
+
+### Reset Room Activity
+
+Occasionally, a server may encounter an issue where all rooms are set to active for processing, even those without player objects. The cause of this issue is unknown, but it can result in the server running slowly. By setting rooms to inactive, you can resolve this issue and improve server performance.
+
+```js
+storage.db.rooms.update({ active: true }, { $set: { active: false } })
+```
+
+### Reset Map Images
+
+Regenerate room images for the world map.
+
+```js
+storage.db.rooms.find().then(rooms => rooms.map(r => map.updateRoomImageAssets(r._id)))
+```

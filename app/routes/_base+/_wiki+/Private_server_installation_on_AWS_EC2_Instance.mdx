@@ -1,0 +1,51 @@
+---
+title: "Private Server Installation on AWS EC2 Instance"
+categories:
+  - Private_Server
+---
+
+## Setup Amazon Web Services EC2 with Node JS
+
+Follow this guide to install Node 6.5.0: http://iconof.com/blog/how-to-install-setup-node-js-on-amazon-aws-ec2-complete-guide/
+
+### Open Ports 21025 – 21028 in AWS Console
+
+- Go to the "Network & Security" -> Security Group settings in the left hand navigation
+- Find the Security Group that your instance is using
+- Click on Inbound Rules
+- Use the drop down and add Custom TCP Rule (port 21025 - 21028)
+- Click Apply and enjoy
+
+### Resize your instance:
+
+A m3.medium EC2 instance (1 CPU's and 4GB RAM) or a c4.large (2 CPU's and 4GB RAM) runs the game quickly, while t2.micro was noticeably sluggish. It should be noted that any of the t2 family will run at 20% of normal speed once they run out of "cpu credits", so it is advisable to avoid using them.
+
+- Using AWS Management Console:
+- Right-Click on the instance
+- Wait...
+- Instance Management > Change Instance Type
+
+## Start Screeps Server
+
+In an SSH command window, run the following:
+
+```bash
+sudo su
+npm install -g screeps
+screeps init
+nohup screeps start &
+```
+
+You will be prompted for your Steam Web API key, you can obtain it on [this page](https://steamcommunity.com/dev/apikey).
+
+### Restarting the Server
+
+If you need to restart your server for some reason, or the process ends, simply re-run the start command:
+
+```bash
+sudo nohup screeps start &
+```
+
+## Profit!
+
+That's it! Close your SSH connection and exit your terminal. You can now connect to your EC2 instance's IP address @ port 21025 using a Steam client.

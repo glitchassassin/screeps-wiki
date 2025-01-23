@@ -1,0 +1,66 @@
+---
+title: Private Server
+description: The Screeps private server is a distributed, standalone game server that allows you to launch your own game world on a local computer or dedicated server on the Internet.
+categories:
+  - Private_Server
+---
+
+## Modules
+
+The private server consists of several modules that work together to provide the game environment.
+
+### Launcher
+
+The server launch process consists of multiple parallel processes linked to each other. There are different types of launchers available:
+
+- **GUI Launcher**: This launcher comes with the standard version of the game on Steam. It provides a GUI for managing the server, viewing server logs, and a CLI interface to control the server. However, it can be cumbersome to modify and update and is not the preferred way to manage a server.
+- **Console Launcher**: Allows launching the server from a command line without the GUI. Prerequisites include Node 10, Python 2, and build tools.
+- **Custom Launchers**: Users can create their own launchers to manage server processes.
+
+These are the community preferred solutions for hosting a private server:
+
+- [Screepers Launcher](https://github.com/screepers/screeps-launcher): developed by the community to streamline the launch process and offer additional features for managing the private server.
+- [Jomik's Screeps Server](https://github.com/Jomik/screeps-server): focuses on ease of use and simplicity. It leverages Docker to provide a containerized environment, simplifying deployment and administration.
+
+### Storage
+
+Contains a LokiJS-based database, a key-value storage, and a Pub/Sub mechanism. It stores game data, including map and player data.
+
+### Backend
+
+Includes an HTTP server for client access and a CLI server for administration. Administrators can execute commands and interact with mods.
+
+### Engine
+
+The game core responsible for executing game scripts and interacting with game world objects.
+
+### Driver
+
+Acts as a link between the environment-independent engine and the immediate hosting environment. Users can replace this module for customized data handling.
+
+### Common
+
+A shared code base with useful utilities.
+
+### Source code
+|                                          |                                                                 |
+| ---------------------------------------- | ----------------------------------------------------------------|
+| https://github.com/screeps/screeps       | Main repo, mostly a meta-package and wrapper for other modules. |
+| https://github.com/screeps/launcher      | Electron/CLI launcher.                                          |
+| https://github.com/screeps/backend-local | Webserver/API module.                                           |
+| https://github.com/screeps/engine        | Core Engine, shared with public server.                         |
+| https://github.com/screeps/storage       | Storage module, acts as a communications hub.                   |
+| https://github.com/screeps/common        | Shared module for connecting to storage.                        |
+| https://github.com/screeps/driver        | Engine driver.                                                  |
+
+## Server mods
+
+Screeps mods are a way to extend the functionality of the private server. Mods can add new features, change existing ones, or provide additional tools for managing the server.
+
+Collection of community-made Screeps mods: https://github.com/ScreepsMods
+
+## Links
+
+- [Installation](/Private_Server_Installation)
+- [Common Tasks](/Private_Server_Common_Tasks)
+- [Community Servers](/Community_Servers)

@@ -1,0 +1,46 @@
+---
+title: "Pushing code to Screeps"
+description: When it comes to pushing (uploading/updating/saving/committing) code to Screeps, there is three main ways to go about it.
+categories:
+  - Development
+---
+
+## Client & Browser
+
+The 'default' way to push code to Screeps is to use the provided Steam Client and/or Browser version. Using the provided window, a user can write and/or paste code into created modules or directly into main. At the top-left of the window there will be a green checkmark that when clicked will push the current version of the code to the server. It is important to note, that this must be done when the main window's focus is at room-level, attempting to upload code at map-level will result in it not saving, and quite possibly loss of progress as it may reset to the previously pushed version. Along with the checkmark you can also use the circular arrow (return arrow) next to it, to revert your changes to the last-pushed state the server had. Once clicked, there is no warning or pop-up asking are you sure, it is just reverted. Alternatively you can use `ALT + ENTER` to do a push or 'save' the current code you are working on.
+
+Another way of editing is though the local copy of your Scripts stored on your machine running the Screep's client. Stored under `C:\Users\UserNameHere\AppData\Local\Screeps\Scripts` then in folders dependent on server (like screeps.com, or your local IP for a steam private server), all scripts created are contained within. As long as the client is running, it will auto-sync the relevant folder of scripts (note: will not do subfolders, everything must be in one folder!) So changes made to the Screep's version are synced to the local folder, and changes made to the local folder's scripts are synced to Screep's version. If the client was not running when changes were made to the Screep's version (by any means) Screeps will detect the discrepancy and ask you if you wish to replace your local folder's scripts with the Screep's server's version.
+
+While easy to access and use, as noted it quite possible in a few ways to lose progress on your scripts this way either by not syncing properly, or saving at the wrong time.
+
+## GitHub Integration
+
+It is possible to use Github to push code to Screeps by commits to the `master` branch. First, a User needs to link their Screep's account to their Github account on the [account page](https://screeps.com/a/#!/account). Then, any new commits to the repository in the master branch will be uploaded to Screeps. It is important to note that this is one-way, changes on the Screep's server copy by other means do not update the github repository.
+
+Some important things to note:
+
+- Only files from the Directory indicated in the repository sync configuration will be copied.
+- Does not copy subdirectories.
+- Must be 'default' branch running in Screeps.
+
+## Web-API
+
+Using Screep's [Web API](https://docs.screeps.com/auth-tokens.html) it is possible to push code to Screep's from a variety of applications. Please note: If done automatically there are [rate limits](https://docs.screeps.com/auth-tokens.html#Rate-Limiting) in place, always follow the official doc's guidelines on usage and follow posted limits. Screep's official docs also detail how under the [committing Scripts using external tools](https://docs.screeps.com/commit.html) document.
+
+### Grunt
+
+Grunt is well-documented on Screep's official docs, introduced in the [committing](https://docs.screeps.com/commit.html) article and expanding in the [Advanced Grunt Usage](https://docs.screeps.com/contributed/advanced_grunt.html) article.
+
+### ATOM
+
+The ATOM editor was to be the [officially reccomended](https://blog.screeps.com/2019/08/ide/) IDE for screeps, however beyond the first alpha announcement is still believed to be in development as of writing. It uses the webAPI to push code, which is set-up though a guided process when installing the [Screep's-ide package](https://atom.io/packages/screeps-ide). It will ask the user to sign-in and create a token for ATOM to use pushing code to the server.
+
+### VS Code
+
+### Rollup
+
+for an example of using Rollup, take a look at the [Screeps Typescript Starter](https://github.com/screepers/screeps-typescript-starter)
+
+### Private-Server Uploading
+
+To upload code to a private-server using this method, you need to have the [Screepsmod-auth](https://github.com/ScreepsMods/screepsmod-auth) installed and running.
