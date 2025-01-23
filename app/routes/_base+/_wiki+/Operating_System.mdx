@@ -1,0 +1,56 @@
+---
+title: Operating System
+description: In the context of Screeps an operating system is a process based way of controlling code execution, run priority and managing resources like CPU, heap and Memory.
+categories:
+  - Development
+---
+
+## General philosophy
+
+Every Screeps player has to decide in what order the different modules of their code base will run. For beginners, starting with a tutorial code style bot, it is very easy: They decide in what order things should run and then just write a chain of if-else/switches to accomplish this order. Usually at a certain point of logic complexity this gets out of hand though.
+
+Once a player is at that point they either stick to the concept or start abstracting the different modules more.
+
+An OS style bot is based on processes. All game logic is usually contained or referenced in these processes, then the programmer assigns priorities to the processes and decides when to start them. The great thing about a working OS is that this is all there is to managing code execution order and CPU: The OS manages everything for you in the background.
+
+A quick example for CPU management: If you are at your CPU limit constantly and your ticks get cut off because your bucket is empty you might not ever run logic that you put at the end of your main loop. The remedy for this is usually to work based on bucket levels and deactivate parts of your code base. You can prevent this "starvation" of the logic in OS very easily by increasing the priority of processes that have not run in a while. At some point your process will rise enough in priority to be run.
+
+## Components
+
+The most common components are process, scheduler and kernel. Other than these three there are a lot of different names for similar concepts and seemingly endless possibilities to name/design the details of the system.
+
+### Basic Components
+
+These are the fundamental components that you will definitely find in one form or another in any Screeps OS.
+
+#### Process (runnable entity)
+
+A process contains logic for a certain part of the bot, like a module in a non-OS bot. The logic is usually executed by a `run()` method. processes generally have at least some sort of id (for the instance), a name (the process "type") and a priority (or ordering purposes) attached.
+
+#### Scheduler (decides what to run next)
+
+The scheduler manages execution order of processes and will generally offer some way for the kernel to get the next Process to run.
+
+#### Kernel (manages OS)
+
+The kernel is usually the entity that keeps the whole system together. It will commonly offer an API to interact with the OS as a whole (for example a `tick()` method to run everything) or partially (for example adding processes to run and similar).
+
+### Other common components
+
+These components are also commonly found in OS, usually to help abstracting things further.
+
+#### Process Table
+
+A process table is a way of managing currently running processes on the kernel or scheduler. The simplest way to do this is to keep an object that is indexed by process ids or names and contains processes.
+
+#### Process registry
+
+This is a way to organize "available" processes. It makes starting new processes a bit easier (if you have all processes in a registry, all you need is the type/name of a process to get back an instance) but also helps with setting up different environments for different servers. You could run a whole different set of processes per shard or on private servers.
+
+#### Threads (as runnable entity)
+
+In this model threads are the runnable entity and they are owned/started by a process. Processes become more of a context data container, managing threads.
+
+#### File system
+
+While we are doing all this work abstracting logic into process based systems, we might as well manage Memory and caches using a file system. Ideally a fs abstracts away every call to `Memory.something`. In doing so, you can easily change the save location on the "backend" (how about moving something from Memory to segments for example) without having to touch all your game logic. Having a FS also allows you to have one API for any data location.

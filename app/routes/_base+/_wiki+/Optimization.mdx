@@ -1,0 +1,54 @@
+---
+title: Optimization
+description: Optimization is is the act of making your code more efficient in some form or manner. In order to optimize, a target must be chosen to optimize towards.
+---
+
+import { Image } from "../../../components/Image";
+
+## Types of Efficiency Targets
+
+### CPU efficiency
+
+Optimizing to use the least amount of CPU to complete a specific task like locking creeps to 1 intent per tick to reduce average CPU usage. See the category CPU Optimization for examples. This is the most familiar target, allowing you to reduce your CPU usage, or do more with the same amount of CPU.
+
+### Game Efficiency
+
+This is when you target your code to do multiple things at once (e.g. carriers fill an extension and move to the next one on the same tick).
+
+### Energy Efficiency
+
+When something you do saves energy or maximizes energy input (e.g. calculating and spawning the exact size of carriers needed based on distance of the remote source)
+
+### Other Efficiencies
+
+#### Spawn Efficiency
+
+When you want to maintain the maximum amount of creeps (or creep parts) out of a single spawn during a single creep cycle (1500 ticks)
+
+#### Memory Efficiency
+
+A subset of CPU efficiency, it's when you trim your memory usage to minimize the parse/serialization CPU usage
+
+<Image src="/images/Efficiency_Target_Triangle_(Figure_1).jpg" caption="Efficiency Target Triangle (Figure 1) - This is a visual representation (with examples) that optimizing towards one efficiency type is typically detrimental to the other two major types." float="right" />
+
+## Target Selection
+
+Looking at these types of efficiency, you can see that some implementations targeting one are mutually exclusive of others. You cannot both lock creeps to 1 intent per tick and move and fill extensions on the same tick. This forces us to look at each optimization target (efficiency type) as a scale.
+
+Looking at Figure 1, you can see that each of the targets have a theoretical "perfect" point. The closer you get to any of these, the farther away from the others you get. Every edit to your code is a trade off, just like the traditional CPU vs memory trade off that computer programmers have had since the beginning. You target one, and sacrifice others.
+
+## Usefulness of multiple targets
+
+Different efficiency targets are beneficial at different points in the game.
+
+### Early Game
+
+Early, when you only have one room, you will have more CPU than you need. Focusing on Energy efficiency will allow you to upgrade your [Controller](/StructureController) faster, to increase your [RCL](/Room_Control_Level) and [GCL](/Global_Control_Level).
+
+### Mid-Game
+
+Mid-Game, You're a little more established and are less concerned solely about energy, and will want to increase and expand your operations, so game efficiency is a more logical target during this period. You're still not doing too much, so CPU is not yet an issue, so it does not need to be the sole target yet.
+
+### Late Game
+
+Late Game is very CPU constrained. A large player with 50+ rooms of vision per-tick (typical of even RCL 20 players) will have a lot of logistics, intelligence, trading code, and more all vying for CPU usage. Operating Systems become more appealing in an attempt to manage the CPU. At this point, CPU efficiency becomes the only reasonable target, and you will need to focus solely on that.
