@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import { getPages } from "~/lib/pages.server";
 import type { Route } from "./+types/Categories._index";
 
@@ -48,12 +47,12 @@ export default function Categories({
       <ul className="list-disc pl-6">
         {categories.map((category) => (
           <li key={category.name} className="my-0">
-            <Link
-              to={`/Categories/${category.name}`}
+            <a
+              href={`/Categories/${category.name}`}
               className="text-blue-600 dark:text-blue-400 hover:underline"
             >
               {category.name}
-            </Link>
+            </a>
           </li>
         ))}
       </ul>

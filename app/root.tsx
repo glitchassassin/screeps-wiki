@@ -1,6 +1,5 @@
 import {
   isRouteErrorResponse,
-  Link,
   Links,
   Meta,
   Outlet,
@@ -79,12 +78,12 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
           <h1 className="text-3xl font-bold mb-4">{title}</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-8">{message}</p>
           <div className="flex justify-center gap-4">
-            <Link
-              to="/"
+            <a
+              href="/"
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
             >
               Return to Main Page
-            </Link>
+            </a>
             {createFilename && (
               <a
                 href={`${REPO_URL}/new/main/app/routes/_wiki%2B?filename=${createFilename}.mdx`}

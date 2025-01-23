@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 import { useState } from "react";
-import { Link, Outlet } from "react-router";
+import { Outlet } from "react-router";
 import { WikiHeader } from "~/components/WikiHeader";
 import { getPages } from "~/lib/pages.server";
 import type { TocEntry } from "../../lib/remark/toc";
@@ -73,40 +73,40 @@ export default function WikiLayout({
               )}
             >
               <li>
-                <Link
-                  to="/"
+                <a
+                  href="/"
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
                   Main Page
-                </Link>
+                </a>
               </li>
               <li className="border-t border-gray-200 dark:border-gray-700 my-4"></li>
               {quicklinks.map((page) => (
                 <li key={page.slug}>
-                  <Link
-                    to={page.slug}
+                  <a
+                    href={page.slug}
                     className="text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     {page.frontmatter.title}
-                  </Link>
+                  </a>
                 </li>
               ))}
               <li className="border-t border-gray-200 dark:border-gray-700 my-4"></li>
               <li>
-                <Link
-                  to="/AllPages"
+                <a
+                  href="/AllPages"
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
                   All Pages
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to="/Categories"
+                <a
+                  href="/Categories"
                   className="text-blue-600 dark:text-blue-400 hover:underline"
                 >
                   Categories
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
