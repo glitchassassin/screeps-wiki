@@ -8,7 +8,7 @@ categories:
 
 ## Restrictions
 
-There are multiple obstacles with remote mining. These include gaining [vision](/Vision) to the room, making sure your code supports multiple room [pathing](/Pathing), hauling resources back from the remove rooms, the threat of [invaders](/Invader), and the logistics of reserving the room.
+There are multiple obstacles with remote mining. These include gaining [vision](/Vision) to the room, making sure your code supports multiple room [pathing](/Pathfinding), hauling resources back from the remove rooms, the threat of [invaders](/Invader), and the logistics of reserving the room.
 
 ## Strategies
 
@@ -22,7 +22,7 @@ The most common tactic for harvesting a nearby room for energy, each source is n
 
 #### Miner
 
-A Miner's job when spawned is to go to its designated [source](/Source) or [roomPosition](/RoomPosition) and spend its life-time solely harvesting energy. Known as [Static Harvesting](/Basic_Harvesting) the creep can normally be configured in a number of ways. If there are roads to the location, less move parts are needed saving energy spawning the creep, but requiring repair of the roads. There is also a trade-off to be gained with the number of work parts the miner was spawned with. Larger (more work parts) miners can strip a source faster, thus saving CPU by issuing less harvest [intents](/Intent) they are however more expensive to spawn. Conversely, a smaller (less work parts) miner costs less to spawn but will have to issue more harvest intents to strip the source, using more CPU. Ultimately it is up to the user to determine what trade off is right for them/their bot.
+A Miner's job when spawned is to go to its designated [source](/Source) or [roomPosition](/Map#roomposition) and spend its life-time solely harvesting energy. Known as [Static Harvesting](/Static_Harvesting) the creep can normally be configured in a number of ways. If there are roads to the location, less move parts are needed saving energy spawning the creep, but requiring repair of the roads. There is also a trade-off to be gained with the number of work parts the miner was spawned with. Larger (more work parts) miners can strip a source faster, thus saving CPU by issuing less harvest [intents](/Intent) they are however more expensive to spawn. Conversely, a smaller (less work parts) miner costs less to spawn but will have to issue more harvest intents to strip the source, using more CPU. Ultimately it is up to the user to determine what trade off is right for them/their bot.
 
 #### Hauler
 
@@ -36,7 +36,7 @@ Sources start out with 1500 energy in non-claimed or reserved rooms, so reservin
 
 As with any room you harvest energy in, around every 100,000 energy harvested, as long as there is one exit open to a neutral room [invaders](/Invader) will attack. As creeps that harvest/transport/claim are normally non-combat creeps, and invaders by default live for 1500 ticks, simply letting them be can result in a large loss of energy. Effectively detecting, spawning and, deploying a combat creep to deal with the invaders automatically in a timely manner helps improve overall energy gains due to not needing downtime to avoid/respawn harvesting creeps.
 
-With the advent of [strongholds](/Invader) invaderCores can now spawn in rooms that are not owned by a user and start attacking/reserving a controller which can block your creeps from being able to harvest. As invaderCores are 'alien' technology and can not be dismantled by worker/harvester creeps, a creep needs to be dispatched to attack and remove the invaderCore. As some strongholds can spawn these quite often, dealing with them quickly and in a timely manner is critical.
+With the advent of [strongholds](/Invader#strongholds--stronghold-invaders) invaderCores can now spawn in rooms that are not owned by a user and start attacking/reserving a controller which can block your creeps from being able to harvest. As invaderCores are 'alien' technology and can not be dismantled by worker/harvester creeps, a creep needs to be dispatched to attack and remove the invaderCore. As some strongholds can spawn these quite often, dealing with them quickly and in a timely manner is critical.
 
 Beyond NPC threats, other users can also disrupt your proxy harvesting. Other user's attacks tend to be more dynamic / threating so require some [combat](/Combat) code to effectively deal with. But at base level, detecting the threat and responding to it is more or less the same as with an invader.
 

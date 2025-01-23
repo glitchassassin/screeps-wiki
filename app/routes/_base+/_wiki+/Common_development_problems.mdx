@@ -106,7 +106,7 @@ An [exit-tile](/Exit_tiles) will cause a creep that is on it at-ticks-end to be 
 Some different ways to counter-act this:
 
 - Call on your logic to move as-soon-as your detected in room (EX: Your in room, you lock your target/find your target, move to it asap in code not next tick).
-- Use a [roomPosition](/RoomPosition) as a target, and only begin your in-room logic once you have moved 'in range' (away from exit tiles) of the desired position
+- Use a [roomPosition](/Map#roomposition) as a target, and only begin your in-room logic once you have moved 'in range' (away from exit tiles) of the desired position
 - Use roomPositions as a target, in context of your goal for the room. (EX: You want to harvest a source, use a roomPosition that is adj to the source as a target for the move)
 - Step off the exit tile into the room as soon as you enter (not guaranteed 'best position' but do-able)
 

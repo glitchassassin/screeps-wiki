@@ -120,7 +120,7 @@ Once a user hit's [GCL](/Global_Control_Level) two, they can claim another [room
 
 ### Claiming
 
-A creep with claim parts needs to travel to an adjacent [roomPosition](/RoomPosition) to the target room's [controller](/StructureController) and execute a `claimController()` call. If the user has spare GCL, the room will be claimed, the controller will need energy to upgrade/stay claimed, and a spawn construction site can be placed. As a creep with claim parts only has 600 ticks-to-live, a room needs to be ~599 tiles (roomPositions) away from where it was spawned. As rooms are 50 by 50 tiles, you can claim a room ~10-12 rooms away from your spawn (depending on [terrain](/Terrain) generating more fatigue via swamps for the creep or blocking/longer paths around walls, obstacles like other players, ect).
+A creep with claim parts needs to travel to an adjacent [roomPosition](/Map#roomposition) to the target room's [controller](/StructureController) and execute a `claimController()` call. If the user has spare GCL, the room will be claimed, the controller will need energy to upgrade/stay claimed, and a spawn construction site can be placed. As a creep with claim parts only has 600 ticks-to-live, a room needs to be ~599 tiles (roomPositions) away from where it was spawned. As rooms are 50 by 50 tiles, you can claim a room ~10-12 rooms away from your spawn (depending on [terrain](/Terrain) generating more fatigue via swamps for the creep or blocking/longer paths around walls, obstacles like other players, ect).
 
 ### Building
 
@@ -297,7 +297,7 @@ The users (your) code will run on every shard you have a owned object on. As suc
 
 ## Strongholds
 
-A [stronghold](/Invader) automatically spawns in a [sector](/Sector) in one of the [Source-Keeper rooms](/Room) routinely, with lots of loot in the form of resources. Being able to attack and eventually, automatically attack and loot these fortresses is a large task, but if you have some combat code set up already it can be easier.
+A [stronghold](/Invader#strongholds--stronghold-invaders) automatically spawns in a [sector](/Map#sector) in one of the [Source-Keeper rooms](/Map#room) routinely, with lots of loot in the form of resources. Being able to attack and eventually, automatically attack and loot these fortresses is a large task, but if you have some combat code set up already it can be easier.
 
 ### Detection
 
@@ -337,7 +337,7 @@ A [costMatrix](https://docs.screeps.com/api/#PathFinder-CostMatrix) is used by t
 
 ### Caching & Reusing paths
 
-Once a path is found, if creeps are reliably going to re-use the path either constantly or to an 'approximate' area, then storing the path and calling it when-needed greatly helps reduce CPU useage as your creeps do not have to constantly re-calculate it. Generally unless you wish to write your own, [moveByPath()](https://docs.screeps.com/api/#Creep.moveByPath) is employed. It can take either an array of [RoomPositions](/RoomPosition) or a string as formatted by [findPath](https://docs.screeps.com/api/#Room.findPath) or a string that was formatted in the findPath style that is then compressed using [serialize path](https://docs.screeps.com/api/#Room.serializePath). It is important to note, that for using moveTo it MUST be one of these formats, and a valid format. Using an array of objects that contain roomPosition data, but are not roomPositions themselves does not work, and either does a user's custom string compression UNLESS it is converting back to a format that moveByPath understands. It is quite possible to convert roomPositions from pathFinder.search() into the format that findPath uses if desired.
+Once a path is found, if creeps are reliably going to re-use the path either constantly or to an 'approximate' area, then storing the path and calling it when-needed greatly helps reduce CPU useage as your creeps do not have to constantly re-calculate it. Generally unless you wish to write your own, [moveByPath()](https://docs.screeps.com/api/#Creep.moveByPath) is employed. It can take either an array of [RoomPositions](/Map#roomposition) or a string as formatted by [findPath](https://docs.screeps.com/api/#Room.findPath) or a string that was formatted in the findPath style that is then compressed using [serialize path](https://docs.screeps.com/api/#Room.serializePath). It is important to note, that for using moveTo it MUST be one of these formats, and a valid format. Using an array of objects that contain roomPosition data, but are not roomPositions themselves does not work, and either does a user's custom string compression UNLESS it is converting back to a format that moveByPath understands. It is quite possible to convert roomPositions from pathFinder.search() into the format that findPath uses if desired.
 
 ## Automated Room Planning & Building
 
