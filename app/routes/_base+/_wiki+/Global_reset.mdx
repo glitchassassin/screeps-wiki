@@ -1,0 +1,19 @@
+---
+title: Global reset
+description: Global Resets are a byproduct of the loop architecture. They occur when the `global` object is cleared, which causes everything that was cached in it to get removed.
+categories:
+  - Game_Knowledge
+  - Development
+---
+
+When the global object is reset it causes a spike in CPU usage as a number of items are no longer cached and must be regenerated, including-
+
+- Parsed code loaded through the `require` function.
+- Results of any code outside of the "loop" function,
+- Anything stored manually in the `global` object itself.
+
+Global Resets occur whenever new code is uploaded to the server. They also occur infrequently over time.
+
+## Reset Storms
+
+Prior to around May 2019, every six hours a large cluster of global resets would occur, colloquially referred to as "reset storms". These clusters can have over a hundred global resets that happen almost every tick while this is ongoing. As the reset storms grew in size the developers began adding more CPU to player's buckets whenever they occurred, allowing players to use more of the bucket to offset the increase CPU load. Thanks to several updates to the game however, this no longer happens.

@@ -1,0 +1,26 @@
+---
+title: Global Control Level
+description: The Global Controller Level (GCL) is the main indicator of progression in the game. Much like Room Controller Levels, it is advanced by spending energy on upgrading the Room Controllers. The Global Controller Level is however, an accumulation of the total amount of energy that has been spent on upgrading room controllers, across any player owned rooms. A player will retain their GCL between respawns.
+categories:
+  - Stubs
+  - Resources
+  - Game_Knowledge
+---
+
+## Progression
+
+As you progress from one level to the next, the required control points to get to the next level increase as well. All players start at GCL 1, and can only own one room, start with 20 CPU (locked) or 30 CPU (unlocked with a [CPU UNLOCK](/Account-level_Resource) / lifetime sub) as allowed by their [shard](/Shard)'s or server's set limit. Higher GCLs will provide you with additional rooms and CPU. A user's required GCL points to next level by default is expressed by `Math.pow(gclLevel - 1, C.GCL_POW) * C.GCL_MULTIPLY;` seen here in the source code for the private server. Where as time of writing `GCL_POW` is 2.4 & `GCL_MULTIPLY` is 1000000 by default.
+
+## CPU
+
+### With a Lifetime Subscription or CPU Unlock
+
+A player that has a lifetime subscription or active CPU Unlock will have **20 + GCL * 10** CPU until GCL 28, where it stays at 300 CPU for all higher GCL's.
+
+### Without a subscription
+
+If a player bought the Steam version, but does not have a lifetime subscription or is not currently unlocked via a CPU Unlock, they will be limited to 20 CPU regardless of GCL.
+
+## Rooms
+
+A player can claim up to, but no more than the current GCL. GCL does not limit how many rooms can be reserved.

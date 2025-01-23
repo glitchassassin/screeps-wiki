@@ -1,0 +1,50 @@
+---
+title: Generic Creeps
+description: The term 'Generic Creeps' normally refers to creeps that do not have one specific role that they preform for all time, but are suited and tasked with preforming multiple functions inside a colony. While these creeps tend to be less-specialized than a role creep, they are far more flexible able to take on many different tasks.
+categories: []
+---
+
+## Generic Make-up
+
+Though by no means required, most generic creeps consist of three body parts `WORK`, `CARRY` & `MOVE`. the WORK parts allow for the actions of harvesting, building, upgrading and repairing, while CARRY insures a reserve of energy to do its assigned task and MOVE of course, to get to the task assigned. Balancing these is up to the user, more WORK and the faster a task gets done, but the more expensive the creep is. More CARRY, and the less trips back-and-forth getting or harvesting energy is required, but it takes up space and makes the creep larger. More MOVE and the creep can move over plains and/or swamps with little difficulty, however this energy/parts could be spent on more creeps. One could make an argument for one config over the other, but it is ultimately up to the user to decide what is best for their bot & creeps. And by no means do they need to even have WORK parts, its quite possible to apply generic logic to 'generic haulers' or other types of creeps.
+
+## Identifying the Creeps
+
+Generic creeps should be easily sortable & assignable. You can flag them via `Memory` as a role creep would, parse/use their name to determine what creeps are generic and to a specific room/region, or whatever method you see fit. Further sorting by their assigned task/state & goal, allows for easier manipulation and updating as-needed. If you have to spend time going back-over or filtering a list rather than using one at tick-start, consider grouping/management/assigning them differently to easily allow for access to whatever 'group' you need to. For example, if a creep is done its assigned task/goal/state/mission, the previous tick, it can be moved/updated into a 'needs energy' state, and then grouped with other creeps that also need energy to help preform this action on all creeps that need it that tick.
+
+## Room-Level or Colony-Level management
+
+Once you have sorted your generic creeps, you can get conditions at room-level or colony level, then assign tasks as-needed. For example, at a room-level, you can check for construction sites that need to be built. If this tick, you have available generic workers with energy, that are not currently assigned a task/goal, you can loop over your workers and assign as many as you feel are needed to work on this task from the pool of available workers. At a colony level, say you needed to haul or retrieve energy from a [proxy harvest](/Remote_Harvesting) location. You go to your creeps that need, or do not have energy, check who is closest or best (in context of the action) to assign, then assign the the task/mission/goal. A large benefit of doing it this way over role creeps is that 'generally' a role creep will preform the check itself, which if multiple of the same rolecreep, leads to redundant or repeated checks of the same room-level conditions. For example, say you have three role specific 'builders', these builders one after the other all look for energy (to harvest or withdraw) each having to check in-turn when their role is called by the handler. They then have to take a look for construction sites, and pick out what one is best for them. Now, there is no reason that role-specific creeps could not have 'room level' management or handlers to their assignments (such as caching construction sites, or energy sources) but in general a room-level manager with the generic creep mindset will handle/assign these tasks/goals/missions and the generic creep only needs to handle the context of its assignment rather then checking conditions.
+
+### Common Tasks/States
+
+Some common tasks/states would be:
+
+- Harvest Energy
+- Build construction site
+- Upgrade controller
+- Repair object
+- Fill extensions/spawn/tower
+- Move Energy/Resource
+
+These are no by 'the only' tasks, and of course, it is up again to the user how to order these in priority and how many creeps need to be preforming a task at once.
+
+## Generic Creep 'role' or action context
+
+Once a creep as been assigned a goal/task/state/action, the main idea of their role runner/ code is to take their assignment and complete it. This manager/runner should be able to take various different mission contexts and run the appropriate action for them. How you want to do this, of course, is up to the user.
+
+### Switch-case the target object
+
+If you are targeting objects specifically, then you can switch-case the type of the object to understand the context. For example, if your target object is a controller, then likely you are upgrading it and as such can call/move to the target. If your creep has no energy and its target is a storage, likely you are withdrawing, and you can then moveTo and withdraw from it.
+
+### RoomPosition movement
+
+If you are storing the acquired [roomPosition](/RoomPosition) for your creeps' assigned task, then it is very easy to check if the creep is 'there' in context of needing to move to or next to the object. Of course, you would still need more information to preform an action, unless you are already storing roomPositions somewhere in context of their action (like having a group of roomPositions for upgrading, or a group for harvesting)
+
+### States
+
+Another way to have the creep process its assignment is to have specific logic run for a state. For example, if you sort a creep that 'needs energy' in to a 'need energy' state, you can run logic specific to that state in the creep's runner.
+
+### Missions/Task/Encoding
+
+To take it further, it is quite possible to fully encode a creep's task/mission and use its assigned task to preform the actions without strictly hard-coding. For example, the role runner could assign a creep to 'build' a construction site. With the ID of the construction site it needs to preform the action on, it could then assign the creep a 'mission' containing details of what it needs to do, such as: `build` for 'action' type (method to use), `3` for the 'range' the creep 'needs to' be within its target, Similarly you could assign it a roomPosition to move to, or simply feed it the target object & range to move to. In this case, the runner does not 'need' to know what type of object it is acting on as the mission gives it an action to preform on the object. It is quite possible to make these missions into small strings to store in a creep's `Memory` then decode when running its logic.
