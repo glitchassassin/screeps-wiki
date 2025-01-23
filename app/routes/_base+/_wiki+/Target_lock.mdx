@@ -1,0 +1,42 @@
+---
+title: Target Lock
+description: Target locking is a CPU saving technique where you cache the most optimal target for an object to move to or perform any action on, amortizing the cost of the selection process over a longer period of time.
+categories:
+  - Stubs
+  - CPU_Optimization
+---
+
+## Usage
+
+Target locking can be used for creeps, towers, or any other object that performs an act on another. This target selection process can be expensive (like `findClosestByPath()` or deciding which creep to attack with a tower), and especially costly if you perform it each tick to find the target again. On the first target selection, you save the `.id` of the target in Memory or the heap, allowing follow on ticks to spend less CPU on a validation check instead of selection.
+
+## Implementation Steps
+
+Target locking is a reoccurring loop of multiple steps, not including the logic being performed based on the target: Target selection, Target caching, Target recovery, Target validation and if the action is complete or the target is invalidated looping back to Target selection.
+
+### Target selection
+
+Target selection occurs exactly like prior to implementation of target locking
+
+### Target caching
+
+Once you have a target selected, cache the identifier in `Memory` or on the heap (module scoped variables or in `global`)
+
+### Target recovery
+
+The next, and subsequent ticks, you restore the target object from the cache
+
+### Target validation
+
+This step is typically less CPU intensive than the initial selection. This is where you would ensure that the target extension still needs to be filled, or if the target of your attack is still alive or not. This step ensures that you do not continue moving towards an invalid target. If the target is invalid, you loop back to target selection.
+
+### Pseudo code of implementation
+
+```
+IF target already cached // not true on first iteration
+    restore target from cache
+IF target is not valid
+    find target
+    cache target
+move towards or perform action based on target
+```
