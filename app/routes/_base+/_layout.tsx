@@ -80,14 +80,7 @@ export default function WikiLayout({
                   Main Page
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/categories"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Categories
-                </Link>
-              </li>
+              <li className="border-t border-gray-200 dark:border-gray-700 my-4"></li>
               {quicklinks.map((page) => (
                 <li key={page.slug}>
                   <Link
@@ -98,6 +91,23 @@ export default function WikiLayout({
                   </Link>
                 </li>
               ))}
+              <li className="border-t border-gray-200 dark:border-gray-700 my-4"></li>
+              <li>
+                <Link
+                  to="/AllPages"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  All Pages
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/categories"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Categories
+                </Link>
+              </li>
             </ul>
           </div>
         </nav>
