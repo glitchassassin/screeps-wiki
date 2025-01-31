@@ -1,6 +1,7 @@
 import { clsx } from "clsx";
 import { useState } from "react";
 import { Outlet } from "react-router";
+import { Search } from "~/components/Search";
 import { WikiHeader } from "~/components/WikiHeader";
 import { getPages } from "~/lib/pages.server";
 import type { TocEntry } from "../../lib/remark/toc";
@@ -64,6 +65,13 @@ export default function WikiLayout({
                 {isSidebarOpen ? "[ − ]" : "[ + ]"}
               </button>
             </div>
+            <Search
+              className={clsx(
+                isSidebarOpen ? "block" : "hidden",
+                "md:block",
+                "mt-4"
+              )}
+            />
             <ul
               className={clsx(
                 "space-y-2",

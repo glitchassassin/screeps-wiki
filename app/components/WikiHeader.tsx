@@ -1,4 +1,5 @@
 import { GitHubEditLink } from "./GithubEditLink";
+import { Search } from "./Search";
 
 export function WikiHeader({ filename }: { filename?: string }) {
   return (
@@ -14,6 +15,7 @@ export function WikiHeader({ filename }: { filename?: string }) {
             className="h-8"
           />
         </a>
+        <Search className="hidden md:block" />
         {filename && (
           <div className="flex items-center space-x-4">
             <GitHubEditLink filename={filename} />
