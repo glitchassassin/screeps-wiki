@@ -7,6 +7,8 @@ categories:
 
 The CLI server is accessed through the terminal or command prompt and can be used to control the server and modify server settings.
 
+It only supports single line input, so if your input spans multiple lines, it's likely you'll get back a bunch of `SyntaxError`s.
+
 ## CLI Server Commands
 
 ### Commands List
@@ -17,51 +19,21 @@ Get a list of available commands.
 help()
 ```
 
-Additional commands may be available depending on the server configuration and installed mods.
+Additional commands may be available depending on the server configuration and installed mods. You can generally pass one of the
+top-level objects it documents to get more information about that section. For example, `help(system)` will give you the documentation
+for that section, and `help(system.pauseSimulation)` the documentation for that, etc.
 
-## Server Config
+Note that if you're running screepsmod-admin-utils, it has its own help page at `help(utils)`, which doesn't appear in this list.
 
-### System Commands
+## Server Management
 
-Get the commands for managing the server.
+### Running the game
 
-```js
-help(system)
-```
+The game's tick can be started and stopped through the use of `system.startSimulation()` and `system.pauseSimulation()`.
 
-### Pause Server Ticks
+The tick rate itself can be adjusted via `system.getTickDuration()` and `system.setTickDuration()` (the default being 1000, so 1s/tick).
 
-Pause the server to prevent ticks from running.
-
-```js
-system.pauseSimulation()
-```
-
-### Resume Server Ticks
-
-Resume the server to allow ticks to run.
-
-```js
-system.resumeSimulation()
-```
-
-### Tick Rate
-
-Get the current tick duration.
-
-```js
-system.getTickDuration()
-```
-
-### Change Tick Rate
-
-Set the server tick duration to 1000 milliseconds per tick, default is 1000.
-
-```js
-system.setTickDuration(1000)
-```
-
-## Users
+## Managing Users
 
 ### Global Control Level
 
@@ -95,6 +67,22 @@ Change the CPU limit of a user.
 storage.db.users.update({ username: 'username' },{ $set: { cpu: 500 } })
 ```
 
+### Disable CPU processing for a user
+
+If your server is running in the GCL-to-CPU mode, then the command above won't work;
+it'll stick until the cronjob for the mode kicks in and recalculates the allotted 
+CPU for the player.
+
+In that case, you can change the `active` property on the user object. Its default
+value is `10000`, which is what the GCL-to-CPU mode in screepsmod-admin-utils looks
+for, and the server will stop processing if it's `0`; this means you can either
+suspend an user completely, or opt them out of the mode by settting it to anything
+other than those two values.
+
+```js
+storage.db.users.update({ username: 'username' }, { $set: { active: 0 } });
+```
+
 ## Rooms
 
 ### Controller Level
@@ -113,9 +101,18 @@ Change the progress amount of a controller.
 storage.db['rooms.objects'].update({ room: 'W7N3', type: 'controller' },{ $set: { progress: 10899000 } })
 ```
 
+### Fill all extensions
+
+```js
+storage.db['rooms.objects'].update({ room: "E4S19", type: 'extension' }, { $set: { "store.energy": 200 } }) // depends on the room's RCL
+```
+
 ### Remove Objects
 
 Remove all Ruins from a room. This can be used to remove other game object types as well.
+
+Be careful if you're trying to remove a player, because their controllers will appear as
+if they owned the object, so you'll have to filter those out and handle them differently.
 
 ```js
 storage.db['rooms.objects'].removeWhere({ type: 'ruin' })
@@ -158,11 +155,56 @@ storage.db['rooms.objects'].update({ type: 'storage', room: 'W7N3' },{ $set: { s
 ## Construction Sites
 
 ### Max Construction Progress
-Set max progress on all construction sites. As soon as a creep does any construction the structure will be built.
+
+Set max progress on all construction sites.
+
+As soon as a creep does any construction the structure will be built. Note that it will cause the builder's store to overflow, so use sparingly!
 
 ```js
 storage.db['rooms.objects'].update({ type: 'constructionSite' },{ $set: { progress: 99999 } })
 ```
+
+## Creeps
+
+### Longer creep lifetime
+```js
+storage.db['rooms.objects'].update({ _id: "65086f144b63f3002e74d267" }, { $set: { ageTime: 999999 } })
+```
+
+### Faster spawning
+
+```js
+storage.env.get(storage.env.keys.GAMETIME).then(tick => storage.db['rooms.objects'].update({ room: "E7S16", type: 'spawn' }, { $set: { "spawning.spawnTime": parseInt(tick, 10) + 1 } }))
+```
+
+### Heal a creep
+
+```js
+let creep;
+storage.db['rooms.objects'].findOne({_id: "6508e9d2009a9600318f4bf6"}).then(d => creep = d);
+creep.body.forEach((d, idx) => d.hits = 100);
+storage.db["rooms.objects"].update({_id: "6508ebf0009a9600318f4c3d" }, { $set: { "body": creep.body, "hits": creep.hitsMax } })
+```
+
+
+## Power Creeps
+
+### Edit pcreep powers
+
+You have to build an object keyed by POWER type and the level you want to give the pcreep.
+Note that if the pcreep is already spawned, it has its own copy of its `powers` property, which also needs an update.
+
+```js
+storage.db["users.power_creeps"].update({ _id: "6591b1928a936c001ba8b463" }, { $set: { level: 7, powers: { "1": { level: 3 }, "2": { level: 1 }, "3": { level: 1 }, "6": { level: 1 }, "19": { level: 1 },}}})
+storage.db["rooms.objects"].update({ _id: "6591b1928a936c001ba8b463" }, { $set: { level: 7, powers: { "1": { level: 3 }, "2": { level: 1 }, "3": { level: 1 }, "6": { level: 1 }, "19": { level: 1 },}}})
+```
+
+### Updating spawn times
+
+```js
+storage.db["users.power_creeps"].update({ _id: "6591b1928a936c001ba8b463" }, { $set: { spawnCooldownTime: 1692327427061 } })
+```
+
 
 ## Repair
 
@@ -232,14 +274,6 @@ Update the cached world terrain data. Use this whenever there's a chance the ter
 map.updateTerrainData()
 ```
 
-### Refresh Image Assets
-
-Refresh every room's image assets. Use this whenever the map images do not match the terrain.
-
-```js
-storage.db.rooms.find().then(rooms => Promise.all(rooms.map(({ _id }) => map.updateRoomImageAssets(_id))));
-```
-
 ### Add NPC Terminals
 
 Add a NPC Terminal to a room. Repeat as many times as desired changing rooms (Use highway rooms or SK rooms). NPC orders should appear on the market automatically after a little while.
@@ -256,6 +290,25 @@ Add a Power Bank to a room.
 storage.db['rooms.objects'].insert({ room: 'W4N10', x: 25, y: 25, type: 'powerBank', store: { power: 4000 }, hits: 10000, hitsMax: 10000, decayTime: 1000000 })
 ```
 
+You can reset all "highway" rooms' powerbank timers so that the next time the cronjob runs it'll spawn one it.
+
+```js
+storage.db["rooms"].update({ bus: true, status: "normal" }, { $set: { powerBankTime: 0 } })
+```
+
+If you need more control, the following is copied from the engine's cronjob, and adapted into a single line, copy/pasteable function.
+
+```js
+// Execute that one in the cli so the function exists
+async function makePowerBank(roomName, x, y, crit) { if (x < 0 || x > 49 || y < 0 || y > 49) { return false; } const room = await storage.db['rooms'].findOne({ _id: roomName }); if (!room) return false; const POWER_BANK_HITS = 2000000; const POWER_BANK_DECAY = 5000; const POWER_BANK_CAPACITY_MIN = 500; const POWER_BANK_CAPACITY_MAX = 5000; const POWER_BANK_CAPACITY_CRIT = 0.3; if (crit === undefined) { crit = POWER_BANK_CAPACITY_CRIT; } let power = Math.floor(Math.random() * (POWER_BANK_CAPACITY_MAX - POWER_BANK_CAPACITY_MIN) + POWER_BANK_CAPACITY_MIN); if (Math.random() < crit) { power += POWER_BANK_CAPACITY_MAX; } const gameTime = await storage.env.get(storage.env.keys.GAMETIME); return await storage.db['rooms.objects'].insert({ type: 'powerBank', x, y, room: roomName, store: {power}, hits: POWER_BANK_HITS, hitsMax: POWER_BANK_HITS, decayTime: parseInt(gameTime) + POWER_BANK_DECAY }); }
+```
+
+Once that function is defined, you can just execute
+```js
+makePowerBank("W38N12", 12, 12);
+```
+to create as many powerbanks as you want using the same rules the server uses.
+
 ### Add Deposits
 
 Add a Deposit to a room, change the depositType to change type of the deposit.
@@ -265,6 +318,7 @@ storage.db['rooms.objects'].insert({ room: 'W0N9', x: 16, y:26, type: 'deposit',
 ```
 
 ### Add Portals
+
 Add a Portal to a room. Run this command twice and create portals going both directions for the best result. You can alternatively set unstableDate as a timestamp (think Date.now()) instead of decayTime, in which case the portal will be stable up until the time expires, at which point the game will set decayTime to PORTAL_DECAY.
 
 ```js
@@ -337,6 +391,25 @@ Add a healer NPC invader to a room.
 storage.db['rooms.objects'].insert({ room: 'W6N3', x: 1, y: 41, type: 'creep', user: '2', name: 'invader_small_healer', body: [{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'heal', hits: 100 },{ type: 'move', hits: 100 } ], hits: 1000, hitsMax: 1000, ticksToLive: 1500, fatigue: 0, store: {}, storeCapacity: 0 })
 ```
 
+### Checking and changing invader goals
+
+If you're investigating why invaders are (or aren't) spawning, the engine tracks that through the
+`invaderGoal` & `invaderHarvested` properties on a room; each time a source gets harvested, the
+latter counts up. Once it reaches `invaderGoal`, the room is eligible for an invasion per the rules
+in the [Invader](./Invader.mdx) section.
+
+```js
+storage.db["rooms"].findOne({ _id: "E25S6"}).then(o => print(o.invaderGoal));
+storage.db["rooms.objects"].find({room: "E25S6", type: {$in: ['source']}}).then(rs => print(rs.reduce((sum, s) => sum += s.invaderHarvested, 0)));
+```
+
+```js
+// Make dem pop
+storage.db["rooms"].update({ _id: "E25S6"}, { $set: { invaderGoal: 10000 } });
+system.runCronjob("genInvaders");
+```
+
+
 ## Find
 
 ### Find Users
@@ -389,11 +462,24 @@ Wipe the map and reset all user data, rooms, GCL, GPL, server settings, etc.
 system.resetAllData()
 ```
 
+## Random tidbits
+
+There are some undocumented functions on `storage.env`:
+
+```js
+storage.env.smembers(storage.env.keys.ACTIVE_ROOMS);
+
+Object.keys(storage.env);
+// => keys,get,mget,sadd,smembers,set,setex,expire,ttl,del,hmget,hmset,hget,hset,hgetall,incr,flushall
+```
+
 ## Server Fixes
 
 ### Reset Room Activity
 
-Occasionally, a server may encounter an issue where all rooms are set to active for processing, even those without player objects. The cause of this issue is unknown, but it can result in the server running slowly. By setting rooms to inactive, you can resolve this issue and improve server performance.
+Occasionally, a server may encounter an issue where all rooms are set to active for processing, even those
+without player objects. The cause of this issue is unknown, but it can result in the server running slowly.
+By setting rooms to inactive, you can resolve this issue and improve server performance.
 
 ```js
 storage.db.rooms.update({ active: true }, { $set: { active: false } })
@@ -401,8 +487,30 @@ storage.db.rooms.update({ active: true }, { $set: { active: false } })
 
 ### Reset Map Images
 
-Regenerate room images for the world map.
+Refresh every room's image assets. Use this whenever the map images do not match the terrain.
 
 ```js
 storage.db.rooms.find().then(rooms => rooms.map(r => map.updateRoomImageAssets(r._id)))
+```
+
+This only works for the normal world map; the beta map caches its tiles into the browser's localStorage,
+so the following snippet should take care of that:
+
+```js
+dbs = await indexedDB.databases();
+dbs.forEach(d => indexedDB.deleteDatabase(d.name));
+```
+
+## Broken objects
+
+There's a known issue with the integrated server (running from the Steam client), where it sometimes
+breaks its database when exiting, leading to objects that have no capacity.
+
+The following snippet should restore all impacted objects to their normal behavior:
+
+```js
+storage.db['rooms.objects'].update({ type: "spawn" }, { $set: { storeCapacityResource: { energy: 300 } } });
+storage.db['rooms.objects'].update({ type: "extension" }, { $set: { storeCapacityResource: { energy: 200 } } }); // or 50/100 depending on RCL
+storage.db['rooms.objects'].update({ type: "link" }, { $set: { storeCapacityResource: { energy: 800 } } });
+storage.db['rooms.objects'].update({ type: "tower" }, { $set: { storeCapacityResource: { energy: 1000 } } });
 ```
