@@ -7,31 +7,61 @@ categories:
   - In-Game_Resources
 ---
 
-Power is a resource in Screep's that is used in increasing a user's Globasl Power Level by feeding it into a powerSpawn and executing [https://docs.screeps.com/api/#StructurePowerSpawn.processPower](https://docs.screeps.com/api/#StructurePowerSpawn.processPower) at the cost of 50 energy per 1 power. Global Power Level allows you to spawn powerCreeps which have special powers and are considered the hero units of screeps. Power is also a resource that can be sold/bought in the [market](/Market). It is naturally created in PowerBanks which spawn in highway rooms on the map. Global Power Level is determined via `Math.floor(Math.pow((runtimeData.user.power || 0) / C.POWER_LEVEL_MULTIPLY, 1 / C.POWER_LEVEL_POW))` where 'runtimeData.user.power' is your current processed power, and 'C.POWER_LEVEL_MULTIPLY' and 'C.POWER_LEVEL_POW' are constants which can be seen in the [official api](https://docs.screeps.com/api/).
+Power is a resource in Screep's that is used to increase a user's Global Power Level. Power is processed by transferring it (along with energy) into a PowerSpawn structure and executing [https://docs.screeps.com/api/#StructurePowerSpawn.processPower](https://docs.screeps.com/api/#StructurePowerSpawn.processPower) at the cost of 50 energy per 1 power. Global Power Level allows you to spawn Power Creeps which have special powers and are considered the hero units of screeps.
 
-## PowerBanks
+Power appears in Power Banks which spawn in highway rooms on the map. Power can also be sold/bought on the [market](/Market)--NPCs regularly sell it on the official world.
 
-Power-banks are structures that spawn in highway rooms and contain power. They exist for 5000 ticks, decaying at a rate of 1 per tick. They will contain some amount of power (randomly) between 500 - 10,000. They have a health of 2,000,000 hits and need to be destroyed to drop the power, which they will in a ruin for 5 ticks, then on the ground subsequent ticks. Attacking a powerBank reflects half of the damage back to the attacking creep.
+Global Power Level starts at 0 and requires 1000 power to be processed to reach GPL 1. Each level after GPL 1 requires 2000 power more than the previous level. The actual formula used to determine Global Power Level is `Math.floor(Math.pow((runtimeData.user.power || 0) / C.POWER_LEVEL_MULTIPLY, 1 / C.POWER_LEVEL_POW))` where 'runtimeData.user.power' is your current processed power, and 'C.POWER_LEVEL_MULTIPLY' and 'C.POWER_LEVEL_POW' are constants which can be seen in the [official api](https://docs.screeps.com/api/).
+
+## Power Banks
+
+Power banks are structures that spawn in highway rooms. They will contain some amount of power between 500 - 10,000 that is randomly determined at spawn time. They have a health of 2,000,000 hits and need to be destroyed to access the power contained within. Attacking a power bank reflects half of the damage dealt back to the attacking creep, so it is recommended that creep(s) dispatched to destroy the structure have some way to heal.
+
+Once destroyed, the power bank's stored power can be collected from the ruin. The ruin will decay after 5 ticks and leave any remaining power decaying on the ground.
 
 ### Power Harvesting
 
-Power harvesting is action of locating, destroying, and retrieving power from powerBanks. You first need to locate a powerBank in a highway room via creep scout or Observer, then spawn creeps to attack it, and creeps to heal (or however you choose to configure your creeps). You then need to attack the bank till it runs out of HP, once dead, it is wise to have carrier creeps already in position to take the power from the ruin/ground and transport it back to one of your rooms for processing/the market.
+To acquire power from a power bank, a player first needs to locate a power bank in a highway room (typically via a scout Creep or Observer). Players can also locate power banks manually via the client UI, but the short expiration timer relative to the power bank's high hit points makes this infeasible.
+
+Once a power bank is located, the player must spawn creeps to attack the power bank and heal damage sustained by the attackers. Note that power banks cannot be dismantled by creeps with `WORK` parts as they are not buildable structures. As such, melee attacks provide the highest and most cost-effective single-target DPS. Since a creep cannot perform a melee attack and melee heal on the same tick, many players dispatch teams of separate melee attack and heal creeps.
+
+Carrier creeps be near the power bank and ready to collect its power as soon as the structure is destroyed to minimize/prevent power loss due to decay.
 
 ## Power Creeps
 
-Power creeps are considered hero units in screeps, they have their own unique look and while they do have ticksToLive of 5000, they are effectively immortal as even if they die they can be respawned after a short cooldown of 8 hours. You create powerCreeps with your Global Power Levels on the manage power creeps section of your overview page, and then spawn them into the world using https://docs.screeps.com/api/#PowerCreep.spawn and a powerSpawn. Their TicksToLive can be extended by using https://docs.screeps.com/api/#PowerCreep.renew targeted at a powerSpawn or powerBank, and they will have a carry capacity & Hit points based on their level. Powercreeps can use a variety of powers which most cost a resource tied to that type of creep. Currently, the operator creep is the only powerCreep released.
+Power creeps are considered hero units in screeps. They have a unique appearance, they can use unique powers, and they are immortal. While they can expire or be killed, they can be respawned after an 8 hour cooldown.
 
-When creating/upgrading a powerCreep, you spend GPL to increase the level of its powers. Powers start at level 0 (Meaning the power creep does not have access to them) and can be leveled 1 - 5 which increases the effectiveness of that power. Each level of a power you apply to the powerCreep increases its overall level which starts at 0 (no powers) and goes to level 25. A powerCreep of level 25 can not have any more powers or levels applied to them. As the powerCreep increases in level, its carry capacity and overall hitpoints increases at a rate of 1000 hit points per level and 100 capacity per level. A level 0 power creep starts with 1000 hitpoints and 100 carry capacity. You can only upgrade certain powers to a new level when the powerCreep itself has reached a certain level. This often means that you can not make a pure 1 power creep, as the higher levels of a power requires a high overall powerCreep level.
+To create a power creep, a player must allocate one of their free Global Power Levels and assign a name to the new creep. Created power creeps are bound to the player's account, and their names cannot be edited after they are created. Power creeps can be created, upgraded, and deleted via either the in-game UI (click "Manage Power Creeps" from the Profile Overview page) or the [PowerCreep](https://docs.screeps.com/api/#PowerCreep) API.
 
-Its important to note, that removing/deleting a powerCreep from your account costs 1 GPL and takes 24 hours, unless you activate an experimentation period which allows you to delete without a cost instantly for 24 hours. These periods are normally granted during times of new releases (such as when powerCreeps released, or factories) to allow for players to adjust to the new mechanics without penalty. You can only have a maximum of 30 experimentation periods at a time and, there is not set schedule or time that they replenish.
+All power creeps start in an unspawned state after they are created. They can be spawned at no cost from any of the player's active power spawn structures via [PowerCreep.spawn](https://docs.screeps.com/api/#PowerCreep.spawn). Spawned power creeps will expire after `C.POWER_CREEP_LIFE_TIME` ticks (5,000), but the timer can be restarted by moving the power creep adjacent to a power bank or owned power spawn and using [PowerCreep.renew](https://docs.screeps.com/api/#PowerCreep.renew).
+
+Each power creep has an associated level, as well as levels for each of their class's powers. Newly-created power creeps start at level 0, and they have no useable powers (i.e. all power levels also start at 0). The player must allocate unused GPL to level up the creep and its powers. Each allocated GPL increases the level of the power creep and one of its powers by 1. The level cap for power creeps is 25, and the level cap for each of their powers is 5. Each level of each power requires a minimum power creep level to unlock, so it is not possible to immediately max out a single power, nor are all powers available at power creep level 1. The powers available for each power creep are class-specific. Power creep upgrades are permanent. The allocated GPL may only be regained by deleting the power creep.
+
+A player can delete power creeps from their account, but this will cause the player's GPL to permanently decrease by 1, and the deletion takes 24 hours. The lost level will need to be re-earned by processing more power. The player can delete power creeps instantly without losing GPL by activating an experimentation period beforehand.
+
+Players start with 30 experimentation periods. These periods are normally granted when content that impacts power creep mechanics is released (such as when the Factory structure was added) to allow for players to adjust to the new mechanics without penalty. A player can only have a maximum of 30 experimentation periods at a time, and there is not a set schedule or time that they replenish.
+
+Power creeps can use a variety of powers specific to their class. These powers may have a resource cost associated with them. For example, most Operator powers consume "Ops" resources from the power creep's cargo.
+
+Powers typically have a cooldown. Power cooldown timers are independent of one another, and the cooldown for each power starts on the tick the power is successfully used. Barring other limitations (ex: resource costs to use the power, range to target, etc), this means that a power with a cooldown less than or equal to the power's effect duration can be used repeatedly on a target without interruption. For example, an Operator can use Operate Lab to boost the production rate of several labs indefinitely as long as it has enough Ops and is within range to reuse the power when the effect expires.
+
+Powers have additional restrictions on their use:
+- [StructureController.isPowerEnabled](https://docs.screeps.com/api/#StructureController.isPowerEnabled) must be true for the room's controller, or the room must not have a controller (ex: highway rooms, source keeper rooms).
+    - Power can be enabled for a room with a controller via [PowerCreep.enableRoom](https://docs.screeps.com/api/#PowerCreep.enableRoom). The power creep must be adjacent to the controller, and that controller must be owned by the power creep's owner.
+- Powers cannot be used while a room is in safe mode. Effects from powers triggered before the safe mode activation will stay in effect.
+
+Once power is enabled in a room, it cannot be disabled unless the controller reaches RCL 0 (either by being unclaimed or downgrading).
+
+Currently, the Operator is the only class of power creep that has been released. It starts with 1,000 hits and 100 carry capacity. Each time it is upgraded, it gains an additional 1,000 hits and 100 carry capacity.
+
+Unlike regular creeps, power creeps do not accumulate fatigue while moving. This means that they can move once every tick over any obstacle-free position, regardless of terrain or used carry capacity.
 
 ### Operator
 
-The first released class of powerCreep, operators can handle a wide variety of tasks from economy to defense and attacking. They have several powers, some which cost the resource Ops, but not all cost this resource to use.
+The first released class of power creep, operators can handle a wide variety of tasks from economy to defense and attacking. Many of their powers cost Ops--a special resource which is consumed from the user's cargo--but some have no resource cost. Ops can be generated with the Operators "Generate Ops" power or purchased from the market.
 
 #### Generate_Ops
-
-A power that generates the resource Ops that is used in a variety of the operator's powers as a required resource. It can also be sold/purchased though the market. The effect is instant, granting ops to the powerCreeps' carry as long as there is space to do so and, has a cooldown of 50 ticks.
+A power that generates the resource Ops that is used in a variety of the operator's powers as a required resource. It can also be sold/purchased though the market. Generated Ops are added to the user's cargo as soon as the power is triggered. This power has a cooldown of 50 ticks. It does not have an Ops cost.
 
 | Level | Effect | Required PC level |
 | ----- | ------ | ----------------- |

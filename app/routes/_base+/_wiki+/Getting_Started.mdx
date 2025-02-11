@@ -10,7 +10,7 @@ categories:
 There is an in-game [tutorial](https://screeps.com/a/#!/sim/tutorial) available which will help you set up a basic codebase.
 
 ## Choosing a Shard (Screeps:World - Main Server)
-When playing on the main Screeps:World server (also known as the MMO aka Massive-Multiplayer Online server), the world is split up into four [shards](/Shard) which are each their own server, interconnected by portals in [highway room](Map) crossings. A player can spawn into any of these Shards, but once on a shard must transverse the portal network to claim new rooms on other shards. Each shard has their own considerations on if it is the best for you to start on.
+When playing on the main Screeps:World server (also known as the MMO aka Massive-Multiplayer Online server), the world is split up into four [shards](/Shard) which are each their own server, interconnected by portals in [highway room](Map) crossings. A player can spawn into any of these Shards, but once on a shard, the player's creeps must transverse the [portal](/StructurePortal) network to claim new rooms on other shards. Each shard has their own considerations on if it is the best for you to start on.
 
 - Shard 0 - The original Main-server, as such it is the largest and slowest shard (tick rate wise) with many rooms that are in an inactive state, and many old players who are either not actively playing or who don't check in that often. A good start for some one who doesn't worry too much about the tick-rate speed and wants some room.
 - Shard 1 - The first shard to be released, nick-named 'The Ocean' mainly because of a alliance of players known as the Ypsilon Pact who claimed the shard mostly for their own, however, it is still quite possible to spawn and play here, but expect many dedicated screeps neighbors.
@@ -26,15 +26,15 @@ When you first spawn into the live world, your room will be at room control leve
 ## RCL 2
 RCL 2 brings extensions, which add energy capacity to your spawn. This allows you to build bigger and better creeps. The article on [creep building strategies](/Creep_body_setup_strategies) can help you build creeps effectively.
 
-You can build up to five at this level, each storing 50 energy. As your room progresses through Room Controller Levels, you will be able to build more extensions.
+You can build up to five extensions at this level. Each one costs 3,000 energy to build and can store 50 energy. Every time your room levels up, you will be able to build more extensions.
 
-Although not quite as important at this level, it is important that you place your extensions wisely. A fully-leveled room can have 60 extensions, all of which need to be easily accessible to be filled up. Different players have different patterns for placing extensions, listed on the [Extension Placement](/Extension_Placement) page.
+Although not quite as important at this level, it is important that you place your extensions wisely. A fully-leveled room can have 60 extensions, all of which need to be easily accessible to be filled up. Different players have different patterns for placing extensions. See [Automatic base building](/Automatic_base_building) for some examples.
 
 ## RCL 3
-Now that your room is at RCL3, you need to build a tower immediately. A tower is your best defense at this level because it can easily defend your entire room from attackers. For tips on tower placement, read [Tower placement](/StructureTower).
+Now that your room is at RCL3, you should build a tower immediately. A tower is your best defense at this level because it can easily defend your entire room from attackers. Even if you do not expect to be attacked by other players, [invaders](/Invader) will spawn periodically as you harvest energy from your room's sources. For tips on tower placement, read [Tower placement](/StructureTower).
 
 ## RCL 4
-At RCL 4, you can build a storage. Storages are useful because they allow you to store up to 1 million resources; however, they are difficult to move, so place your storage carefully. You will want your storage to be in a place where it can be reached easily.
+At RCL 4, you can build a storage. Storages are useful because (unlike containers) they allow you to store up to 1 million resources of any type and do not decay over time. Moving a storage after it has been constructed and filled is difficult, as the resources must be relocated (or left to decay) until a new storage is built elsewhere in the room. As such, it is important to place your storage carefully. You will want your storage to be in a place where it can be reached easily.
 
 ## RCL 5
 At RCL 5, you can now build links. Links can be used for [link mining](/Static_Harvesting#Link_Mining), which helps reduce the need for haulers. They are also useful for transporting energy to your controller, which will help you level up faster. This is valuable because RCL 6 costs 1.21 million energy, which must all be transported to the controller.
@@ -43,8 +43,20 @@ At RCL 5, you can now build links. Links can be used for [link mining](/Static_H
 RCL 6 unlocks several new features, mainly in the form of minerals and trading. At RCL 6, you can build an extractor on the mineral in your room and mine that mineral. You can also build a terminal, which allows you to participate on the [Market](/Market). There, you will be able to purchase other minerals, then combine them in [Labs](/StructureLab). This will allow you to [boost](/Boosts) creeps to make them stronger.
 
 ## Further Expansion
-At some point, your [GCL](/Global_Control_Level) will upgrade to level 2. When this happens, you will be able to [take control over another room](/Claiming_new_room). This will give you access to more resources and different minerals.
+At some point, your [GCL](/Global_Control_Level) will upgrade to level 2. You will get a pop-up in the game UI the next time you open it after leveling up. You can also check your GCL in your code via `Game.gcl.level`. When this happens, you will be able to [take control over another room](/Claiming_new_room).
 
-You will also want to keep upgrading your room. Rooms can be upgraded to RCL 8, and can still be upgraded after that to increase your GCL.
+Increasing your GCL and claiming more rooms is key to building your empire. Additional rooms gives you access to more resources and different minerals. Additionally, claiming more rooms and upgrading their controllers can help you increase your GCL more quickly, allowing you to claim even more rooms. Last but not least, if CPU is unlocked on your account, your CPU limit will increase by 10 every time your GCL increases (up to a maximum of 300).
+
+Regardless of when you choose to expand, you will also want to keep upgrading your room. Rooms can be leveled up to RCL 8, and new structures are available at each level. See [Room Control Level](/Room_Control_Level) for more details on these new structure types. Even at RCL 8, your controller can still be upgraded after that to increase your GCL. It is important to note that you can only upgrade a maxed out controller with 15 energy per tick, though.
 
 Many players also get into [Remote Harvesting](/Remote_Harvesting), where they send creeps into unowned or reserved rooms to harvest the sources there. Although it is difficult to code, it can be very rewarding in terms of energy.
+
+Once you have these concepts covered, these articles can help you find even more ways you can improve your bot:
+- [Intermediate-level tips](/Intermediate-level_tips)
+- [Great Filters](/Great_Filters)
+- [Maturity Matrix](/Maturity_Matrix)
+
+## Debugging and Troubleshooting
+On the way to multiple rooms and RCL 8, you'll undoubtedly run into some bugs. In addition to the official documentation, these resources may help:
+- [Common development problems](/Common_development_problems)
+- [Basic debugging](/Basic_debugging)
