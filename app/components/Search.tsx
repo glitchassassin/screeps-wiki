@@ -3,7 +3,6 @@ export function Search({
 }: React.FormHTMLAttributes<HTMLFormElement>) {
   return (
     <form
-      method="get"
       action={(data) => {
         const query = data.get("q");
         window.open(
@@ -21,11 +20,11 @@ export function Search({
         name="q"
         placeholder="Search wiki..."
         aria-label="Search wiki"
-        className="w-full pl-3 pr-10 py-1.5 rounded bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full pl-3 pr-10 py-1.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 placeholder-gray-600 dark:placeholder-gray-400 border border-gray-400 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
       <button
         type="submit"
-        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 focus:outline-none"
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none"
         aria-label="Search"
       >
         <svg

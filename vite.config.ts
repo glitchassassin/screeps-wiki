@@ -2,6 +2,7 @@ import mdx from "@mdx-js/rollup";
 import { reactRouter } from "@react-router/dev/vite";
 import autoprefixer from "autoprefixer";
 import rehypeSlug from "rehype-slug";
+import rehypeStarryNight from "rehype-starry-night";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import tailwindcss from "tailwindcss";
@@ -18,7 +19,7 @@ export default defineConfig({
   plugins: [
     mdx({
       remarkPlugins: [remarkFrontmatter, remarkGfm, remarkToc],
-      rehypePlugins: [rehypeSlug],
+      rehypePlugins: [rehypeSlug, rehypeStarryNight],
     }),
     reactRouter(),
     tsconfigPaths(),

@@ -10,7 +10,7 @@ export function GitHubEditLink({ filename }: { filename?: string }) {
       href={editUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+      className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-100"
     >
       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
         <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />

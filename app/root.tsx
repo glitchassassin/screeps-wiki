@@ -10,6 +10,7 @@ import {
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import starrynightStylesheet from "./starrynight.css?url";
 import { WikiHeader } from "./components/WikiHeader";
 import { REPO_URL } from "./data";
 
@@ -25,6 +26,7 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
   { rel: "stylesheet", href: stylesheet },
+  { rel: "stylesheet", href: starrynightStylesheet },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
