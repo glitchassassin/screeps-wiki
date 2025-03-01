@@ -355,10 +355,10 @@ strongholds.spawn('W4N5', { templateName: 'bunker3' })
 
 ### Remove Invader Cores
 
-Remove Invader Cores from all rooms.
+Remove Invader Cores from all rooms. This will also clear the ramparts owned by the user '2' (which is the internal ID for the invaders NPC).
 
 ```js
-storage.db['rooms.objects'].removeWhere({ type: 'invaderCore' })
+storage.db['rooms.objects'].removeWhere({ $or: [ { type: 'rampart', user: '2' }, { type: 'invaderCore' } ] })
 ```
 
 ### Add Invader Core Ruin
