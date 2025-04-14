@@ -8,6 +8,8 @@ The site's content is in the [`app/routes/_base+/_wiki+`](https://github.com/gli
 
 Pages are in MDX (Markdown + JSX) format. You can add or edit them with a pull request (or directly, if you have contributor permissions). If you want to avoid cloning the repo locally, try the [github.dev web editor](https://github.dev/glitchassassin/screeps-wiki).
 
+Be sure to read the [Contribute](https://github.com/glitchassassin/screeps-wiki/blob/main/app/routes/_base%2B/_wiki%2B/Contribute.mdx) article before making significant edits!
+
 ### What is MDX?
 
 MDX is an extension of Markdown that allows you to import JSX (React) components and embed them in the markup. This is how we (currently) specify images, image galleries, and spoiler blocks.
