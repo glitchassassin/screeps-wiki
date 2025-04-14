@@ -70,7 +70,7 @@ storage.db.users.update({ username: 'username' },{ $set: { cpu: 500 } })
 ### Disable CPU processing for a user
 
 If your server is running in the GCL-to-CPU mode, then the command above won't work;
-it'll stick until the cronjob for the mode kicks in and recalculates the allotted 
+it'll stick until the cronjob for the mode kicks in and recalculates the allotted
 CPU for the player.
 
 In that case, you can change the `active` property on the user object. Its default
@@ -514,3 +514,9 @@ storage.db['rooms.objects'].update({ type: "extension" }, { $set: { storeCapacit
 storage.db['rooms.objects'].update({ type: "link" }, { $set: { storeCapacityResource: { energy: 800 } } });
 storage.db['rooms.objects'].update({ type: "tower" }, { $set: { storeCapacityResource: { energy: 1000 } } });
 ```
+
+## PTR Settings
+
+PTR-specific configuration changes can be enabled on a private server via an env var change: `PTR=true`.
+
+See [Undocumented Behavior](/Undocumented_Behavior#PTR_Settings) for a list of the effects.

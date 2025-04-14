@@ -1,9 +1,22 @@
 ---
 title: "Prototyping"
+description: Prototypes in the Screeps API can be modified by players. This allows custom methods to be defined directly on game classes such as `Creep` or `Room`. Unlike changes to individual game objects, changes to prototypes are retained across ticks, and they apply to all objects of that type instantiated after the prototype is modified.
 categories:
   - Development
+  - Stubs
 ---
 
-Prototyping is the process of creating a prototype of an existing object in the game, such as creep or room. This allows you to make your own functions to call off of these objects. Not all objects in the game can be prototyped, such as `Game`
+This technique allows a developer to define features that can accessed directly from a game object. For example,
+one could define a custom `travelTo` method on `Creep` as an alternative to `moveTo`. It is even possible
+to overwrite/redefine existing properties/methods (known as "[monkey patching](https://en.wikipedia.org/wiki/Monkey_patch)"),
+though this can have unintended side-effects.
 
-For more details, check out the wonderfully written prototype doc here: https://docs.screeps.com/contributed/modifying-prototypes.html
+For more details and examples, check out the wonderfully-written [official documentation](https://docs.screeps.com/contributed/modifying-prototypes.html).
+
+## Caveats
+
+Static class methods and properties (ex: all of the fields on `Game`) cannot be modified via prototypes.
+
+Some game types (ex: `RoomPosition`) are not [interned](https://en.wikipedia.org/wiki/Interning_(computer_science)).
+As such, if a memoized property is defined on such a class's prototype and later invoked on an instance of that class,
+the memoized result won't necessarily be available from other instances representing the same room position.

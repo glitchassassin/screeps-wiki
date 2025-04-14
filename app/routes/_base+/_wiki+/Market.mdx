@@ -128,6 +128,11 @@ Beyond pixels, most users will start with energy trading as it is used in almost
 
 If desired, it is of course possible to purchase account-level resources from the Screep's store or Steam and then sell them in-game for credits.
 
+## Caveats
+
+Many `Game.market` functions have an undocumented hard limit on how many times they can be invoked per tick.
+See [Undocumented Behavior](/Undocumented_Behavior#Hard_Limits_on_Certain_Intents) for more details.
+
 ## F.A.Q.
 What is the difference between 'amount' and 'remainingAmount'?
 
@@ -150,7 +155,7 @@ Check that you did not specify a room.  As they are account-level, they do not r
 I keep getting -6 on a return from deal but I have plenty of credits and/or room in my terminal! What gives.
 
 ```
-Deal transactions require energy as well as credits / room.  Check that you have enough energy to complete the transaction for the amount you are looking for, you can use 
+Deal transactions require energy as well as credits / room.  Check that you have enough energy to complete the transaction for the amount you are looking for, you can use
 https://docs.screeps.com/api/#Game.market.calcTransactionCost to check the amount you should have.
 ```
 
