@@ -1,0 +1,78 @@
+---
+title: Undocumented Behavior
+description: The Screeps server has numerous quirks and hard-coded values that are not mentioned in the official documentation. Read on to avoid being caught unawares.
+quicklink: true
+categories:
+  - Development
+---
+
+# Behaviors
+
+## Hard Limits on Certain Intents
+
+In addition to the soft limit imposed by the 0.2 CPU cost required to register an intent,
+some intents have a hard limit on the number that can be registered per tick:
+
+* `Game.market.deal`: 10
+* `Game.market.cancelOrder`: 50
+* `Game.market.changeOrderPrice`: 50
+* `Game.market.extendOrder`: 50
+* `PowerCreep.spawn`: 50
+* `PowerCreep.suicide`: 50
+* `PowerCreep.delete`: 50
+* `PowerCreep.upgrade`: 50
+* `PowerCreep.rename`: 50
+* `PowerCreep.create`: 50
+
+Each limit is specific to that particular method. For example, if a player calls
+`Game.market.cancelOrder` successfully 50 times, they may still call `Game.market.deal`
+up to 10 times.
+
+Any invocations that exceed the limit **will fail silently** (the return code will be `OK`).
+Using the previous example, the 11th+ call to `Game.market.deal` would be effectively ignored,
+whereas the first 10 would be processed as expected. Fortunately, the 0.2 CPU cost will not be
+incurred for any intents that exceed the limit ([source](https://github.com/screeps/driver/blob/e691bd3ee843cb12ac4bedc68397b2b92709f622/lib/runtime/runtime.js#L85-89)).
+
+All currently-known hard limits are applied to intents in the `global` namespace
+which appears to concern intershard / account-level actions.
+
+### Workarounds
+
+* Manually track progress against the limit each tick via [[prototyping]] or an overlying abstraction
+* If hitting these limits due to batch processing, run the affected job more frequently so fewer invocations occur on any given tick
+
+## Magic Numbers
+
+See the [Useful Constants](https://wiki.screepspl.us/Useful_Constants/#missing-constants-hardcoded-in-engine) page.
+
+## Intent Precondition Checks
+
+An intent will be rejected due to precondition checks even if another intent has been registered on the same tick that will
+allow all necessary conditions to be met.
+
+For example, if a creep carrying no energy successfully registers an intent to withdraw or pickup energy, it still won't
+be able to repair, build, or upgrade until the next tick.
+
+## PTR Settings
+
+There are several differences between the [Public Test Realm](https://docs.screeps.com/ptr.html) (PTR) and the official World server:
+
+* All buildable structures have a build cost of 1
+    * The only exceptions are swamp roads (cost: 5) and tunnels (cost: 150); the new cost is applied before the terrain cost multiplier for roads
+    * Build cost changes are reflected in the client and on `ConstructionSite` instances, but **not in the build cost constants defined by the API**
+    * Repair costs are unchanged; this is particularly impactful for tunnels
+* The RCL upgrade cost for every level is 1,000
+    * The downgrade timer must still be maxed out before RCL increases
+    * This new cost also applies to RCL 1 -> 2 (normally only costs 200); beware this balance change when respawning
+    * The upgrade cap of 15 still applies; this can potentially impact benchmarking setups
+    * The client UI will not reflect this cost change
+* Nukers only require 1 energy and 1 ghodium to fill
+* Nuker firing cooldowns and Nuke land timers are both reduced to 100 ticks
+* The market GUI is disabled, but the market itself is still functional
+    * Only the most recent 1-2 days of price history are available for each resource; sometimes it is entirely absent
+* The shard3 CPU limit is increased to 60
+* The 12-hour cooldown on `Game.cpu.setShardLimits` does not apply
+
+Most of these changes can be found by grepping for `config.ptr` in the [engine repo](https://github.com/search?q=repo%3Ascreeps%2Fengine+config.ptr&type=code)
+
+This behavior can be easily recreated on a private server via an environment variable change: [`PTR=true`](https://github.com/screeps/engine/blob/97c9d12385fed686655c13b09f5f2457dd83a2bf/src/config.js#L5).
