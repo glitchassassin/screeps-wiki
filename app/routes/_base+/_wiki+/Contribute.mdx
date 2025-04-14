@@ -3,7 +3,7 @@ title: Contribute
 description: Contributing to this wiki is a big help to the Screeps community, especially the newer players. The intent of the wiki is to compliment the API and existing documentation, not duplicate the information. The details in here should lean towards concepts and ideas, instead of a hard "what" of each entity. Explanations of various implementations and uses of objects should give multiple options, and weigh the pros and cons of each.
 quicklink: true
 categories:
-  - wiki
+  - Wiki
 ---
 
 ## How To Contribute
@@ -20,22 +20,54 @@ Pull requests use a GitConsensus workflow, which means that it will be merged au
 - Do not provide raw code in text form under any circumstances. Pictures of example code will only be used when there is no way to explain a concept succinctly without it. Solicit for advice from the community in #wiki before posting any code.
 - Some in-game objects are not worthy of getting their own page. For example, the classes "StructureWall" and "StructureRampart" both fit in the article "Defensive Structures," which would briefly explain the differences between the two, then go into concepts and usages applicable to both.
 
-## High-level Concept Articles
+## Article Types
+
+### High-level Concept Articles
 
 High level concepts, like [Operating System](/Operating_System) design or [Source Keeper Mining](/Source_Keeper_Mining) are concepts that lean heavily on a full understanding of multiple smaller concepts. An explanation of what the concept is and similarities common in most implementations can be had in an overview section, then dive into more detailed concepts, linking to other articles for each if they are large enough to justify it. If a concept is important enough, but not worthy of its own article, you may create a link, redirecting to that section, so users can access it in the URL as if it were an article (e.g. "StructureWall" redirecting to "Defensive_Structures#wall"). Under no circumstances should raw code be posted in text or picture form, unless there is no way to explain the concept otherwise.
 
-## Other Concept Articles
+### Other Concept Articles
 
 Other concepts are not as grandiose as high-level concepts, but should be treated similarly. If there are multiple implementations, discuss each including pros and cons. Concepts can be included in game object articles such as "healing with towers" being a subsection of "StructureTower". This occurs when there is simply not enough content to justify a new article.
 
-## Game Object Articles
+### Game Object Articles
 
 Not every in-game class or object needs its own article. The example above in the rules is the perfect example: the classes "StructureWall" and "StructureRampart" both fit in the article "Defensive Structures." If a structure is important enough to warrant its own article, start with a basic overview, then roll into common (and perhaps uncommon) uses for it, different implementations of the uses (if applicable) and the pros and cons for everything. Discussions of tactics for towers (heal vs attack for defense), or common placement of links, and how to implement them is the important part. External links to the API or developers' documentation pages are acceptable. If there are any changes, an external link to the blog announcement may be warranted.
 
-## Missing Articles or Links
+### Missing Articles or Links
 
 As with any community wiki, we have orphaned articles that aren't linked to from elsewhere, dead-end articles that don't link to other articles, and uncreated articles that are linked to from existing articles (these are the red links you might see around the place). These are all great places to start if you want to make a quick improvement to the wiki!
 
-## Other useful Links for new Contributors
+## Conventions and Syntax
 
-In addition to the previously mentioned links the [list of all pages](/AllPages) can be a useful reference for adding all the relevant links, and the list of stubs in the [categories](/Categories) can give another good idea of pages to work on.
+### Article Metadata
+
+The [MDX](https://mdxjs.com/) page for each article begins with [Frontmatter](https://mdxjs.com/guides/frontmatter/)-formatted metadata. For example, here's the metadata for this article:
+
+```markdown
+---
+title: Contribute
+description: Contributing to this wiki is a big help to the Screeps community, especially the newer players. The intent of the wiki is to compliment the API and existing documentation, not duplicate the information. The details in here should lean towards concepts and ideas, instead of a hard "what" of each entity. Explanations of various implementations and uses of objects should give multiple options, and weigh the pros and cons of each.
+quicklink: true
+categories:
+  - Wiki
+---
+```
+
+The following fields are supported:
+* `title` (`string`): The title of the article. Underscores will be converted to spaces when the page is rendered.
+* `description` (`string`): A description of the article. In addition to providing search metadata, this blurb will be displayed below the title and above the table of contents when the article is rendered.
+* `quicklink` (`boolean`): When set to true, the article can be referenced via title using the `[[quicklink]]` syntax.
+* `categories` (`string[]`): The article will be included on all category pages referenced by name in this list.
+
+The latest version of the metadata format can be found by checking the `Frontmatter` type in [`app/lib/pages.server.ts`](https://github.com/glitchassassin/screeps-wiki/blob/main/app/lib/pages.server.ts).
+
+### Naming Conventions
+
+Article, section, and category titles should be named and formatted consistently. For example: when adding categories to an article, check out the existing [categories](/Categories) before creating a new one.
+
+## Other Resources
+
+* [Repo README on Github](https://github.com/glitchassassin/screeps-wiki?tab=readme-ov-file#screeps-wiki)
+* [List of all pages](/AllPages): can be a useful reference for adding all the relevant links
+* [List of stub pages](/Categories/Stubs/): can give another good idea of pages to work on
