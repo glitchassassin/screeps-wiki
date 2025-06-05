@@ -24,8 +24,8 @@ Knowing "constant worthy" values that do not have a constant set up in the engin
 | The max amount of CPU that can be used in one game tick, any CPU over the user's assigned amount comes out of the bucket | 500 | `const MAX_CPU_PER_TICK = 500;` |
 | The ranges creeps have to be within to execute certain actions. | `{ attack: 1, attackController: 1, build: 3, claimController: 1, dismantle: 1, generateSafeMode: 1, harvest: 1, heal: 1, pickup: 1, pull: 1, rangedAttack: 3, rangedHeal: 3, rangedMassAttack: 3, repair: 3, reserveController: 1, transfer: 1, upgradeController: 3, withdraw: 1};` | `const CREEP_ACTION_RANGES = { attack: 1, attackController: 1, build: 3, claimController: 1, dismantle: 1, generateSafeMode: 1, harvest: 1, heal: 1, pickup: 1, pull: 1, rangedAttack: 3, rangedHeal: 3, rangedMassAttack: 3, repair: 3, reserveController: 1, transfer: 1, upgradeController: 3, withdraw: 1};` |
 | Maximum size of the default memory (per shard) in characters | 2097152 | `const MEMORY_SIZE = 2097152;` |
-| Maximum size of an intetershard memory (per shard) in characters | 1024 | `const MEMORY_INERSHARD_SIZE = 1024;` |
-| Maximum size of a rawMemory segment (per shard) in characters | 1024 | `const MEMORY_RAW_SEGMENT_SIZE = 1024;` |
+| Maximum size of an intershard memory (per shard) in characters | 1024 | `const MEMORY_INTERSHARD_SIZE = 1024;` |
+| Maximum size of a rawMemory segment (per shard) in characters | [100 * 1024](https://github.com/screeps/driver/blob/e691bd3ee843cb12ac4bedc68397b2b92709f622/lib/runtime/runtime.js#L264) | `const MEMORY_RAW_SEGMENT_SIZE = 102400;` |
 | Maximum size of a rawMemory total (per shard, 10 active segments) in characters | 10240 | `const MEMORY_RAW_TOTAL_SIZE = 10240;` |
 | Hits (Health/HitPoints) per power creep level | 1000 | `const POWER_CREEP_HITS_PER_LEVEL = 1000;` |
 | 'value' of plains terrain (Note: absence of value could always be considered a 'plains' since its 0) | 0 | `const TERRAIN_MASK_PLAIN = 0;` |
